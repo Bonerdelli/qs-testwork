@@ -23,12 +23,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@pages*": ["./src/pages"],
-      "@library*": ["./src/library"],
-      "@components*": ["./src/components"]
-    }
+    "jsx": "react-jsx"
   },
   "include": [
     "src/styles.d.ts",

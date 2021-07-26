@@ -20,7 +20,7 @@ module.exports = {
   rules: {
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
-    'react/jsx-one-expression-per-line': ['warn', { allow: 'single-child' }],
+    'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/destructuring-assignment': 'off',
     'react/prop-types': 'off',
