@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
+    'react/react-in-jsx-scope': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/destructuring-assignment': 'off',
