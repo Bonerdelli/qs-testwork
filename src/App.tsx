@@ -1,12 +1,18 @@
-import './App.css'
+import { Layout } from 'antd'
+
 import { TreeSelect } from './TreeSelect'
 
+import './App.css'
+
+const { Content } = Layout
 
 function App(): JSX.Element {
   return (
-    <div className="App">
-      <TreeSelect />
-    </div>
+    <Layout style={{ height: '100%' }}>
+      <Content className="content">
+        <TreeSelect />
+      </Content>
+    </Layout>
   )
 }
 
