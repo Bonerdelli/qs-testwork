@@ -1,6 +1,6 @@
 import { notification } from 'antd'
 
-export const API_URL = process.env.API_URL || 'http://localhost:3031'
+export const API_URL = process.env.API_URL || 'http://localhost:3001'
 
 export interface ApiError {
   code?: string
@@ -15,7 +15,7 @@ export interface ApiErrorResponse {
  * Fetch and parse JSON from backend
  */
 export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
-  let result = undefined
+  let result
   try {
     const response = await fetch(url)
     result = await response.json()
@@ -23,7 +23,7 @@ export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
       return await handleApiError(result.error)
     }
   } catch (e) {
-    console.error(e)
+    return await handleApiError(e)
   }
   return result as T
 }
@@ -32,20 +32,21 @@ export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
  * Helper function to build endpoint URL
  */
 export function getEndpointUrl(path: string): string {
-  let result = path.replace(/^\/+/, '').replace(/\/+$/, '')
-  return `${API_URL}/${result}`
+  const url = path.replace(/^\/+/, '').replace(/\/+$/, '')
+  return `${API_URL}/${url}`
 }
-
 
 /**
  * Helper function to handle API errors
  */
-async function handleApiError(error: ApiError): Promise<ApiErrorResponse> {
+async function handleApiError(error?: ApiError): Promise<ApiErrorResponse> {
   notification.error({
     message: 'Ошибка загрузки данных',
-    description: error.message,
+    description: error?.message,
     placement: 'bottomRight',
   })
-  console.error('API Error', error.message)
-  return { error }
+  console.error('API Error', error?.message)
+  return error ? { error } : {
+    error: { message: 'Unknown error' },
+  }
 }

@@ -23,5 +23,5 @@ export function useApiData<T>(
     getData()
   }, [])
 
-  return [ data, setData ]
+  return [data, setData]
 }

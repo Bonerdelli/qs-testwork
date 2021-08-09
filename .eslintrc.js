@@ -36,6 +36,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/member-delimiter-style': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
     'object-curly-newline': 'off',

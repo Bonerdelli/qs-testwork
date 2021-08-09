@@ -26,7 +26,7 @@ function getItem(id) {
 function getLeaf(id) {
   const node = getItem(id)
   const statement = db.prepare('SELECT * FROM tree WHERE parent = ?')
-  const childs = statement.all()
+  const childs = statement.all(id)
   if (childs.length > 0) {
     node.childs = childs
   }
