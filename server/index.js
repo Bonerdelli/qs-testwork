@@ -1,15 +1,19 @@
 const express = require('express')
-const { initDb, db } = require('./database')
+const { initDb, getLeaf, db } = require('./database')
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3031
 const app = express()
+
+app.get('/tree/:nodeId', function(req, res) {
+  const { nodeId } = req.params
+  const leaf = getLeaf(nodeId)
+  console.log(leaf)
+});
 
 app.listen(PORT, async () => {
   try {
     console.log(`Server listening on ${PORT}`)
     initDb()
-    const row = db.prepare('SELECT * FROM tree WHERE id = ?').get(1)
-    console.log('Test db', row)
   } catch (e) {
     console.error('Error', e.message)
   }

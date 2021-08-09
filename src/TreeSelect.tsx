@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Row, Col, Card, Tree, Button } from 'antd'
 
+import { DataItem } from './types'
+import { useApiData } from './helpers/hooks'
 import leftTreeData from './mock/antd-tree' // TODO: replace with fake API
 
 import './TreeSelect.css'
@@ -13,7 +15,9 @@ export interface TreeNode {
 }
 
 export const TreeSelect: React.FC = () => {
+  const [testData] = useApiData<DataItem[]>(`/tree/1`)
   const [localTree] = useState<TreeNode[]>([]) // setLocalTree
+  console.log('testData', testData)
   return (
     <Row align="middle" justify="center">
       <Col span={10}>

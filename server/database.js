@@ -18,8 +18,25 @@ function initDb() {
   insertMany(insert)(treeData)
 }
 
+function getItem(id) {
+  const statement = db.prepare('SELECT * FROM tree WHERE id = ?')
+  return statement.get(id)
+}
+
+function getLeaf(id) {
+  const node = getItem(id)
+  const statement = db.prepare('SELECT * FROM tree WHERE parent = ?')
+  const childs = statement.all()
+  if (childs.length > 0) {
+    node.childs = childs
+  }
+  return node
+}
+
 
 module.exports = {
   db,
   initDb,
+  getItem,
+  getLeaf,
 }
