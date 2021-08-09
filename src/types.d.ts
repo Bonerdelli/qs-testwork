@@ -1,5 +1,9 @@
 export interface DataItem {
+  id: number
   value: string
-  updatedAt: Date
-  isDeleted?: boolean
+  parent: number
+  childs?: DataItem[]
+  // TODO: make flags
+  // updatedAt: Date
+  // isDeleted?: boolean
 }

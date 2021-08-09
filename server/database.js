@@ -3,6 +3,8 @@ const treeData = require('../data/tree.json')
 
 const db = new Database(':memory:')
 
+const TREE_ROOT_NODE_ID = 1
+
 const insertMany = (insert) => db.transaction((items) => {
   for (const item of items) insert.run(item)
 })
@@ -33,10 +35,19 @@ function getLeaf(id) {
   return node
 }
 
+function getSubtree(id, maxDepth = 1) {
+  const subtree = getLeaf(id)
+  if (subtree.childs && maxDepth > 1) {
+    subtree.childs = subtree.childs.map(item => getSubtree(item.id, maxDepth - 1))
+  }
+  return subtree
+}
 
 module.exports = {
+  TREE_ROOT_NODE_ID,
   db,
   initDb,
   getItem,
   getLeaf,
+  getSubtree,
 }
