@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 
-import { TreeSelect } from './TreeSelect'
+import { TreeEditor } from './components/TreeEditor'
 
 import './App.css'
 
@@ -10,7 +10,7 @@ function App(): JSX.Element {
   return (
     <Layout style={{ height: '100%' }}>
       <Content className="content">
-        <TreeSelect />
+        <TreeEditor />
       </Content>
     </Layout>
   )
