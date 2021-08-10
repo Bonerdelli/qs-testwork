@@ -14,7 +14,7 @@ export const CachedTreeView: React.FC<CachedTreeViewProps> = ({ tree }) => {
   const [treeData, setTreeData] = useState<DataNode[]>()
   useEffect(() => {
     if (tree) {
-      const treeNodes = treeDataToNodes(treeData)
+      const treeNodes = treeDataToNodes(tree)
       setTreeData([treeNodes])
     }
   }, [tree])

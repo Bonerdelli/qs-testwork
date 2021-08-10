@@ -1,8 +1,8 @@
 import { DataNode } from 'antd/es/tree'
-import { DataItem } from '../types'
+import { TreeNode } from '../types'
 
-export function treeDataToNodes(tree: DataItem): DataNode {
-  const nodeMapper = (item: DataItem): DataNode => {
+export function treeDataToNodes(tree: TreeNode): DataNode {
+  const nodeMapper = (item: TreeNode): DataNode => {
     const { value, id } = item
     const dataNode: DataNode = {
       key: id,
