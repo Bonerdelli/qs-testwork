@@ -45,7 +45,7 @@ async function handleApiError(error?: ApiError): Promise<ApiErrorResponse> {
     description: error?.message,
     placement: 'bottomRight',
   })
-  console.error('API Error', error?.message)
+  console.error('API Error', error?.message) // eslint-disable-line no-console
   return error ? { error } : {
     error: { message: 'Unknown error' },
   }

@@ -21,7 +21,7 @@ export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree }) => {
       treeData={treeData}
       draggable={false}
       defaultExpandedKeys={[0]}
-      titleRender={(node) => (
+      titleRender={node => (
         <DBTreeItem nodeId={node.key as number} />
       )}
     />

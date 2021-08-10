@@ -5,5 +5,5 @@ export interface TreeNode {
   childs?: TreeNode[]
   // TODO: make flags
   // updatedAt: Date
-  // isDeleted?: boolean
+  // isDeleted?: boolean // OR deletedAt
 }

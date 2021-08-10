@@ -23,14 +23,14 @@ export const CachedTreeView: React.FC<CachedTreeViewProps> = ({ tree }) => {
       treeData={treeData}
       draggable={false}
       defaultExpandedKeys={[0]}
-      titleRender={(node) => (
+      titleRender={node => (
         <CachedTreeNode nodeId={node.key as number} />
       )}
     />
   ) : (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description='Загрузите элементы чтобы начать редактирование'
+      description="Загрузите элементы чтобы начать редактирование"
     />
   )
 }
