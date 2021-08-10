@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+
 import { Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'
 
@@ -22,7 +23,7 @@ export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree }) => {
       draggable={false}
       defaultExpandedKeys={[0]}
       titleRender={node => (
-        <DBTreeNode nodeId={node.key as number} />
+        <DBTreeNode dataNode={node} />
       )}
     />
   )

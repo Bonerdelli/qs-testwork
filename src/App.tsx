@@ -2,6 +2,8 @@ import { Layout } from 'antd'
 
 import { TreeEditor } from './components/TreeEditor'
 
+// NOTE: we don't need preprocessor here,
+// because styles aren't complex
 import './App.css'
 
 const { Content } = Layout

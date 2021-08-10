@@ -30,7 +30,7 @@ export const CachedTreeView: React.FC<CachedTreeViewProps> = ({ tree }) => {
   ) : (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description="Загрузите элементы чтобы начать редактирование"
+      description={(<>Загрузите элементы,<br /> чтобы начать редактирование</>)}
     />
   )
 }

@@ -14,7 +14,7 @@ export const TreeEditor: React.FC = () => {
   // const [treeLoading, setTreeLoading] = useState<boolean>(true)
   // useEffect(() => setTreeLoading(!!tree), [tree])
   return (
-    <Row align="middle" justify="center">
+    <Row justify="center">
       <Col span={10}>
         <Card
           size="small"

@@ -1,0 +1,26 @@
+.tree-node {
+  /* font-size: .85rem; */
+}
+
+.tree-node > div {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.tree-node-actions {
+  position: absolute;
+  margin-left: .5em;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition-property: opacity;
+  /* TODO: import duration from antd source when switch to LESS */
+  transition-duration: 250ms;
+}
+
+.ant-tree-node-content-wrapper:hover .tree-node-actions,
+.ant-tree-treenode-selected .ant-tree-node-content-wrapper .tree-node-actions {
+  visibility: visible;
+  opacity: 1;
+}
