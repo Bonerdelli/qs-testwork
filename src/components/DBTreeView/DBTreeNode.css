@@ -25,13 +25,21 @@
 
 .tree-node-edit-input {
   display: inline-block;
-  min-width: 2em;
+  margin-top: 1px;
+  margin-left: 1px;
+  /* width: auto; */
+}
+
+.tree-node-edit-input .ant-input {
+  position: relative;
+  min-width: 4em;
   max-width: 15em;
-  width: 4em;
+  left: -0.25em;
 }
 
 .ant-tree-node-content-wrapper:hover .tree-node-actions,
-.ant-tree-treenode-selected .ant-tree-node-content-wrapper .tree-node-actions {
+.ant-tree-treenode-selected .ant-tree-node-content-wrapper .tree-node-actions,
+.tree-node.active .tree-node-actions {
   visibility: visible;
   opacity: 1;
 }

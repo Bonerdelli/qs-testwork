@@ -4,12 +4,14 @@ import storage from 'redux-persist/lib/storage'
 
 import { CashedTreeNodesStoreModel, cashedTreeNodesStoreModel } from './cashedTreeNodes'
 import { DbTreeStoreModel, dbTreeStoreModel } from './dbTree'
+import { NodeEditStoreModel, nodeEditModel } from './nodeEdit'
 
 export const STORAGE_KEY_PREFIX = 'qs-testwork'
 
 export interface AppStoreModel {
-  cashedTreeNodes: CashedTreeNodesStoreModel
   dbTree: DbTreeStoreModel
+  cashedTreeNodes: CashedTreeNodesStoreModel
+  nodeEdit: NodeEditStoreModel
 }
 
 const persistBaseConfig = {
@@ -25,8 +27,9 @@ const persistRootConfig: PersistConfig<AppStoreModel> = {
 }
 
 const model = {
-  cashedTreeNodes: cashedTreeNodesStoreModel,
   dbTree: dbTreeStoreModel,
+  cashedTreeNodes: cashedTreeNodesStoreModel,
+  nodeEdit: nodeEditModel,
 }
 
 export const store = createStore<AppStoreModel>(model, {

@@ -18,13 +18,12 @@ const nodeMapper = (item: TreeNode): TreeDataNode => {
   return dataNode
 }
 
-// antd nodes?
+// TODO: rename to antd nodes?
 export function treeDataToNodes(tree: TreeNode): TreeDataNode {
   return nodeMapper(tree)
 }
 
 export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
   const dataNodes = treeNodes.map(nodeMapper)
-  console.log('dataNodes', dataNodes)
   return dataNodes
 }

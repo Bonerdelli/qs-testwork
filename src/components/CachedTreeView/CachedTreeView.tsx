@@ -3,11 +3,14 @@ import { Tree, Empty } from 'antd'
 import { DataNode } from 'antd/es/tree'
 
 import { CachedTreeNode } from './CachedTreeNode'
+import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
 import { cashedTreeItemsToNodes } from '../../helpers/tree'
 import { useStoreState } from '../../store'
+import { TreeDataNode } from '../../types'
 
 export const CachedTreeView: React.FC = () => {
   const { nodes } = useStoreState(state => state.cashedTreeNodes)
+  const { activeId } = useStoreState(state => state.nodeEdit)
   const [treeData, setTreeData] = useState<DataNode[]>()
   useEffect(() => {
     if (nodes) {
@@ -20,8 +23,10 @@ export const CachedTreeView: React.FC = () => {
       treeData={treeData}
       draggable={false}
       defaultExpandedKeys={[0]}
-      titleRender={node => (
-        <CachedTreeNode dataNode={node} />
+      titleRender={(node: TreeDataNode) => (
+        node.treeNode?.id === activeId
+          ? <CachedTreeNodeEditor dataNode={node} />
+          : <CachedTreeNode dataNode={node} />
       )}
     />
   ) : (
