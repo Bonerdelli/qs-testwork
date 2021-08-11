@@ -2,13 +2,13 @@ import { createStore, createTypedHooks } from 'easy-peasy'
 import { PersistConfig, persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import { CashedTreeStoreModel, cashedTreeStoreModel } from './cashedTree'
+import { CashedTreeNodesStoreModel, cashedTreeNodesStoreModel } from './cashedTreeNodes'
 import { DbTreeStoreModel, dbTreeStoreModel } from './dbTree'
 
 export const STORAGE_KEY_PREFIX = 'qs-testwork'
 
 export interface AppStoreModel {
-  cashedTree: CashedTreeStoreModel
+  cashedTreeNodes: CashedTreeNodesStoreModel
   dbTree: DbTreeStoreModel
 }
 
@@ -20,12 +20,12 @@ const persistBaseConfig = {
 const persistRootConfig: PersistConfig<AppStoreModel> = {
   ...persistBaseConfig,
   whitelist: [
-    'cashedTree',
+    'cashedTreeNodes',
   ],
 }
 
 const model = {
-  cashedTree: cashedTreeStoreModel,
+  cashedTreeNodes: cashedTreeNodesStoreModel,
   dbTree: dbTreeStoreModel,
 }
 

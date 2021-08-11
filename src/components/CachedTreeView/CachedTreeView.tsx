@@ -2,29 +2,26 @@ import { useState, useEffect } from 'react'
 import { Tree, Empty } from 'antd'
 import { DataNode } from 'antd/es/tree'
 
-import { TreeNode } from '../../types'
-import { treeDataToNodes } from '../../helpers/tree'
 import { CachedTreeNode } from './CachedTreeNode'
+import { cashedTreeItemsToNodes } from '../../helpers/tree'
+import { useStoreState } from '../../store'
 
-export interface CachedTreeViewProps {
-  tree?: TreeNode
-}
-
-export const CachedTreeView: React.FC<CachedTreeViewProps> = ({ tree }) => {
+export const CachedTreeView: React.FC = () => {
+  const { nodes } = useStoreState(state => state.cashedTreeNodes)
   const [treeData, setTreeData] = useState<DataNode[]>()
   useEffect(() => {
-    if (tree) {
-      const treeNodes = treeDataToNodes(tree)
-      setTreeData([treeNodes])
+    if (nodes) {
+      const treeNodes = cashedTreeItemsToNodes(nodes)
+      setTreeData(treeNodes)
     }
-  }, [tree])
+  }, [nodes])
   return treeData ? (
     <Tree
       treeData={treeData}
       draggable={false}
       defaultExpandedKeys={[0]}
       titleRender={node => (
-        <CachedTreeNode nodeId={node.key as number} />
+        <CachedTreeNode dataNode={node} />
       )}
     />
   ) : (

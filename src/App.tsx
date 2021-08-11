@@ -1,3 +1,6 @@
+// TODO: change title and favicon
+// TODO: put test work description in repo
+
 import { StoreProvider } from 'easy-peasy'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Spin } from 'antd'

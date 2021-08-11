@@ -1,19 +1,30 @@
-import { DataNode } from 'antd/es/tree'
-import { TreeNode } from '../types'
+import { TreeNode, TreeDataNode } from '../types'
 
 export const TREE_ROOT_NODE_ID = 1
 
-export function treeDataToNodes(tree: TreeNode): DataNode {
-  const nodeMapper = (item: TreeNode): DataNode => {
-    const { value, id } = item
-    const dataNode: DataNode = {
-      key: id,
-      title: value,
-    }
-    if (item.childs) {
-      dataNode.children = item.childs.map(nodeMapper)
-    }
-    return dataNode
+/**
+ * Helper function to map tree item nodes to data nodes used in antd Tree
+ */
+const nodeMapper = (item: TreeNode): TreeDataNode => {
+  const { value, id } = item
+  const dataNode: TreeDataNode = {
+    key: id,
+    title: value,
+    treeNode: item,
   }
+  if (item.childs) {
+    dataNode.children = item.childs.map(nodeMapper)
+  }
+  return dataNode
+}
+
+// antd nodes?
+export function treeDataToNodes(tree: TreeNode): TreeDataNode {
   return nodeMapper(tree)
+}
+
+export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
+  const dataNodes = treeNodes.map(nodeMapper)
+  console.log('dataNodes', dataNodes)
+  return dataNodes
 }

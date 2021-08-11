@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
-
 import { Tree } from 'antd'
-import { DataNode } from 'antd/es/tree'
 
-import { TreeNode } from '../../types'
+import { TreeNode, TreeDataNode } from '../../types'
 import { treeDataToNodes } from '../../helpers/tree'
 import { DBTreeNode } from './DBTreeNode'
 
@@ -12,7 +10,7 @@ export interface DBTreeViewProps {
 }
 
 export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree }) => {
-  const [treeData, setTreeData] = useState<DataNode[]>()
+  const [treeData, setTreeData] = useState<TreeDataNode[]>()
   useEffect(() => {
     const treeNodes = treeDataToNodes(tree)
     setTreeData([treeNodes])

@@ -1,18 +1,23 @@
 import { Button } from 'antd'
 import { DoubleRightOutlined } from '@ant-design/icons'
-import { DataNode } from 'antd/es/tree'
 
 import { TREE_ROOT_NODE_ID } from '../../helpers/tree'
+import { useStoreActions } from '../../store'
+import { TreeDataNode } from '../../types'
 
 import './DBTreeNode.css'
 
 export interface DBTreeNodeProps {
-  dataNode: DataNode
+  dataNode: TreeDataNode
 }
 
-export const DBTreeNode: React.FC<DBTreeNodeProps> = ({ dataNode }) => {
-  const { key } = dataNode
+export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
+  dataNode,
+}) => {
+  const { key, treeNode } = dataNode
+  const { addNode } = useStoreActions(state => state.cashedTreeNodes)
   const handleLoadClick = (e: any) => { // MouseEvent
+    treeNode && addNode(treeNode)
     e.stopPropagation()
   }
   const renderActionButtons = () => (

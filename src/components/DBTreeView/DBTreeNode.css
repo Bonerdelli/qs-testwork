@@ -1,5 +1,8 @@
+/* TODO: move outside of DBTreeView */
+
 .tree-node {
   /* font-size: .85rem; */
+  white-space: nowrap;
 }
 
 .tree-node > div {
@@ -8,8 +11,9 @@
 }
 
 .tree-node-actions {
-  position: absolute;
-  margin-left: .5em;
+  margin-left: .2em;
+  position: relative;
+  top: -0.05em;
 
   visibility: hidden;
   opacity: 0;
@@ -17,6 +21,13 @@
   transition-property: opacity;
   /* TODO: import duration from antd source when switch to LESS */
   transition-duration: 250ms;
+}
+
+.tree-node-edit-input {
+  display: inline-block;
+  min-width: 2em;
+  max-width: 15em;
+  width: 4em;
 }
 
 .ant-tree-node-content-wrapper:hover .tree-node-actions,
