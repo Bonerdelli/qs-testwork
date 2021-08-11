@@ -20,7 +20,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   const confirmEdit = (e: any) => { // MouseEvent
     if (treeNode && editedValue) {
       setNodeValue([treeNode, editedValue])
-      setActiveId(undefined)
+      setTimeout(() => setActiveId(undefined))
     }
     e.stopPropagation()
   }

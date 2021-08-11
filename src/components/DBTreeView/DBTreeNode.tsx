@@ -34,7 +34,7 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
   )
   return (
     <div className="tree-node">
-      {dataNode.title}
+      <span className="tree-node-value">{dataNode.title}</span>
       {key !== TREE_ROOT_NODE_ID && renderActionButtons()}
     </div>
   )

@@ -22,7 +22,7 @@ export const CachedTreeView: React.FC = () => {
     <Tree
       treeData={treeData}
       draggable={false}
-      defaultExpandedKeys={[0]}
+      selectedKeys={[activeId ?? 0]}
       titleRender={(node: TreeDataNode) => (
         node.treeNode?.id === activeId
           ? <CachedTreeNodeEditor dataNode={node} />

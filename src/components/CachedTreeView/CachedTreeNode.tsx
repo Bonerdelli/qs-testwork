@@ -46,7 +46,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   )
   return (
     <div className="tree-node">
-      {dataNode.title}
+      <div className="tree-node-value">{dataNode.title}</div>
       {renderActionButtons()}
     </div>
   )
