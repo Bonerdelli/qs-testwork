@@ -18,7 +18,7 @@ export const CachedTreeView: React.FC = () => {
       setTreeData(treeNodes)
     }
   }, [nodes])
-  return treeData ? (
+  return treeData?.length ? (
     <Tree
       treeData={treeData}
       draggable={false}

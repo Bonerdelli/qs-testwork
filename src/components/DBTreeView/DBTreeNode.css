@@ -34,7 +34,9 @@
   position: relative;
   min-width: 4em;
   max-width: 15em;
+  height: 1.6em;
   left: -0.25em;
+  padding: 0px 3px;
 }
 
 .ant-tree-node-content-wrapper:hover .tree-node-actions,

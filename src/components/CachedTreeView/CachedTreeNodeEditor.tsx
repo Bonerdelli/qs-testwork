@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Form, Button, Input } from 'antd'
+import { Button, Input } from 'antd'
 import {
   CheckOutlined,
   CloseOutlined,
@@ -18,7 +18,10 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
   const confirmEdit = (e: any) => { // MouseEvent
-    treeNode && setNodeValue([treeNode, editedValue])
+    if (treeNode && editedValue) {
+      setNodeValue([treeNode, editedValue])
+      setActiveId(undefined)
+    }
     e.stopPropagation()
   }
   const cancelEdit = (e: any) => { // MouseEvent
@@ -30,6 +33,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
       <Button
         type="link"
         shape="circle"
+        disabled={!editedValue}
         icon={<CheckOutlined />}
         onClick={confirmEdit}
         style={{
@@ -50,28 +54,17 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   )
   return (
     <div className="tree-node active">
-      <Form
-        initialValues={{ title: treeNode?.value }}
-        validateTrigger="onChange"
-        requiredMark={false}
-      >
-        <Form.Item
-          noStyle
-          name="title"
-          validateStatus="error"
-          className="tree-node-edit-input"
-          rules={[{ min: 1 }]}
-        >
-          <Input
-            size="small"
-            onChange={e => setEditedValue(e.target.value)}
-            onPressEnter={e => confirmEdit(e)}
-            style={{
-              // width: `${editedValue.length ?? 4}em`,
-            }}
-          />
-        </Form.Item>
-      </Form>
+      <div className="tree-node-edit-input">
+        <Input
+          size="small"
+          defaultValue={treeNode?.value}
+          onChange={e => setEditedValue(e.target.value)}
+          onPressEnter={e => confirmEdit(e)}
+          style={{
+            width: `${editedValue.length * 0.85 + 2}em`,
+          }}
+        />
+      </div>
       {renderActionButtons()}
     </div>
   )
