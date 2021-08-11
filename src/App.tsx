@@ -1,20 +1,24 @@
-import { Layout } from 'antd'
+import { StoreProvider } from 'easy-peasy'
+import { PersistGate } from 'redux-persist/integration/react'
+import { Spin } from 'antd'
 
-import { TreeEditor } from './components/TreeEditor'
+import { AppLayout } from './components/AppLayout'
+import { store, persistor } from './store'
 
 // NOTE: we don't need preprocessor here,
 // because styles aren't complex
 import './App.css'
 
-const { Content } = Layout
-
 function App(): JSX.Element {
+  const renderLoading = () => (
+    <Spin />
+  )
   return (
-    <Layout style={{ height: '100%' }}>
-      <Content className="content">
-        <TreeEditor />
-      </Content>
-    </Layout>
+    <PersistGate loading={renderLoading()} persistor={persistor}>
+      <StoreProvider store={store}>
+        <AppLayout />
+      </StoreProvider>
+    </PersistGate>
   )
 }
 

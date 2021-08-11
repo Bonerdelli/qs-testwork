@@ -6,4 +6,5 @@ export interface TreeNode {
   // TODO: make flags
   // updatedAt: Date
   // isDeleted?: boolean // OR deletedAt
+  // TODO: hasChilds и NSTree
 }
