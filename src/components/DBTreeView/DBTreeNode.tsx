@@ -14,7 +14,6 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({ dataNode }) => {
   const { key } = dataNode
   const handleLoadClick = (e: any) => { // MouseEvent
     e.stopPropagation()
-    console.log('handleLoadClick', key)
   }
   const renderActionButtons = () => (
     <div className="tree-node-actions">

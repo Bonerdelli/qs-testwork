@@ -46,6 +46,7 @@ module.exports = {
     quotes: ['warn', 'single'],
     'linebreak-style': 'warn',
     'global-require': 'error',
+    'no-param-reassign': 'off',
     'no-plusplus': 'off',
     'no-continue': 'off',
     'sort-keys': 'off',

@@ -1,7 +1,8 @@
 import { Layout } from 'antd'
-const { Content } = Layout
 
 import { TreeEditor } from './TreeEditor'
+
+const { Content } = Layout
 
 export const AppLayout: React.FC = () => (
   <Layout style={{ height: '100%' }}>

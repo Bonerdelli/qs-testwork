@@ -32,14 +32,14 @@ const model = {
 export const store = createStore<AppStoreModel>(model, {
   reducerEnhancer: reducer => persistReducer(
     persistRootConfig,
-    reducer
-  )
+    reducer,
+  ),
 })
 
 const typedHooks = createTypedHooks<AppStoreModel>()
-export const useStoreActions = typedHooks.useStoreActions
-export const useStoreDispatch = typedHooks.useStoreDispatch
-export const useStoreState = typedHooks.useStoreState
+export const { useStoreActions } = typedHooks
+export const { useStoreDispatch } = typedHooks
+export const { useStoreState } = typedHooks
 
 export const persistor = persistStore(store)
 export default store
