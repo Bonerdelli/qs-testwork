@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Row, Col, Card, Skeleton, Button } from 'antd'
+import { Row, Col, Card, Skeleton, Popconfirm, Button } from 'antd'
 import {
   ReloadOutlined,
   DoubleLeftOutlined,
@@ -74,16 +74,22 @@ export const TreeEditor: React.FC = () => {
               <DoubleLeftOutlined />
               Сохранить
             </Button>,
-            <Button
-              size="small"
-              type="text"
+            <Popconfirm
               key="clear"
-              disabled={cashedNodes?.length === 0}
-              onClick={() => cashedNodesClear()}
+              title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+              onConfirm={() => cashedNodesClear()}
+              okText="Да"
+              cancelText="Нет"
             >
-              <ClearOutlined />
-              Очистить кэш
-            </Button>,
+              <Button
+                size="small"
+                type="text"
+                disabled={cashedNodes?.length === 0}
+              >
+                <ClearOutlined />
+                Очистить кэш
+              </Button>,
+            </Popconfirm>,
           ]}
         >
           <CachedTreeView />

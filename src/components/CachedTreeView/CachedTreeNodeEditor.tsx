@@ -61,7 +61,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
           size="small"
           defaultValue={treeNode?.value}
           onChange={e => setEditedValue(e.target.value)}
-          onPressEnter={execOnAntdEvent(cancelEdit)}
+          onPressEnter={execOnAntdEvent(confirmEdit)}
           style={{
             width: `${editedValue.length * 0.85 + 2}em`,
           }}

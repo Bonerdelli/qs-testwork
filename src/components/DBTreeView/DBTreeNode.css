@@ -60,8 +60,7 @@
  */
 
 .ant-tree .ant-tree-node-content-wrapper:hover {
-  background-color: rgba(0, 0, 0, 0.02) !important;
-  border-color: rgba(0, 0, 0, 0.02) !important;
+  background-color: rgba(0, 0, 0, 0.03) !important;
 }
 
 .tree-node-actions .ant-btn:not([disabled]):hover {
