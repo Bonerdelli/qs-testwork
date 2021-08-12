@@ -4,8 +4,10 @@ import { TreeNode } from '../types'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
-  addNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  restoreNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
   setTree: Action<CashedTreeNodesStoreModel, TreeNode[]>
   clear: Action<CashedTreeNodesStoreModel>
@@ -17,7 +19,7 @@ const getNodeIndex = (
 
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
-  addNode: action((state, payload) => {
+  loadNode: action((state, payload) => {
     const { childs, ...node } = payload
     const index = getNodeIndex(state.nodes, node.id)
     if (index !== -1) {
@@ -28,11 +30,35 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       node,
     ]
   }),
-  removeNode: action((state, payload) => {
+  unloadNode: action((state, payload) => {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
       state.nodes.splice(index, 1)
+      state.nodes = [
+        ...state.nodes,
+      ]
+    }
+  }),
+  removeNode: action((state, payload) => {
+    const { id } = payload
+    const index = getNodeIndex(state.nodes, id)
+    if (index !== -1) {
+      state.nodes[index] = {
+        ...state.nodes[index],
+        deletedAt: new Date(),
+        isUpdated: true,
+      }
+    }
+  }),
+  restoreNode: action((state, payload) => {
+    const { id } = payload
+    const index = getNodeIndex(state.nodes, id)
+    if (index !== -1) {
+      state.nodes[index] = {
+        ...state.nodes[index],
+        deletedAt: undefined,
+      }
     }
   }),
   setNodeValue: action((state, payload) => {
@@ -41,6 +67,8 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (index !== -1) {
       state.nodes[index] = {
         ...state.nodes[index],
+        updatedAt: new Date(),
+        isUpdated: true,
         value,
       }
     }

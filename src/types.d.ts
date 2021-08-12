@@ -5,10 +5,9 @@ export interface TreeNode {
   value: string
   parent: number
   childs?: TreeNode[]
-  // TODO: make flags
-  // updatedAt: Date
-  // isDeleted?: boolean // OR deletedAt
-  // TODO: hasChilds и NSTree
+  isUpdated?: boolean
+  updatedAt?: Date
+  deletedAt?: Date
 }
 
 export interface TreeDataNode extends DataNode {

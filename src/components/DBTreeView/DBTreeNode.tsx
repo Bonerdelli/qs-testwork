@@ -15,9 +15,9 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
   dataNode,
 }) => {
   const { key, treeNode } = dataNode
-  const { addNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { loadNode } = useStoreActions(state => state.cashedTreeNodes)
   const handleLoadClick = (e: any) => { // MouseEvent
-    treeNode && addNode(treeNode)
+    treeNode && loadNode(treeNode)
     e.stopPropagation()
   }
   const renderActionButtons = () => (

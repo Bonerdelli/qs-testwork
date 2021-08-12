@@ -17,6 +17,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   const { setNodeValue } = useStoreActions(state => state.cashedTreeNodes)
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
+
   const confirmEdit = (e: any) => { // MouseEvent
     if (treeNode && editedValue) {
       setNodeValue([treeNode, editedValue])
@@ -24,10 +25,12 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
     }
     e.stopPropagation()
   }
+
   const cancelEdit = (e: any) => { // MouseEvent
     setActiveId(undefined)
     e.stopPropagation()
   }
+
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
