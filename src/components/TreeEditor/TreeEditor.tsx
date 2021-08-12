@@ -1,9 +1,12 @@
+// TODO: hide button labels based on screen width
+
 import { useState } from 'react'
 import { Row, Col, Card, Skeleton, Popconfirm, Button } from 'antd'
 import {
   ReloadOutlined,
   DoubleLeftOutlined,
   ClearOutlined,
+  SyncOutlined,
 } from '@ant-design/icons'
 
 import { TreeNode } from '../../types'
@@ -34,6 +37,10 @@ export const TreeEditor: React.FC = () => {
 
   }
 
+  const handleSync = () => {
+
+  }
+
   return (
     <Row justify="center">
       <Col span={10}>
@@ -49,7 +56,7 @@ export const TreeEditor: React.FC = () => {
               onClick={handleReload}
             >
               <ReloadOutlined />
-              Перезагрузить
+              Обновить
             </Button>,
           ]}
         >
@@ -62,7 +69,7 @@ export const TreeEditor: React.FC = () => {
         <Card
           size="small"
           className="tree-card"
-          title="Редактирование"
+          title="Редактирование (локальный кэш)"
           actions={[
             <Button
               size="small"
@@ -76,6 +83,30 @@ export const TreeEditor: React.FC = () => {
             </Button>,
             <Popconfirm
               key="clear"
+              title={(
+                <>
+                  Данные узлов будут перезагружены<br />
+                  Внесённые изменения будут потеряны<br />
+                  Продолжить?
+                </>
+              )}
+              onConfirm={() => cashedNodesClear()}
+              okText="Да"
+              cancelText="Нет"
+            >
+              <Button
+                size="small"
+                type="text"
+                key="save"
+                disabled={cashedNodes?.length === 0}
+                onClick={handleSync}
+              >
+                <SyncOutlined />
+                Перечитать
+              </Button>
+            </Popconfirm>,
+            <Popconfirm
+              key="clear"
               title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
               onConfirm={() => cashedNodesClear()}
               okText="Да"
@@ -87,8 +118,8 @@ export const TreeEditor: React.FC = () => {
                 disabled={cashedNodes?.length === 0}
               >
                 <ClearOutlined />
-                Очистить кэш
-              </Button>,
+                Очистить
+              </Button>
             </Popconfirm>,
           ]}
         >
