@@ -7,6 +7,7 @@ import {
 
 import { useStoreActions } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
+import { execOnAntdEvent } from '../../helpers/antd'
 
 import '../DBTreeView/DBTreeNode.css'
 
@@ -18,17 +19,15 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
 
-  const confirmEdit = (e: any) => { // MouseEvent
+  const confirmEdit = () => {
     if (treeNode && editedValue) {
       setNodeValue([treeNode, editedValue])
       setTimeout(() => setActiveId(undefined))
     }
-    e.stopPropagation()
   }
 
-  const cancelEdit = (e: any) => { // MouseEvent
+  const cancelEdit = () => {
     setActiveId(undefined)
-    e.stopPropagation()
   }
 
   const renderActionButtons = () => (
@@ -38,7 +37,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
         shape="circle"
         disabled={!editedValue}
         icon={<CheckOutlined />}
-        onClick={confirmEdit}
+        onClick={execOnAntdEvent(confirmEdit)}
         style={{
           color: 'green',
         }}
@@ -49,7 +48,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
         type="text"
         shape="circle"
         icon={<CloseOutlined />}
-        onClick={cancelEdit}
+        onClick={execOnAntdEvent(cancelEdit)}
         title="Отмена"
         size="small"
       />
@@ -62,7 +61,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
           size="small"
           defaultValue={treeNode?.value}
           onChange={e => setEditedValue(e.target.value)}
-          onPressEnter={e => confirmEdit(e)}
+          onPressEnter={execOnAntdEvent(cancelEdit)}
           style={{
             width: `${editedValue.length * 0.85 + 2}em`,
           }}

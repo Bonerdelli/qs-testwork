@@ -3,6 +3,7 @@ import { UndoOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
+import { execOnAntdEvent } from '../../helpers/antd'
 
 import '../DBTreeView/DBTreeNode.css'
 
@@ -12,18 +13,15 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   const { treeNode } = dataNode
   const { restoreNode } = useStoreActions(state => state.cashedTreeNodes)
 
-  const handleRestoreClick = (e: any) => { // MouseEvent
-    treeNode && restoreNode(treeNode)
-    e.stopPropagation()
-  }
-
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
         type="text"
         shape="circle"
         icon={<UndoOutlined />}
-        onClick={handleRestoreClick}
+        onClick={execOnAntdEvent(
+          () => treeNode && restoreNode(treeNode),
+        )}
         title="Восстановить"
         size="small"
       />

@@ -4,6 +4,7 @@ import { DoubleRightOutlined } from '@ant-design/icons'
 import { TREE_ROOT_NODE_ID } from '../../helpers/tree'
 import { useStoreActions } from '../../store'
 import { TreeDataNode } from '../../types'
+import { execOnAntdEvent } from '../../helpers/antd'
 
 import './DBTreeNode.css'
 
@@ -16,22 +17,22 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
 }) => {
   const { key, treeNode } = dataNode
   const { loadNode } = useStoreActions(state => state.cashedTreeNodes)
-  const handleLoadClick = (e: any) => { // MouseEvent
-    treeNode && loadNode(treeNode)
-    e.stopPropagation()
-  }
+
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
         type="link"
         shape="circle"
         icon={<DoubleRightOutlined />}
-        onClick={handleLoadClick}
+        onClick={execOnAntdEvent(
+          () => treeNode && loadNode(treeNode),
+        )}
         title="Загрузить для редактирования"
         size="small"
       />
     </div>
   )
+
   return (
     <div className="tree-node">
       <span className="tree-node-value">{dataNode.title}</span>
