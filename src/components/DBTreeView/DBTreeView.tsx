@@ -7,9 +7,10 @@ import { DBTreeNode } from './DBTreeNode'
 
 export interface DBTreeViewProps {
   tree: TreeNode
+  loading?: boolean
 }
 
-export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree }) => {
+export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree, loading }) => {
   const [treeData, setTreeData] = useState<TreeDataNode[]>()
   const [expandedKeys, setExpandedKeys] = useState<number[]>([]) // TODO: make persist state if needed
 
@@ -38,6 +39,7 @@ export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree }) => {
 
   return (
     <Tree
+      disabled={loading}
       treeData={treeData}
       draggable={false}
       expandedKeys={expandedKeys}

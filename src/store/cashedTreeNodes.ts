@@ -8,6 +8,7 @@ export interface CashedTreeNodesStoreModel {
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
   setTree: Action<CashedTreeNodesStoreModel, TreeNode[]>
+  clear: Action<CashedTreeNodesStoreModel>
 }
 
 const getNodeIndex = (
@@ -46,5 +47,8 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   }),
   setTree: action((state, payload) => {
     state.nodes = payload
+  }),
+  clear: action((state) => {
+    state.nodes = []
   }),
 }
