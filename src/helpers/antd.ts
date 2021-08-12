@@ -1,3 +1,20 @@
+export const antdTreeUseExpandedState = (
+  expandedKeys: number[],
+  setExpandedKeys: (keys: number[]) => void,
+) => (_keys: (number | string)[], event: any) => {
+  const newKeys: number[] = [...expandedKeys]
+  const { expanded, node: { key } } = event
+  const keyIndex = expandedKeys.indexOf(key)
+  if (!expanded && keyIndex !== -1) {
+    newKeys.splice(keyIndex, 1)
+  } else if (expanded && keyIndex === -1) {
+    newKeys.push(+key)
+  } else {
+    return
+  }
+  setExpandedKeys(newKeys)
+}
+
 export const execOnAntdEvent = (callback: () => void) => (e: any) => {
   callback()
   e.stopPropagation()

@@ -3,6 +3,7 @@ import { Tree } from 'antd'
 
 import { TreeNode, TreeDataNode } from '../../types'
 import { treeDataToNodes, getLeafNodeKeys } from '../../helpers/tree'
+import { antdTreeUseExpandedState } from '../../helpers/antd'
 import { DBTreeNode } from './DBTreeNode'
 
 export interface DBTreeViewProps {
@@ -23,27 +24,13 @@ export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree, loading }) => {
     setTreeData([treeNodes])
   }, [tree])
 
-  const onExpand = (_keys: (number | string)[], event: any) => {
-    const newKeys = [...expandedKeys]
-    const { expanded, node: { key } } = event
-    const keyIndex = expandedKeys.indexOf(key)
-    if (!expanded && keyIndex !== -1) {
-      newKeys.splice(keyIndex, 1)
-    } else if (expanded && keyIndex === -1) {
-      newKeys.push(key)
-    } else {
-      return
-    }
-    setExpandedKeys(newKeys)
-  }
-
   return (
     <Tree
       disabled={loading}
       treeData={treeData}
       draggable={false}
       expandedKeys={expandedKeys}
-      onExpand={onExpand}
+      onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={node => (
         <DBTreeNode dataNode={node} />
       )}
