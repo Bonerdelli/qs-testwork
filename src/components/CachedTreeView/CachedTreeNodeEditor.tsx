@@ -15,7 +15,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
-  const { setNodeValue } = useStoreActions(state => state.cashedTreeNodes)
+  const { setNodeValue, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
 
@@ -27,6 +27,9 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   }
 
   const cancelEdit = () => {
+    if (treeNode?.isNew) {
+      unloadNode(treeNode)
+    }
     setActiveId(undefined)
   }
 
@@ -58,6 +61,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
     <div className="tree-node active">
       <div className="tree-node-edit-input">
         <Input
+          autoFocus
           size="small"
           defaultValue={treeNode?.value}
           onChange={e => setEditedValue(e.target.value)}

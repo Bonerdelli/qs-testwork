@@ -5,9 +5,11 @@ export interface TreeNode {
   value: string
   parent: number
   childs?: TreeNode[]
-  isUpdated?: boolean
   updatedAt?: Date
   deletedAt?: Date
+  // TODO: separate with UI model?
+  isUpdated?: boolean
+  isNew?: boolean
 }
 
 export interface TreeDataNode extends DataNode {

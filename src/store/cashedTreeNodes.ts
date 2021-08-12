@@ -4,12 +4,16 @@ import { TreeNode } from '../types'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
+  maxNodeId: number
+
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
   restoreNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  addChildNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
-  setTree: Action<CashedTreeNodesStoreModel, TreeNode[]>
+
   clear: Action<CashedTreeNodesStoreModel>
 }
 
@@ -19,17 +23,23 @@ const getNodeIndex = (
 
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
+  maxNodeId: 0,
+
   loadNode: action((state, payload) => {
     const { childs, ...node } = payload
     const index = getNodeIndex(state.nodes, node.id)
     if (index !== -1) {
       return
     }
+    if (node.id > state.maxNodeId) {
+      state.maxNodeId = node.id
+    }
     state.nodes = [
       ...state.nodes,
       node,
     ]
   }),
+
   unloadNode: action((state, payload) => {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
@@ -40,6 +50,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       ]
     }
   }),
+
   removeNode: action((state, payload) => {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
@@ -51,6 +62,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       }
     }
   }),
+
   restoreNode: action((state, payload) => {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
@@ -61,6 +73,22 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       }
     }
   }),
+
+  addChildNode: action((state, payload) => {
+    const { id } = payload
+    const { maxNodeId } = state
+    const index = getNodeIndex(state.nodes, id)
+    if (index !== -1) {
+      ++state.maxNodeId
+      state.nodes.push({
+        id: maxNodeId + 1,
+        parent: id,
+        value: '',
+        isNew: true,
+      })
+    }
+  }),
+
   setNodeValue: action((state, payload) => {
     const [{ id }, value] = payload
     const index = getNodeIndex(state.nodes, id)
@@ -73,9 +101,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       }
     }
   }),
-  setTree: action((state, payload) => {
-    state.nodes = payload
-  }),
+
   clear: action((state) => {
     state.nodes = []
   }),

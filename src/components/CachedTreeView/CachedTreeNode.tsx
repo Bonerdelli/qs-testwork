@@ -1,4 +1,4 @@
-import { Button, Badge } from 'antd'
+import { Button, Badge, Popconfirm } from 'antd'
 import {
   EditOutlined,
   PlusCircleOutlined,
@@ -6,7 +6,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons'
 
-import { useStoreActions } from '../../store'
+import { useStoreActions, useStoreState } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
 import { execOnAntdEvent } from '../../helpers/antd'
 
@@ -16,8 +16,28 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
-  const { unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { maxNodeId } = useStoreState(state => state.cashedTreeNodes)
+  const { addChildNode, unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
+
+  const addNode = () => {
+    treeNode && addChildNode(treeNode)
+    setTimeout(() => setActiveId(maxNodeId + 1))
+  }
+
+  const renderStateBage = () => {
+    if (treeNode?.isNew) {
+      return (
+        <Badge status="success" className="tree-node-status-badge" />
+      )
+    }
+    if (treeNode?.isUpdated) {
+      return (
+        <Badge status="warning" className="tree-node-status-badge" />
+      )
+    }
+    return <></>
+  }
 
   const renderActionButtons = () => (
     <div className="tree-node-actions">
@@ -35,9 +55,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
         type="text"
         shape="circle"
         icon={<PlusCircleOutlined style={{ color: '#52c41a' }} />}
-        onClick={execOnAntdEvent(
-          () => setActiveId(treeNode?.id),
-        )}
+        onClick={execOnAntdEvent(addNode)}
         title="Добавить"
         size="small"
       />
@@ -52,22 +70,34 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
         title="Удалить"
         size="small"
       />
-      <Button
-        type="text"
-        shape="circle"
-        icon={<ClearOutlined />}
-        onClick={execOnAntdEvent(
-          () => treeNode && unloadNode(treeNode),
-        )}
-        title="Выгрузить из кэша"
-        size="small"
-      />
+      <Popconfirm
+        placement="bottom"
+        disabled={!treeNode?.isUpdated && !treeNode?.isNew}
+        title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+        onConfirm={() => treeNode && unloadNode(treeNode)}
+        okText="Да"
+        cancelText="Нет"
+      >
+        <Button
+          type="text"
+          shape="circle"
+          icon={<ClearOutlined />}
+          onClick={execOnAntdEvent(
+            () => treeNode
+              && !treeNode.isUpdated
+              && !treeNode.isNew
+              && unloadNode(treeNode),
+          )}
+          title="Выгрузить из кэша"
+          size="small"
+        />
+      </Popconfirm>
     </div>
   )
 
   return (
     <div className="tree-node">
-      {treeNode?.isUpdated && <Badge status="warning" className="tree-node-status-badge" />}
+      {renderStateBage()}
       <div className="tree-node-value">{dataNode.title}</div>
       {treeNode && renderActionButtons()}
     </div>

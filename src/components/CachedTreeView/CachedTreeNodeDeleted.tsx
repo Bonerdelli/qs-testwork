@@ -1,5 +1,5 @@
-import { Button, Badge } from 'antd'
-import { UndoOutlined } from '@ant-design/icons'
+import { Button, Badge, Popconfirm } from 'antd'
+import { UndoOutlined, ClearOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
@@ -11,7 +11,7 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
-  const { restoreNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { restoreNode, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
 
   const renderActionButtons = () => (
     <div className="tree-node-actions">
@@ -25,6 +25,21 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
         title="Восстановить"
         size="small"
       />
+      <Popconfirm
+        placement="bottom"
+        title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+        onConfirm={() => treeNode && unloadNode(treeNode)}
+        okText="Да"
+        cancelText="Нет"
+      >
+        <Button
+          type="text"
+          shape="circle"
+          icon={<ClearOutlined />}
+          title="Выгрузить из кэша"
+          size="small"
+        />
+      </Popconfirm>
     </div>
   )
   return (
