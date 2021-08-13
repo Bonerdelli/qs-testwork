@@ -1,13 +1,15 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const cors = require('cors')
 
+const { initDb } = require('./database')
 const {
-  TREE_ROOT_NODE_ID,
-  db,
-  initDb,
-  getLeaf,
-  getSubtree,
-} = require('./database')
+  getTree,
+  getTreeBranch,
+  addTreeNode,
+  updateTreeNode,
+  deleteTreeNode,
+} = require('./api')
 
 const PORT = process.env.PORT || 3001
 
@@ -16,23 +18,15 @@ const corsOptions = {
 };
 
 const app = express()
+app.use(bodyParser)
 app.use(cors(corsOptions))
 
-const sendJson = (res, data) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(data));
-}
-
-app.get('/tree', function(req, res) {
-  const subtree = getSubtree(1, 2) // TODO: put it to constants
-  sendJson(res, subtree)
-});
-
-app.get('/tree/:nodeId', function(req, res) {
-  const { nodeId } = req.params
-  const leaf = getLeaf(nodeId)
-  sendJson(res, leaf)
-});
+const router = express.Router()
+router.get('/tree', getTree)
+router.get('/tree/:nodeId', getTreeBranch)
+router.post('/tree', addTreeNode)
+router.patch('/tree/:nodeId', updateTreeNode)
+router.delete('/tree/:nodeId', deleteTreeNode)
 
 app.listen(PORT, async () => {
   try {

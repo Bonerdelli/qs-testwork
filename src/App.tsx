@@ -1,5 +1,6 @@
 // TODO: change title and favicon
 // TODO: put test work description in repo
+// TODO: Обшибка загрузки данных. Произошла ошибка при попытке получить данные с сервера
 
 import { StoreProvider } from 'easy-peasy'
 import { PersistGate } from 'redux-persist/integration/react'
