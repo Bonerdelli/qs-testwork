@@ -7,8 +7,10 @@ export interface TreeNode {
   childs?: TreeNode[]
   updatedAt?: Date
   deletedAt?: Date
+  // Flags for local nodes editor
   // TODO: separate with UI model?
   isUpdated?: boolean
+  isDeleted?: boolean
   isNew?: boolean
 }
 

@@ -58,7 +58,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.nodes[index] = {
         ...state.nodes[index],
         deletedAt: new Date(),
-        isUpdated: true,
+        isDeleted: true,
       }
     }
   }),

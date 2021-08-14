@@ -1,3 +1,10 @@
+/**
+ * Tree CRUD API endpoint handlers
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 const {
   TREE_ROOT_NODE_ID,
   db,
@@ -5,15 +12,17 @@ const {
   addItem, updateItem, deleteItem,
 } = require('./database')
 
-
-const sendJson = (res, data) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(data));
+const sendJson = (res, data, status) => {
+  res.setHeader('Content-Type', 'application/json')
+  if (status) {
+    res.status(status)
+  }
+  res.send(JSON.stringify(data))
 }
 
 const handleApiError = (res, error) => {
   const { message, code } = error
-  res.status(500).send({ message, code })
+  sendJson(res, { message, code }, 500)
 }
 
 const getTree = (req, res) => {
@@ -34,7 +43,7 @@ const addTreeNode = (req, res) => {
   } catch(e) {
     return handleApiError(res, e)
   }
-  res.send('Success')
+  sendJson(res, { success: true })
 }
 
 const updateTreeNode = (req, res) => {
@@ -45,7 +54,7 @@ const updateTreeNode = (req, res) => {
   } catch(e) {
     return handleApiError(res, e)
   }
-  res.send('Success')
+  sendJson(res, { success: true })
 }
 
 const deleteTreeNode = (req, res) => {
@@ -55,7 +64,7 @@ const deleteTreeNode = (req, res) => {
   } catch(e) {
     return handleApiError(res, e)
   }
-  res.send('Success')
+  sendJson(res, { success: true })
 }
 
 module.exports = {
