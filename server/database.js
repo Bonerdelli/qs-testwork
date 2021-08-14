@@ -59,10 +59,14 @@ function getSubtree(id, maxDepth = 1) {
   return subtree
 }
 
-function addItem(value, parent) {
-  const statement = db.prepare('INSERT INTO tree VALUES (@value, @parent)')
-  statement.run({ value, id })
+function getNodesUpdatedDateTime(ids) {
+  const statement = db.prepare('SELECT * FROM tree WHERE id IN(?)')
+  statement.all(ids.join(','))
 }
+
+/**
+ * Editing
+ */
 
 function updateItem(id, value, isDeleted) {
   const statement = db.prepare('UPDATE tree SET @value = @value WHERE id = @id')

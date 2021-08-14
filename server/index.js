@@ -8,6 +8,7 @@ const {
   getTreeBranch,
   addTreeNode,
   updateTreeNode,
+  bulkUpdateTreeNodes,
   deleteTreeNode,
 } = require('./api')
 
@@ -24,6 +25,9 @@ app.use(cors(corsOptions))
 const router = express.Router()
 router.get('/tree', getTree)
 router.get('/tree/:nodeId', getTreeBranch)
+router.post('/tree/bulk-update', bulkUpdateTreeNodes)
+
+// NOTE: curerntly we're using only bulk data update
 router.post('/tree', addTreeNode)
 router.patch('/tree/:nodeId', updateTreeNode)
 router.delete('/tree/:nodeId', deleteTreeNode)

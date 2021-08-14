@@ -1,5 +1,5 @@
 /**
- * Tree CRUD API endpoint handlers
+ * Handlers of Tree CRUD API endpoints
  *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
@@ -10,6 +10,7 @@ const {
   db,
   getBranch, getSubtree,
   addItem, updateItem, deleteItem,
+  getNodesUpdatedDateTime,
 } = require('./database')
 
 const sendJson = (res, data, status) => {
@@ -65,6 +66,23 @@ const deleteTreeNode = (req, res) => {
     return handleApiError(res, e)
   }
   sendJson(res, { success: true })
+}
+
+const bulkUpdateTreeNodes = async (req, res) => {
+  const {
+    overrideRemoteChanges,
+    updatedNodes,
+    deletedNodes,
+    addedNodes,
+  } = req.body
+  let needConfirmationNodeId = null
+
+  // Check if confirmation to override needed
+  const updatedNodeIds = updatedNodes.map(node => node.id)
+  if (updatedNodeIds.length) {
+    const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
+  }
+
 }
 
 module.exports = {

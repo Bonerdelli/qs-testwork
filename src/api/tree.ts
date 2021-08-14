@@ -11,23 +11,52 @@ import { post, put, del, isSuccessful } from '../helpers/api'
 /**
  * Handle of saving local tree in the database
  */
-export function saveTreeNodes(treeNodes: TreeNode[]) {
-  const updatedNodes: TreeNode[] = []
-  const deletedNodes: TreeNode[] = []
-  const addedNodes: TreeNode[] = []
+export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<boolean> {
+  const updatedNodes = treeNodes.filter(node => node.isDeleted)
+  const deletedNodes = treeNodes.filter(node => node.isNew)
+  const addedNodes = treeNodes.filter(node => node.isUpdated)
 
-  const nodeIterator = (node: TreeNode) => {
-    if (node.isDeleted) {
-      deletedNodes.push(node)
-    } else if (node.isNew) {
-      addedNodes.push(node)
-    } else if (node.isUpdated) {
-      updatedNodes
+  const result = await bulkUpdateTreeNodes({
+    updatedNodes,
+    deletedNodes,
+    addedNodes,
+  })
+
+  if (Array.isArray(result)) {
+    // TODO: add the confirmation
+    return false
   }
+
+  return !!result
+}
+
+/**
+ * Handling of bulk updates
+ */
+
+export interface TreeBulkUpdateRequest {
+  overrideRemoteChanges?: TreeNode['id']
+  updatedNodes: TreeNode[]
+  deletedNodes: TreeNode[]
+  addedNodes: TreeNode[]
+}
+
+export interface TreeBulkUpdateResponse {
+  success: boolean
+  needConfirmation?: TreeNode['id'][]
+}
+
+export async function bulkUpdateTreeNodes(request: TreeBulkUpdateRequest): Promise<boolean | TreeNode['id'][]> {
+  const result = await post<TreeBulkUpdateResponse>('/tree/bulk-update', request)
+  if ((result as TreeBulkUpdateResponse).needConfirmation) {
+    return (result as TreeBulkUpdateResponse).needConfirmation ?? []
+  }
+  return isSuccessful(result)
 }
 
 /**
  * C(R)UD endpoint handlers
+ * NOTE: not used currently, I implemented this before using bulk update function
  */
 type UpdTreeNode = Omit<TreeNode, 'id'>
 
