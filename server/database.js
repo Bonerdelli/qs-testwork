@@ -1,3 +1,10 @@
+/**
+ * Handling of sample database
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 const Database = require('better-sqlite3')
 const treeData = require('../data/tree.json')
 
