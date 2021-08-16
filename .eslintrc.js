@@ -28,6 +28,7 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     '@typescript-eslint/semi': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/quotes': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

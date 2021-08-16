@@ -6,9 +6,9 @@ const { initDb } = require('./database')
 const {
   getTree,
   getTreeBranch,
+  bulkUpdateTreeNodes,
   addTreeNode,
   updateTreeNode,
-  bulkUpdateTreeNodes,
   deleteTreeNode,
 } = require('./api')
 

@@ -77,17 +77,21 @@ const bulkUpdateTreeNodes = async (req, res) => {
   } = req.body
   let needConfirmationNodeId = null
 
-  // Check if confirmation to override needed
+  // Check if confirmation to override changes needed
   const updatedNodeIds = updatedNodes.map(node => node.id)
   if (updatedNodeIds.length) {
     const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
+    console.log('nodesUpdatedAt', nodesUpdatedAt)
   }
+
+  return false
 
 }
 
 module.exports = {
   getTree,
   getTreeBranch,
+  bulkUpdateTreeNodes,
   addTreeNode,
   updateTreeNode,
   deleteTreeNode,

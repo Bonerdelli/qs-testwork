@@ -13,7 +13,7 @@ export interface DBTreeViewProps {
 
 export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree, loading }) => {
   const [treeData, setTreeData] = useState<TreeDataNode[]>()
-  const [expandedKeys, setExpandedKeys] = useState<number[]>([]) // TODO: make persist state if needed
+  const [expandedKeys, setExpandedKeys] = useState<number[]>([])
 
   useEffect(() => {
     const treeNodes = treeDataToNodes(tree)

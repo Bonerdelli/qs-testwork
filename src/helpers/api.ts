@@ -52,6 +52,7 @@ export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
  */
 export async function post<T = void>(
   url: string,
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data: any,
 ): Promise<ApiCrudResponse<T>> {
   let result
@@ -75,7 +76,7 @@ export async function post<T = void>(
  */
 export async function put<T = void>(
   url: string,
-  data: any,
+  data: unknown,
 ): Promise<ApiCrudResponse<T>> {
   let result
   try {
@@ -117,7 +118,7 @@ export async function del<T = void>(
 /**
  * Helper function to check if request was successful
  */
-export function isSuccessful<T = void>(result: ApiCrudResponse<T>) {
+export function isSuccessful<T = void>(result: ApiCrudResponse<T>): boolean {
   if ((result as ApiErrorResponse).error) {
     return false
   }
@@ -126,7 +127,6 @@ export function isSuccessful<T = void>(result: ApiCrudResponse<T>) {
   }
   return true
 }
-
 
 /**
  * Helper function to build endpoint URL
