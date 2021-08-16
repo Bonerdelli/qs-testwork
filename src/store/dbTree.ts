@@ -17,6 +17,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     state.tree = payload
   }),
   setNodes: action((state, payload) => {
+    console.log('setNodes', payload)
     state.tree = [
       ...state.tree ?? [],
       ...payload,

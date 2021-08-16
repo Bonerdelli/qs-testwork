@@ -36,9 +36,10 @@ export type ApiCrudSuccessResponse<T = void> = T | ApiSuccessResponse
  * Fetch and parse JSON from backend
  */
 export async function getJson<T>(
-  url: string,
+  path: string,
   onError?: (error?: ApiError) => void,
 ): Promise<T | ApiErrorResponse> {
+  const url = getEndpointUrl(path)
   const response = await request
     .get(url)
     .timeout({
@@ -59,11 +60,12 @@ export async function getJson<T>(
  * POST request
  */
 export async function post<T = void>(
-  url: string,
+  path: string,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   payload: any,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  const url = getEndpointUrl(path)
   const response = await request
     .post(url)
     .timeout({
@@ -85,10 +87,11 @@ export async function post<T = void>(
  * PUT request
  */
 export async function put<T = void>(
-  url: string,
+  path: string,
   payload?: any,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  const url = getEndpointUrl(path)
   const response = await request
     .put(url)
     .timeout({
@@ -110,9 +113,10 @@ export async function put<T = void>(
  * DELETE request
  */
 export async function del<T = void>(
-  url: string,
+  path: string,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  const url = getEndpointUrl(path)
   const response = await request
     .delete(url)
     .timeout({

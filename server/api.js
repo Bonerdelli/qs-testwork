@@ -5,8 +5,9 @@
  * @package qs-test-work
  */
 
+const { TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH } = require('../config')
+
 const {
-  TREE_ROOT_NODE_ID,
   db,
   getBranch, getSubtree,
   addItem, updateItem, deleteItem,
@@ -27,14 +28,14 @@ const handleApiError = (res, error) => {
 }
 
 const getTree = (req, res) => {
-  const subtree = getSubtree(1, 2) // TODO: put it to constants
+  const subtree = getSubtree(TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH)
   sendJson(res, subtree)
 }
 
 const getTreeBranch = (req, res) => {
-  const { nodeId } = req.params
-  const branch = getBranch(nodeId)
-  sendJson(res, leaf)
+  const { id } = req.params
+  const branch = getBranch(id)
+  sendJson(res, branch)
 }
 
 const addTreeNode = (req, res) => {

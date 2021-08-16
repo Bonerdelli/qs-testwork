@@ -25,15 +25,15 @@ app.use(bodyParser.json())
 app.use(cors(corsOptions))
 
 treeRouter.param(['id'], (req, res, next, value) => {
-  console.log('CALLED ONLY ONCE with', value)
   next()
 })
 
 treeRouter.get('/', getTree)
 treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
+treeRouter.get('/:id', getTreeBranch)
 
 // NOTE: now we're using only bulk data update
-// treeRouter.route('/:id', getTreeBranch)
+// treeRouter.route('/:id')
 //   .post(addTreeNode)
 //   .patch(updateTreeNode)
 //   .delete(deleteTreeNode)
