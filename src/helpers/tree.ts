@@ -18,6 +18,8 @@ const nodeMapper = (item: TreeNode): TreeDataNode => {
   }
   if (item.childs) {
     dataNode.children = item.childs.map(nodeMapper)
+  } else if (item.hasChilds) {
+    dataNode.isLeaf = true
   }
   return dataNode
 }

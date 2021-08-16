@@ -5,6 +5,7 @@ export interface TreeNode {
   value: string
   parent: number
   childs?: TreeNode[]
+  hasChilds?: boolean
   updatedAt?: Date
   deletedAt?: Date
   // Flags for local nodes editor

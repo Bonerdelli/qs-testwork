@@ -19,17 +19,26 @@ const corsOptions = {
 };
 
 const app = express()
+const treeRouter = express.Router()
+
 app.use(bodyParser.json())
 app.use(cors(corsOptions))
 
-app.get('/tree', getTree)
-app.post('/tree/bulk-update', bulkUpdateTreeNodes)
-app.route('/tree/:nodeId')
-  .get(getTreeBranch)
-  // NOTE: now we're using only bulk data update
-  .post(addTreeNode)
-  .patch(updateTreeNode)
-  .delete(deleteTreeNode)
+treeRouter.param(['id'], (req, res, next, value) => {
+  console.log('CALLED ONLY ONCE with', value)
+  next()
+})
+
+treeRouter.get('/', getTree)
+treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
+
+// NOTE: now we're using only bulk data update
+// treeRouter.route('/:id', getTreeBranch)
+//   .post(addTreeNode)
+//   .patch(updateTreeNode)
+//   .delete(deleteTreeNode)
+
+app.use('/tree', treeRouter)
 
 app.listen(PORT, async () => {
   try {

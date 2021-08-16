@@ -6,7 +6,7 @@
  */
 
 import { TreeNode } from '../types'
-import { post, put, del, isSuccessful } from '../helpers/api'
+import { getJson, post, put, del, isSuccessful } from '../helpers/api'
 
 /**
  * Handle of saving local tree in the database
@@ -28,6 +28,14 @@ export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<boolean> {
   }
 
   return !!result
+}
+
+/**
+ * Get a single tree node with childs
+ */
+export async function getNode(id: TreeNode['id']): Promise<TreeNode> {
+  const result = await getJson<TreeNode>(`/tree/${id}`)
+  return result as TreeNode
 }
 
 /**
