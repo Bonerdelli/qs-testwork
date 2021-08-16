@@ -96,3 +96,7 @@
 .tree-node.active {
   margin-bottom: -1px;
 }
+
+.ant-card-body {
+  background-color: #fff;
+}

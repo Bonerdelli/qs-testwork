@@ -1,7 +1,7 @@
 // TODO: hide button labels based on screen width
 
 import { useState } from 'react'
-import { Row, Col, Card, Skeleton, Popconfirm, Button } from 'antd'
+import { Row, Col, Card, Skeleton, Popconfirm, Result, Button } from 'antd'
 import {
   ReloadOutlined,
   DoubleLeftOutlined,
@@ -20,14 +20,17 @@ import './TreeEditor.css'
 export const TreeEditor: React.FC = () => {
   const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)
   const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
-  const [tree, setData, loadData] = useApiData<TreeNode>('/tree')
+
+  const [tree, setData, loadData] = useApiData<TreeNode>('/tree', e => setApiError(e?.message))
   // const [localTree] = useState<TreeNode[]>([]) // setLocalTree
   // const [treeLoading, setTreeLoading] = useState<boolean>(true)
   // useEffect(() => setTreeLoading(!!tree), [tree])
+  const [apiError, setApiError] = useState<string | null>()
   const [loading, setLoading] = useState<boolean>()
 
   const handleReload = async () => {
     setLoading(true)
+    setApiError(undefined)
     const data = await loadData()
     data && setData(data)
     setLoading(false)
@@ -39,6 +42,26 @@ export const TreeEditor: React.FC = () => {
 
   const handleSync = () => {
 
+  }
+
+  const renderDbTree = () => {
+    if (typeof apiError !== 'undefined') {
+      return (
+        <Result
+          status="error"
+          title="Ошибка загрузки данных"
+          subTitle={apiError}
+        />
+      )
+    }
+    if (tree) {
+      return (
+        <DBTreeView tree={tree} loading={loading} />
+      )
+    }
+    return (
+      <Skeleton active />
+    )
   }
 
   return (
@@ -60,9 +83,7 @@ export const TreeEditor: React.FC = () => {
             </Button>,
           ]}
         >
-          {tree
-            ? <DBTreeView tree={tree} loading={loading} />
-            : <Skeleton active />}
+          {renderDbTree()}
         </Card>
       </Col>
       <Col span={10}>

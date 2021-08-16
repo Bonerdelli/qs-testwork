@@ -35,7 +35,10 @@ export type ApiCrudSuccessResponse<T = void> = T | ApiSuccessResponse
 /**
  * Fetch and parse JSON from backend
  */
-export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
+export async function getJson<T>(
+  url: string,
+  onError?: (error?: ApiError) => void,
+): Promise<T | ApiErrorResponse> {
   const response = await request
     .get(url)
     .timeout({
@@ -44,10 +47,10 @@ export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
     })
     .type('json')
     .accept('json')
-    .catch(err => handleApiError(err))
+    .catch(err => handleApiError(err, onError))
   const result = (response as Response)?.body
   if (result?.error) {
-    return handleApiError(result.error)
+    return handleApiError(result.error, onError)
   }
   return result
 }
@@ -59,6 +62,7 @@ export async function post<T = void>(
   url: string,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   payload: any,
+  onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
   const response = await request
     .post(url)
@@ -69,10 +73,10 @@ export async function post<T = void>(
     .type('json')
     .accept('json')
     .send(payload)
-    .catch(err => handleApiError(err))
+    .catch(err => handleApiError(err, onError))
   const result = (response as Response)?.body
   if (result?.error) {
-    return handleApiError(result.error)
+    return handleApiError(result.error, onError)
   }
   return result
 }
@@ -83,6 +87,7 @@ export async function post<T = void>(
 export async function put<T = void>(
   url: string,
   payload?: any,
+  onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
   const response = await request
     .put(url)
@@ -93,10 +98,10 @@ export async function put<T = void>(
     .type('json')
     .accept('json')
     .send(payload)
-    .catch(err => handleApiError(err))
+    .catch(err => handleApiError(err, onError))
   const result = (response as Response)?.body
   if (result?.error) {
-    return handleApiError(result.error)
+    return handleApiError(result.error, onError)
   }
   return result
 }
@@ -106,6 +111,7 @@ export async function put<T = void>(
  */
 export async function del<T = void>(
   url: string,
+  onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
   const response = await request
     .delete(url)
@@ -115,10 +121,10 @@ export async function del<T = void>(
     })
     .type('json')
     .accept('json')
-    .catch(err => handleApiError(err))
+    .catch(err => handleApiError(err, onError))
   const result = (response as Response)?.body
   if (result?.error) {
-    return handleApiError(result.error)
+    return handleApiError(result.error, onError)
   }
   return result
 }
@@ -147,14 +153,21 @@ export function getEndpointUrl(path: string): string {
 /**
  * Helper function to handle API errors
  */
-function handleApiError(error?: ApiError): ApiErrorResponse {
-  notification.error({
-    message: 'Ошибка загрузки данных',
-    description: error?.message,
-    placement: 'bottomRight',
-  })
-  console.error('API Error', error?.message) // eslint-disable-line no-console
+function handleApiError(
+  error?: ApiError,
+  onError?: (error?: ApiError) => void,
+): ApiErrorResponse {
+  if (onError) {
+    onError(error)
+  } else {
+    console.error('API Error', error?.message) // eslint-disable-line no-console
+    notification.error({
+      message: 'Ошибка загрузки данных',
+      description: error?.message,
+      placement: 'bottomRight',
+    })
+  }
   return error ? { error } : {
-    error: { message: 'Unknown error' },
+    error: { message: 'Неизвестная ошибка' },
   }
 }
