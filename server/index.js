@@ -19,18 +19,17 @@ const corsOptions = {
 };
 
 const app = express()
-app.use(bodyParser)
+app.use(bodyParser.json())
 app.use(cors(corsOptions))
 
-const router = express.Router()
-router.get('/tree', getTree)
-router.get('/tree/:nodeId', getTreeBranch)
-router.post('/tree/bulk-update', bulkUpdateTreeNodes)
-
-// NOTE: curerntly we're using only bulk data update
-router.post('/tree', addTreeNode)
-router.patch('/tree/:nodeId', updateTreeNode)
-router.delete('/tree/:nodeId', deleteTreeNode)
+app.get('/tree', getTree)
+app.post('/tree/bulk-update', bulkUpdateTreeNodes)
+app.route('/tree/:nodeId')
+  .get(getTreeBranch)
+  // NOTE: now we're using only bulk data update
+  .post(addTreeNode)
+  .patch(updateTreeNode)
+  .delete(deleteTreeNode)
 
 app.listen(PORT, async () => {
   try {
