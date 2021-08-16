@@ -1,52 +1,46 @@
 import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 
-import { TreeNode, TreeDataNode } from '../../types'
+import { TreeDataNode } from '../../types'
 import { treeDataToNodes, getLeafNodeKeys } from '../../helpers/tree'
 import { antdTreeUseExpandedState } from '../../helpers/antd'
-import { useStoreActions } from '../../store'
+import { useStoreState, useStoreActions } from '../../store'
 import { DBTreeNode } from './DBTreeNode'
 
-export interface DBTreeViewProps {
-  tree: TreeNode
-  loading?: boolean
-}
-
-export const DBTreeView: React.FC<DBTreeViewProps> = ({ tree, loading }) => {
+export const DBTreeView: React.FC = () => {
+  const { tree, isLoading } = useStoreState(state => state.dbTree)
   const { loadBranch } = useStoreActions(state => state.dbTree)
 
   const [treeData, setTreeData] = useState<TreeDataNode[]>()
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
 
   useEffect(() => {
-    const treeNodes = treeDataToNodes(tree)
+    if (!tree) {
+      return
+    }
+    const dataNodes = treeDataToNodes(tree)
     if (!expandedKeys.length) {
-      const keys = getLeafNodeKeys([treeNodes])
+      const keys = getLeafNodeKeys([dataNodes])
       setExpandedKeys(keys)
     }
-    setTreeData([treeNodes])
+    setTreeData([dataNodes])
   }, [tree])
 
-  const onLoadData = async (node: TreeDataNode): Promise<void> => {
+  const onLoadNodeData = async (node: TreeDataNode): Promise<void> => {
     if (node.children || node.disabled) {
       return
     }
-    console.log(node)
     if (node.treeNode) {
-      const data = await loadBranch(node.treeNode)
-      // if (data.error) {
-      // }
-      node.disabled = true
-      console.log('data', data)
+      await loadBranch(node.treeNode)
     }
   }
 
   return (
     <Tree
-      disabled={loading}
+      disabled={isLoading}
       treeData={treeData}
       draggable={false}
-      loadData={onLoadData}
+      loadData={onLoadNodeData}
       expandedKeys={expandedKeys}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={node => (

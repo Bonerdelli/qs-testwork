@@ -9,8 +9,6 @@ import {
   SyncOutlined,
 } from '@ant-design/icons'
 
-import { TreeNode } from '../../types'
-import { useApiData } from '../../helpers/hooks'
 import { useStoreState, useStoreActions } from '../../store'
 import { DBTreeView } from '../DBTreeView'
 import { CachedTreeView } from '../CachedTreeView'
@@ -18,22 +16,12 @@ import { CachedTreeView } from '../CachedTreeView'
 import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
+  const { tree, isLoading, apiError } = useStoreState(state => state.dbTree)
   const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)
   const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
 
-  const [tree, setData, loadData] = useApiData<TreeNode>('/tree', e => setApiError(e?.message))
-  // const [localTree] = useState<TreeNode[]>([]) // setLocalTree
-  // const [treeLoading, setTreeLoading] = useState<boolean>(true)
-  // useEffect(() => setTreeLoading(!!tree), [tree])
-  const [apiError, setApiError] = useState<string | null>()
-  const [loading, setLoading] = useState<boolean>()
-
   const handleReload = async () => {
-    setLoading(true)
-    setApiError(undefined)
-    const data = await loadData()
-    data && setData(data)
-    setLoading(false)
+
   }
 
   const handleSave = () => {
@@ -54,13 +42,13 @@ export const TreeEditor: React.FC = () => {
         />
       )
     }
-    if (tree) {
+    if (!tree && isLoading) {
       return (
-        <DBTreeView tree={tree} loading={loading} />
+        <Skeleton active />
       )
     }
     return (
-      <Skeleton active />
+      <DBTreeView />
     )
   }
 
