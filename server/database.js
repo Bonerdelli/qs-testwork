@@ -59,6 +59,7 @@ function getBranch(id) {
   )
   const childs = statement.all(id)
   if (childs.length > 0) {
+    childs.forEach(item => item.hasChilds = isNodeHasChilds(item.id))
     node.childs = childs
   }
   return node

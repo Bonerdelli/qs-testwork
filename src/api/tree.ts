@@ -31,6 +31,14 @@ export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<boolean> {
 }
 
 /**
+ * Get a root tree node with subtree
+ */
+export async function getTree(): Promise<TreeNode> {
+  const result = await getJson<TreeNode>(`/tree`)
+  return result as TreeNode
+}
+
+/**
  * Get a single tree node with childs
  */
 export async function getNode(id: TreeNode['id']): Promise<TreeNode> {

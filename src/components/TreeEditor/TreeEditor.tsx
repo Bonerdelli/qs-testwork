@@ -1,6 +1,6 @@
 // TODO: hide button labels based on screen width
 
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Row, Col, Card, Skeleton, Popconfirm, Result, Button } from 'antd'
 import {
   ReloadOutlined,
@@ -19,10 +19,11 @@ export const TreeEditor: React.FC = () => {
   const { tree, isLoading, apiError } = useStoreState(state => state.dbTree)
   const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)
   const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
+  const { reloadTree } = useStoreActions(state => state.dbTree)
 
-  const handleReload = async () => {
-
-  }
+  useEffect(() => {
+    reloadTree()
+  }, [])
 
   const handleSave = () => {
 
@@ -64,7 +65,7 @@ export const TreeEditor: React.FC = () => {
               size="small"
               type="text"
               key="reload"
-              onClick={handleReload}
+              onClick={() => reloadTree()}
             >
               <ReloadOutlined />
               Обновить
