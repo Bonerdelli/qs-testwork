@@ -4,10 +4,12 @@
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
  */
-
 import { notification } from 'antd'
+import request, { Response } from 'superagent'
 
 export const API_URL = process.env.API_URL || 'http://localhost:3001'
+export const REQUEST_TIMEOUT = 5000 // in milliseconds
+export const REQUEST_MAX_TIME = 20000 // in milliseconds
 
 export interface ApiError {
   code?: string
@@ -34,17 +36,20 @@ export type ApiCrudSuccessResponse<T = void> = T | ApiSuccessResponse
  * Fetch and parse JSON from backend
  */
 export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
-  let result
-  try {
-    const response = await fetch(url)
-    result = await response.json()
-    if (result.error) {
-      return await handleApiError(result.error)
-    }
-  } catch (e) {
-    return await handleApiError(e)
+  const response = await request
+    .get(url)
+    .timeout({
+      response: REQUEST_TIMEOUT,
+      deadline: REQUEST_MAX_TIME,
+    })
+    .type('json')
+    .accept('json')
+    .catch(err => handleApiError(err))
+  const result = (response as Response)?.body
+  if (result?.error) {
+    return handleApiError(result.error)
   }
-  return result as T
+  return result
 }
 
 /**
@@ -53,22 +58,23 @@ export async function getJson<T>(url: string): Promise<T | ApiErrorResponse> {
 export async function post<T = void>(
   url: string,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  data: any,
+  payload: any,
 ): Promise<ApiCrudResponse<T>> {
-  let result
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(data),
+  const response = await request
+    .post(url)
+    .timeout({
+      response: REQUEST_TIMEOUT,
+      deadline: REQUEST_MAX_TIME,
     })
-    result = await response.json()
-    if (result.error) {
-      return await handleApiError(result.error)
-    }
-  } catch (e) {
-    return await handleApiError(e)
+    .type('json')
+    .accept('json')
+    .send(payload)
+    .catch(err => handleApiError(err))
+  const result = (response as Response)?.body
+  if (result?.error) {
+    return handleApiError(result.error)
   }
-  return result as ApiCrudSuccessResponse<T>
+  return result
 }
 
 /**
@@ -76,22 +82,23 @@ export async function post<T = void>(
  */
 export async function put<T = void>(
   url: string,
-  data: unknown,
+  payload?: any,
 ): Promise<ApiCrudResponse<T>> {
-  let result
-  try {
-    const response = await fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify(data),
+  const response = await request
+    .put(url)
+    .timeout({
+      response: REQUEST_TIMEOUT,
+      deadline: REQUEST_MAX_TIME,
     })
-    result = await response.json()
-    if (result.error) {
-      return await handleApiError(result.error)
-    }
-  } catch (e) {
-    return await handleApiError(e)
+    .type('json')
+    .accept('json')
+    .send(payload)
+    .catch(err => handleApiError(err))
+  const result = (response as Response)?.body
+  if (result?.error) {
+    return handleApiError(result.error)
   }
-  return result as ApiCrudSuccessResponse<T>
+  return result
 }
 
 /**
@@ -100,19 +107,20 @@ export async function put<T = void>(
 export async function del<T = void>(
   url: string,
 ): Promise<ApiCrudResponse<T>> {
-  let result
-  try {
-    const response = await fetch(url, {
-      method: 'DELETE',
+  const response = await request
+    .delete(url)
+    .timeout({
+      response: REQUEST_TIMEOUT,
+      deadline: REQUEST_MAX_TIME,
     })
-    result = await response.json()
-    if (result.error) {
-      return await handleApiError(result.error)
-    }
-  } catch (e) {
-    return await handleApiError(e)
+    .type('json')
+    .accept('json')
+    .catch(err => handleApiError(err))
+  const result = (response as Response)?.body
+  if (result?.error) {
+    return handleApiError(result.error)
   }
-  return result as ApiCrudSuccessResponse<T>
+  return result
 }
 
 /**
@@ -139,7 +147,7 @@ export function getEndpointUrl(path: string): string {
 /**
  * Helper function to handle API errors
  */
-async function handleApiError(error?: ApiError): Promise<ApiErrorResponse> {
+function handleApiError(error?: ApiError): ApiErrorResponse {
   notification.error({
     message: 'Ошибка загрузки данных',
     description: error?.message,
