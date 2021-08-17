@@ -17,17 +17,13 @@ import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
   const { tree, isLoading, apiError } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)
-  const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const { clear: cashedNodesClear, saveChanges } = useStoreActions(state => state.cashedTreeNodes)
   const { reloadTree } = useStoreActions(state => state.dbTree)
 
   useEffect(() => {
     reloadTree()
   }, [])
-
-  const handleSave = () => {
-
-  }
 
   const handleSync = () => {
 
@@ -85,8 +81,8 @@ export const TreeEditor: React.FC = () => {
               size="small"
               type="text"
               key="save"
-              disabled={cashedNodes?.length === 0}
-              onClick={handleSave}
+              disabled={cashedNodes?.length === 0 || !isChanged}
+              onClick={() => saveChanges(cashedNodes)}
             >
               <DoubleLeftOutlined />
               Сохранить

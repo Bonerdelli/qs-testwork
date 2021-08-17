@@ -78,12 +78,17 @@ const bulkUpdateTreeNodes = async (req, res) => {
   } = req.body
   let needConfirmationNodeId = null
 
+  console.log('bulkUpdateTreeNodes: start')
+
   // Check if confirmation to override changes needed
   const updatedNodeIds = updatedNodes.map(node => node.id)
+  console.log('updatedNodeIds', updatedNodeIds)
   if (updatedNodeIds.length) {
     const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
     console.log('nodesUpdatedAt', nodesUpdatedAt)
   }
+
+  console.log('bulkUpdateTreeNodes: finish')
 
   return false
 

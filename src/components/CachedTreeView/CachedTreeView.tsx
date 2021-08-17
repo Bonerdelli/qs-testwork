@@ -44,6 +44,7 @@ export const CachedTreeView: React.FC = () => {
       expandedKeys={expandedKeys}
       selectedKeys={[activeId ?? 0]}
       defaultExpandedKeys={expandedKeys}
+      // onClick={(key) => setExpandedKeys(key)}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={(node: TreeDataNode) => renderNode(node)}
       className="cashed-tree"

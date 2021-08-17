@@ -137,6 +137,9 @@ export async function del<T = void>(
  * Helper function to check if request was successful
  */
 export function isSuccessful<T = void>(result: ApiCrudResponse<T>): boolean {
+  if (typeof result === 'undefined') {
+    return false
+  }
   if ((result as ApiErrorResponse).error) {
     return false
   }
@@ -166,7 +169,7 @@ function handleApiError(
   } else {
     console.error('API Error', error?.message) // eslint-disable-line no-console
     notification.error({
-      message: 'Ошибка загрузки данных',
+      message: 'Ошибка выполнения запроса',
       description: error?.message,
       placement: 'bottomRight',
     })

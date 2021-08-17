@@ -108,8 +108,12 @@ function isNodeHasChilds(id) {
  * @return Date[]
  */
 function getNodesUpdatedDateTime(ids) {
-  const statement = db.prepare('SELECT * FROM tree WHERE id IN(?)')
-  statement.all(ids.join(','))
+  const idsValue = ids.map(id => +id).join(',')
+  const statement = db.prepare(`SELECT updated_at FROM tree WHERE id IN (?)`)
+  const result = statement.pluck(true).all(idsValue)
+  console.log('RESULT', result);
+  // return result.map(item => item.updated_at)
+  return result
 }
 
 /**
@@ -137,9 +141,10 @@ function restoreItem(id) {
 
 module.exports = {
   TREE_ROOT_NODE_ID,
-  db,
   initDb,
+  db,
   getItem,
   getBranch,
   getSubtree,
+  getNodesUpdatedDateTime,
 }

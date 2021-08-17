@@ -1,10 +1,13 @@
-import { Action, action } from 'easy-peasy'
+import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { TreeNode } from '../types'
+
+import { saveTreeNodes } from '../api/tree'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
   maxNodeId: number
+  isChanged: boolean
 
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -14,6 +17,8 @@ export interface CashedTreeNodesStoreModel {
   addChildNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
 
+  saveChanges: Thunk<CashedTreeNodesStoreModel, TreeNode[]>
+  setUnchanged: Action<CashedTreeNodesStoreModel>
   clear: Action<CashedTreeNodesStoreModel>
 }
 
@@ -24,6 +29,7 @@ const getNodeIndex = (
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
   maxNodeId: 0,
+  isChanged: false,
 
   loadNode: action((state, payload) => {
     const { childs, ...node } = payload
@@ -34,6 +40,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (node.id > state.maxNodeId) {
       state.maxNodeId = node.id
     }
+    delete node.hasChilds
     state.nodes = [
       ...state.nodes,
       node,
@@ -55,6 +62,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
+      state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
         deletedAt: new Date(),
@@ -67,6 +75,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
+      state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
         deletedAt: undefined,
@@ -79,6 +88,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     const { maxNodeId } = state
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
+      state.isChanged = true
       ++state.maxNodeId
       state.nodes.push({
         id: maxNodeId + 1,
@@ -93,6 +103,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     const [{ id }, value] = payload
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
+      state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
         updatedAt: new Date(),
@@ -102,7 +113,18 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     }
   }),
 
+  saveChanges: thunk(async (actions, payload) => {
+    const { setUnchanged } = actions
+    const result = await saveTreeNodes(payload)
+    console.log('saveTreeNodes', result)
+    setUnchanged()
+  }),
+
   clear: action((state) => {
     state.nodes = []
+  }),
+
+  setUnchanged: action((state) => {
+    state.isChanged = true // false
   }),
 }

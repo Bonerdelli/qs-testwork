@@ -12,6 +12,8 @@ export interface DbTreeStoreModel {
   isLoading: boolean
   apiError?: string
 
+  // TODO: store expanded keys to auto-load branches
+
   setTree: Action<DbTreeStoreModel, TreeNode>
   reloadTree: Thunk<DbTreeStoreModel>
   setLoading: Action<DbTreeStoreModel, boolean>
@@ -64,7 +66,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
   reloadTree: thunk(async (actions) => {
     const { setLoading, setTree } = actions
     setLoading(true)
-    const tree = await getTree()
+    const tree = await getTree() // TODO: API error handling
     if (tree) {
       setTree(tree)
       setLoading(false)
