@@ -1,4 +1,5 @@
 <!-- TODO: Te sample back-end based on Express uses SQLite database (written in plain JS) -->
+<!-- TODO: Known limitations: No i18n support, Out of tests coverage, No mobile layout support -->
 
 # Getting Started with Create React App
 

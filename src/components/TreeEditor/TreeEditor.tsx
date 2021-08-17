@@ -1,12 +1,13 @@
 // TODO: hide button labels based on screen width
 
 import { useEffect } from 'react'
-import { Row, Col, Card, Skeleton, Popconfirm, Result, Button } from 'antd'
+import { Row, Col, Card, Skeleton, Popconfirm, Result, Tooltip, Button } from 'antd'
 import {
   ReloadOutlined,
   DoubleLeftOutlined,
   ClearOutlined,
   SyncOutlined,
+  ExclamationCircleFilled,
 } from '@ant-design/icons'
 
 import { useStoreState, useStoreActions } from '../../store'
@@ -17,7 +18,13 @@ import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
   const { tree, isLoading, apiError } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const {
+    nodes: cashedNodes,
+    isChanged,
+    savingError,
+    // confirmOverwriteIds,
+  } = useStoreState(state => state.cashedTreeNodes)
+
   const { clear: cashedNodesClear, saveChanges } = useStoreActions(state => state.cashedTreeNodes)
   const { reloadTree } = useStoreActions(state => state.dbTree)
 
@@ -49,6 +56,7 @@ export const TreeEditor: React.FC = () => {
     )
   }
 
+  // TODO: move out actions outside component?
   return (
     <Row justify="center">
       <Col span={10}>
@@ -81,10 +89,15 @@ export const TreeEditor: React.FC = () => {
               size="small"
               type="text"
               key="save"
+              danger={!!savingError}
               disabled={cashedNodes?.length === 0 || !isChanged}
               onClick={() => saveChanges(cashedNodes)}
             >
-              <DoubleLeftOutlined />
+              {savingError ? (
+                <Tooltip title={savingError}>
+                  <ExclamationCircleFilled style={{ color: 'red' }} />
+                </Tooltip>
+              ) : <DoubleLeftOutlined />}
               Сохранить
             </Button>,
             <Popconfirm

@@ -2,12 +2,16 @@ import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { TreeNode } from '../types'
 
-import { saveTreeNodes } from '../api/tree'
+import { TreeBulkUpdateResponse, saveTreeNodes } from '../api/tree'
+import { ApiErrorResponse } from '../helpers/api'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
-  maxNodeId: number
   isChanged: boolean
+
+  maxNodeId: number
+  confirmOverwriteIds?: TreeNode['id'][]
+  savingError?: string
 
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -19,6 +23,8 @@ export interface CashedTreeNodesStoreModel {
 
   saveChanges: Thunk<CashedTreeNodesStoreModel, TreeNode[]>
   setUnchanged: Action<CashedTreeNodesStoreModel>
+  setOverwriteConfirmation: Action<CashedTreeNodesStoreModel, TreeNode['id'][]>
+  setSavingError: Action<CashedTreeNodesStoreModel, string>
   clear: Action<CashedTreeNodesStoreModel>
 }
 
@@ -113,11 +119,34 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     }
   }),
 
+  // TODO: move into dbTree
+  // TODO: apiErrors state object
   saveChanges: thunk(async (actions, payload) => {
-    const { setUnchanged } = actions
+    const { setUnchanged, setSavingError, setOverwriteConfirmation } = actions
     const result = await saveTreeNodes(payload)
-    console.log('saveTreeNodes', result)
-    setUnchanged()
+    if ((result as ApiErrorResponse)?.error) {
+      const message = (result as ApiErrorResponse)?.error.message ?? 'Неизвестная ошибка'
+      setSavingError(message)
+      return
+    }
+    const typedResult = result as TreeBulkUpdateResponse
+    if (typedResult.success) {
+      setUnchanged()
+      return
+    }
+    if (typedResult.overwriteConfirmRequired) {
+      setOverwriteConfirmation(typedResult.overwriteConfirmRequired)
+      return
+    }
+    setSavingError('Не удалось сохранить изменения')
+  }),
+
+  setOverwriteConfirmation: action((state, payload) => {
+    state.confirmOverwriteIds = payload
+  }),
+
+  setSavingError: action((state, payload) => {
+    state.savingError = payload
   }),
 
   clear: action((state) => {
@@ -125,6 +154,6 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   }),
 
   setUnchanged: action((state) => {
-    state.isChanged = true // false
+    state.isChanged = false
   }),
 }

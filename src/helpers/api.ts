@@ -39,6 +39,7 @@ export async function getJson<T>(
   path: string,
   onError?: (error?: ApiError) => void,
 ): Promise<T | ApiErrorResponse> {
+  let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
     .get(url)
@@ -48,7 +49,12 @@ export async function getJson<T>(
     })
     .type('json')
     .accept('json')
-    .catch(err => handleApiError(err, onError))
+    .catch((err) => {
+      serverError = handleApiError(err, onError)
+    })
+  if (serverError) {
+    return serverError
+  }
   const result = (response as Response)?.body
   if (result?.error) {
     return handleApiError(result.error, onError)
@@ -65,6 +71,7 @@ export async function post<T = void>(
   payload: any,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
     .post(url)
@@ -75,7 +82,12 @@ export async function post<T = void>(
     .type('json')
     .accept('json')
     .send(payload)
-    .catch(err => handleApiError(err, onError))
+    .catch((err) => {
+      serverError = handleApiError(err, onError)
+    })
+  if (serverError) {
+    return serverError
+  }
   const result = (response as Response)?.body
   if (result?.error) {
     return handleApiError(result.error, onError)
@@ -91,6 +103,7 @@ export async function put<T = void>(
   payload?: any,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
     .put(url)
@@ -101,7 +114,12 @@ export async function put<T = void>(
     .type('json')
     .accept('json')
     .send(payload)
-    .catch(err => handleApiError(err, onError))
+    .catch((err) => {
+      serverError = handleApiError(err, onError)
+    })
+  if (serverError) {
+    return serverError
+  }
   const result = (response as Response)?.body
   if (result?.error) {
     return handleApiError(result.error, onError)
@@ -116,6 +134,7 @@ export async function del<T = void>(
   path: string,
   onError?: (error?: ApiError) => void,
 ): Promise<ApiCrudResponse<T>> {
+  let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
     .delete(url)
@@ -125,7 +144,12 @@ export async function del<T = void>(
     })
     .type('json')
     .accept('json')
-    .catch(err => handleApiError(err, onError))
+    .catch((err) => {
+      serverError = handleApiError(err, onError)
+    })
+  if (serverError) {
+    return serverError
+  }
   const result = (response as Response)?.body
   if (result?.error) {
     return handleApiError(result.error, onError)

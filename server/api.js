@@ -5,6 +5,9 @@
  * @package qs-test-work
  */
 
+
+// TODO: rename to tree
+
 const { TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH } = require('../config')
 
 const {
@@ -12,6 +15,7 @@ const {
   getBranch, getSubtree,
   addItem, updateItem, deleteItem,
   getNodesUpdatedDateTime,
+  executeBulkEditing,
 } = require('./database')
 
 const sendJson = (res, data, status) => {
@@ -71,26 +75,37 @@ const deleteTreeNode = (req, res) => {
 
 const bulkUpdateTreeNodes = async (req, res) => {
   const {
-    overrideRemoteChanges,
+    overwriteRemoteChanges,
     updatedNodes,
     deletedNodes,
     addedNodes,
   } = req.body
-  let needConfirmationNodeId = null
 
-  console.log('bulkUpdateTreeNodes: start')
-
-  // Check if confirmation to override changes needed
-  const updatedNodeIds = updatedNodes.map(node => node.id)
-  console.log('updatedNodeIds', updatedNodeIds)
-  if (updatedNodeIds.length) {
+  let overwriteConfirmRequired = []
+  if (updatedNodes.length) {
+    // Check if confirmation to override changes needed
+    const updatedNodeIds = updatedNodes.map(node => node.id)
     const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
-    console.log('nodesUpdatedAt', nodesUpdatedAt)
+    overwriteConfirmRequired = updatedNodes.filter((node, index) => {
+      node.updated_at !== nodesUpdatedAt[index]
+    })
   }
 
-  console.log('bulkUpdateTreeNodes: finish')
+  if (overwriteConfirmRequired.length > 0) {
+    res.status(409)
+    sendJson(res, {
+      success: false,
+      overwriteConfirmRequired,
+    })
+  }
 
-  return false
+  try {
+    executeBulkEditing(updatedNodes, deletedNodes, addedNodes)
+  } catch (e) {
+    return handleApiError(res, e)
+  }
+
+  sendJson(res, { success: true })
 
 }
 

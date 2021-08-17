@@ -109,26 +109,42 @@ function isNodeHasChilds(id) {
  */
 function getNodesUpdatedDateTime(ids) {
   const idsValue = ids.map(id => +id).join(',')
-  const statement = db.prepare(`SELECT updated_at FROM tree WHERE id IN (?)`)
-  const result = statement.pluck(true).all(idsValue)
-  console.log('RESULT', result);
-  // return result.map(item => item.updated_at)
-  return result
+  const sql = `SELECT updated_at FROM tree WHERE id IN (${idsValue})`
+  const statement = db.prepare(sql)
+  return statement.pluck(true).all()
 }
 
 /**
- * Editing...
+ * Execute bulk editing of nodes in a single transaction
+ */
+function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
+  const deleteStatement = db.prepare('UPDATE tr,,,,,ee SET deleted_at = DATETIME(\'now\') WHERE id = @id')
+  const updateStatement = db.prepare('UPDATE tree SET value = @value WHERE id = @id')
+  const addStatement = db.prepare('INSERT INTO tree (parent, value) VALUES (@parent, @value)')
+  const bulkUpdate = db.transaction((updatedNodes, deletedNodes, addedNodes) => {
+    for (const node of updatedNodes) deleteStatement.run(node)
+    for (const node of deletedNodes) updateStatement.run(node)
+    for (const node of addedNodes) addStatement.run(node)
+  })
+}
+
+/**
+ * Editing one by one...
+ * NOTE: actually this fns aren't used
  */
 
+function addItem(parent, value) {
+  const statement = db.prepare('INSERT INTO tree (parent, value) VALUES (@parent, @value)')
+  statement.run({ parent, value })
+}
+
 function updateItem(id, value, isDeleted) {
-  const statement = db.prepare('UPDATE tree SET @value = @value WHERE id = @id')
+  const statement = db.prepare('UPDATE tree SET value = @value WHERE id = @id')
   statement.run({ value, id })
 }
 
 function deleteItem(id) {
-  const statement = db.prepare(
-    'UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id'
-  )
+  const statement = db.prepare('UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id')
   statement.run({ id })
 }
 
@@ -147,4 +163,5 @@ module.exports = {
   getBranch,
   getSubtree,
   getNodesUpdatedDateTime,
+  executeBulkEditing,
 }

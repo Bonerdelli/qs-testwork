@@ -6,28 +6,24 @@
  */
 
 import { TreeNode } from '../types'
-import { getJson, post, put, del, isSuccessful } from '../helpers/api'
+import { ApiErrorResponse, getJson, post, put, del, isSuccessful } from '../helpers/api'
 
 /**
  * Handle of saving local tree in the database
  */
-export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<boolean> {
-  const updatedNodes = treeNodes.filter(node => node.isUpdated)
-  const deletedNodes = treeNodes.filter(node => node.isDeleted)
-  const addedNodes = treeNodes.filter(node => node.isNew)
-
-  const result = await bulkUpdateTreeNodes({
+export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<TreeBulkUpdateResponse | ApiErrorResponse> {
+  const updatedNodes = treeNodes.filter(n => n.isUpdated && !n.isDeleted && !n.isNew)
+  const deletedNodes = treeNodes.filter(n => n.isDeleted)
+  const addedNodes = treeNodes.filter(n => n.isNew)
+  const payload = {
     updatedNodes,
     deletedNodes,
     addedNodes,
-  })
-
-  if (Array.isArray(result)) {
-    // TODO: add the confirmation
-    return false
   }
 
-  return !!result
+  const result = await post<TreeBulkUpdateResponse>('/tree/bulk-update', payload)
+  console.log('saveTreeNodes result', result)
+  return result
 }
 
 /**
@@ -51,7 +47,7 @@ export async function getNode(id: TreeNode['id']): Promise<TreeNode> {
  */
 
 export interface TreeBulkUpdateRequest {
-  overrideRemoteChanges?: TreeNode['id']
+  overwriteRemoteChanges?: TreeNode['id']
   updatedNodes: TreeNode[]
   deletedNodes: TreeNode[]
   addedNodes: TreeNode[]
@@ -59,15 +55,7 @@ export interface TreeBulkUpdateRequest {
 
 export interface TreeBulkUpdateResponse {
   success: boolean
-  needConfirmation?: TreeNode['id'][]
-}
-
-export async function bulkUpdateTreeNodes(request: TreeBulkUpdateRequest): Promise<boolean | TreeNode['id'][]> {
-  const result = await post<TreeBulkUpdateResponse>('/tree/bulk-update', request)
-  if ((result as TreeBulkUpdateResponse)?.needConfirmation) {
-    return (result as TreeBulkUpdateResponse).needConfirmation ?? []
-  }
-  return isSuccessful(result)
+  overwriteConfirmRequired?: TreeNode['id'][]
 }
 
 /**
