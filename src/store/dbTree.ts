@@ -1,24 +1,33 @@
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
+import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getNode } from '../api/tree'
+import { ApiErrorResponse } from '../helpers/api'
+
 import { TreeNode } from '../types'
 
-import { getTree, getNode } from '../api/tree'
-
 type TreeNodeMap = Record<TreeNode['id'], TreeNode>
+type ApiErrorTypes = 'loadData' | 'saveChanges'
 
 export interface DbTreeStoreModel {
   tree?: TreeNode
   treeNodes: TreeNodeMap // For quick node getting
   isLoading: boolean
-  apiError?: string
 
-  // TODO: store expanded keys to auto-load branches
+  confirmOverwriteIds?: TreeNode['id'][]
+  apiErrors: Record<ApiErrorTypes, string | null>
 
+  // Data retrieving
   setTree: Action<DbTreeStoreModel, TreeNode>
   reloadTree: Thunk<DbTreeStoreModel>
   setLoading: Action<DbTreeStoreModel, boolean>
   setBranchNodes: Action<DbTreeStoreModel, [TreeNode['id'], TreeNode[]]>
   loadBranch: Thunk<DbTreeStoreModel, TreeNode>
+
+  // Editing
+  saveChanges: Thunk<DbTreeStoreModel, TreeNode[]>
+  setOverwriteConfirmation: Action<DbTreeStoreModel, TreeNode['id'][]>
+  setApiError: Action<DbTreeStoreModel, [ApiErrorTypes, string | null]>
+  clearApiErrors: Action<DbTreeStoreModel>
 }
 
 const treeReducer = (item: TreeNode, acc: TreeNodeMap): TreeNodeMap => {
@@ -35,6 +44,10 @@ const treeReducer = (item: TreeNode, acc: TreeNodeMap): TreeNodeMap => {
 export const dbTreeStoreModel: DbTreeStoreModel = {
   isLoading: false,
   treeNodes: {},
+  apiErrors: {
+    loadData: null,
+    saveChanges: null,
+  },
 
   setTree: action((state, tree) => {
     const treeNodes = treeReducer(tree, {})
@@ -64,13 +77,22 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
   }),
 
   reloadTree: thunk(async (actions) => {
-    const { setLoading, setTree } = actions
+    const { setLoading, setApiError, setTree } = actions
+    setApiError(['loadData', null])
     setLoading(true)
-    const tree = await getTree() // TODO: API error handling
-    if (tree) {
-      setTree(tree)
+    const result = await getTree()
+    if ((result as ApiErrorResponse).error) {
+      setApiError(['loadData', (result as ApiErrorResponse).error.message])
       setLoading(false)
+      return
     }
+    if (result) {
+      setTree(result as TreeNode)
+      setLoading(false)
+      return
+    }
+    setApiError(['loadData', 'Сервер вернул пустой результат'])
+    setLoading(false)
   }),
 
   loadBranch: thunk(async (actions, payload) => {
@@ -83,4 +105,43 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     }
     setLoading(false)
   }),
+
+  /**
+   * Editing
+   */
+  saveChanges: thunk(async (actions, payload) => {
+    const { setApiError, setOverwriteConfirmation } = actions
+    const result = await saveTreeNodes(payload)
+    if ((result as ApiErrorResponse)?.error) {
+      const message = (result as ApiErrorResponse)?.error.message ?? 'Неизвестная ошибка'
+      setApiError(['saveChanges', message])
+      return
+    }
+    const typedResult = result as TreeBulkUpdateResponse
+    if (typedResult.success) {
+      return
+    }
+    if (typedResult.overwriteConfirmRequired) {
+      setOverwriteConfirmation(typedResult.overwriteConfirmRequired)
+      return
+    }
+    setApiError(['saveChanges', 'Не удалось сохранить изменения'])
+  }),
+
+  setOverwriteConfirmation: action((state, payload) => {
+    state.confirmOverwriteIds = payload
+  }),
+
+  setApiError: action((state, payload) => {
+    const [key, message] = payload
+    state.apiErrors[key] = message
+  }),
+
+  clearApiErrors: action((state) => {
+    state.apiErrors = {
+      loadData: null,
+      saveChanges: null,
+    }
+  }),
+
 }

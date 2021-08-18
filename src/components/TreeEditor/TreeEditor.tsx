@@ -17,16 +17,11 @@ import { CachedTreeView } from '../CachedTreeView'
 import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
-  const { tree, isLoading, apiError } = useStoreState(state => state.dbTree)
-  const {
-    nodes: cashedNodes,
-    isChanged,
-    savingError,
-    // confirmOverwriteIds,
-  } = useStoreState(state => state.cashedTreeNodes)
+  const { tree, isLoading, apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
+  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
 
-  const { clear: cashedNodesClear, saveChanges } = useStoreActions(state => state.cashedTreeNodes)
-  const { reloadTree } = useStoreActions(state => state.dbTree)
+  const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
+  const { reloadTree, saveChanges } = useStoreActions(state => state.dbTree)
 
   useEffect(() => {
     reloadTree()
@@ -36,13 +31,15 @@ export const TreeEditor: React.FC = () => {
 
   }
 
+  console.log('confirmOverwriteIds', confirmOverwriteIds)
+
   const renderDbTree = () => {
-    if (typeof apiError !== 'undefined') {
+    if (apiErrors.loadData) {
       return (
         <Result
           status="error"
           title="Ошибка загрузки данных"
-          subTitle={apiError}
+          subTitle={apiErrors.loadData}
         />
       )
     }
@@ -89,12 +86,12 @@ export const TreeEditor: React.FC = () => {
               size="small"
               type="text"
               key="save"
-              danger={!!savingError}
+              danger={!!apiErrors.saveChanges}
               disabled={cashedNodes?.length === 0 || !isChanged}
               onClick={() => saveChanges(cashedNodes)}
             >
-              {savingError ? (
-                <Tooltip title={savingError}>
+              {apiErrors.saveChanges ? (
+                <Tooltip title={apiErrors.saveChanges}>
                   <ExclamationCircleFilled style={{ color: 'red' }} />
                 </Tooltip>
               ) : <DoubleLeftOutlined />}

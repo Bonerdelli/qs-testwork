@@ -1,17 +1,11 @@
-import { Action, Thunk, action, thunk } from 'easy-peasy'
+import { Action, action } from 'easy-peasy'
 
 import { TreeNode } from '../types'
 
-import { TreeBulkUpdateResponse, saveTreeNodes } from '../api/tree'
-import { ApiErrorResponse } from '../helpers/api'
-
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
+  lastNodeId: number
   isChanged: boolean
-
-  maxNodeId: number
-  confirmOverwriteIds?: TreeNode['id'][]
-  savingError?: string
 
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -21,10 +15,7 @@ export interface CashedTreeNodesStoreModel {
   addChildNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
 
-  saveChanges: Thunk<CashedTreeNodesStoreModel, TreeNode[]>
   setUnchanged: Action<CashedTreeNodesStoreModel>
-  setOverwriteConfirmation: Action<CashedTreeNodesStoreModel, TreeNode['id'][]>
-  setSavingError: Action<CashedTreeNodesStoreModel, string>
   clear: Action<CashedTreeNodesStoreModel>
 }
 
@@ -34,7 +25,7 @@ const getNodeIndex = (
 
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
-  maxNodeId: 0,
+  lastNodeId: 0,
   isChanged: false,
 
   loadNode: action((state, payload) => {
@@ -43,8 +34,8 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (index !== -1) {
       return
     }
-    if (node.id > state.maxNodeId) {
-      state.maxNodeId = node.id
+    if (node.id > state.lastNodeId) {
+      state.lastNodeId = node.id
     }
     delete node.hasChilds
     state.nodes = [
@@ -91,13 +82,13 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
 
   addChildNode: action((state, payload) => {
     const { id } = payload
-    const { maxNodeId } = state
+    const { lastNodeId } = state
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
       state.isChanged = true
-      ++state.maxNodeId
+      ++state.lastNodeId
       state.nodes.push({
-        id: maxNodeId + 1,
+        id: lastNodeId + 1,
         parent: id,
         value: '',
         isNew: true,
@@ -119,41 +110,11 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     }
   }),
 
-  // TODO: move into dbTree
-  // TODO: apiErrors state object
-  saveChanges: thunk(async (actions, payload) => {
-    const { setUnchanged, setSavingError, setOverwriteConfirmation } = actions
-    const result = await saveTreeNodes(payload)
-    if ((result as ApiErrorResponse)?.error) {
-      const message = (result as ApiErrorResponse)?.error.message ?? 'Неизвестная ошибка'
-      setSavingError(message)
-      return
-    }
-    const typedResult = result as TreeBulkUpdateResponse
-    if (typedResult.success) {
-      setUnchanged()
-      return
-    }
-    if (typedResult.overwriteConfirmRequired) {
-      setOverwriteConfirmation(typedResult.overwriteConfirmRequired)
-      return
-    }
-    setSavingError('Не удалось сохранить изменения')
-  }),
-
-  setOverwriteConfirmation: action((state, payload) => {
-    state.confirmOverwriteIds = payload
-  }),
-
-  setSavingError: action((state, payload) => {
-    state.savingError = payload
+  setUnchanged: action((state) => {
+    state.isChanged = false
   }),
 
   clear: action((state) => {
     state.nodes = []
-  }),
-
-  setUnchanged: action((state) => {
-    state.isChanged = false
   }),
 }

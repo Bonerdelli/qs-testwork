@@ -16,13 +16,13 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
-  const { maxNodeId } = useStoreState(state => state.cashedTreeNodes)
+  const { lastNodeId } = useStoreState(state => state.cashedTreeNodes)
   const { addChildNode, unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
 
   const addNode = () => {
     treeNode && addChildNode(treeNode)
-    setTimeout(() => setActiveId(maxNodeId + 1))
+    setTimeout(() => setActiveId(lastNodeId + 1))
   }
 
   const renderStateBage = () => {

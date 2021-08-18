@@ -29,9 +29,9 @@ export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<TreeBulkUpda
 /**
  * Get a root tree node with subtree
  */
-export async function getTree(): Promise<TreeNode> {
-  const result = await getJson<TreeNode>(`/tree`)
-  return result as TreeNode
+export async function getTree(): Promise<TreeNode | ApiErrorResponse> {
+  const result = await getJson<TreeNode>('/tree')
+  return result
 }
 
 /**
