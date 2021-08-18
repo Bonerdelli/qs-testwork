@@ -76,7 +76,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   }),
 
   refreshNodesById: thunk(async (actions, payload) => {
-    const { setApiError, reloadNode } = actions
+    const { setApiError, reloadNode, setUnchanged } = actions
     setApiError(null)
     const result = await getNodes(payload)
     if ((result as ApiErrorResponse).error) {
@@ -85,6 +85,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     }
     if (Array.isArray(result)) {
       result.forEach(node => reloadNode(node))
+      setUnchanged()
       return
     }
     setApiError('Сервер вернул пустой результат')

@@ -5,8 +5,8 @@ const cors = require('cors')
 const { initDb } = require('./database')
 const {
   getTree,
-  getNodes,
   getTreeBranch,
+  getTreeNodes,
   bulkUpdateTreeNodes,
   addTreeNode,
   updateTreeNode,
@@ -31,7 +31,7 @@ treeRouter.param(['id'], (req, res, next, value) => {
 
 treeRouter.get('/', getTree)
 treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
-treeRouter.post('/nodes', getNodes)
+treeRouter.post('/nodes', getTreeNodes)
 treeRouter.get('/:id', getTreeBranch)
 
 // NOTE: now we're using only bulk data update

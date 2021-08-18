@@ -42,8 +42,8 @@ const getTree = (req, res) => {
 
 const getTreeNodes = (req, res) => {
   const { ids } = req.body
-  const subtree = dbGetSubtree(TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH)
-  sendJson(res, subtree)
+  const nodes = dbGetItems(ids)
+  sendJson(res, nodes)
 }
 
 const getTreeBranch = (req, res) => {
@@ -110,6 +110,7 @@ const bulkUpdateTreeNodes = async (req, res) => {
   }
 
   try {
+    console.log('Start updating')
     executeBulkEditing(updatedNodes, deletedNodes, addedNodes)
   } catch (e) {
     return handleApiError(res, e)

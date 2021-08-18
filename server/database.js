@@ -9,6 +9,10 @@ const Database = require('better-sqlite3')
 const treeData = require('../data/tree.json')
 const { TREE_ROOT_NODE_ID } = require('../config')
 
+const ADD_ITEM_SQL_TEMPLATE = 'INSERT INTO tree (parent, value) VALUES (@parent, @value)'
+const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value WHERE id = @id'
+const DELETE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id'
+
 const db = new Database(':memory:')
 
 const insertMany = (insert) => db.transaction((items) => {
@@ -130,13 +134,15 @@ function getNodesUpdatedDateTime(ids) {
  * Execute bulk editing of nodes in a single transaction
  */
 function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
-  const deleteStatement = db.prepare('UPDATE tr,,,,,ee SET deleted_at = DATETIME(\'now\') WHERE id = @id')
-  const updateStatement = db.prepare('UPDATE tree SET value = @value WHERE id = @id')
-  const addStatement = db.prepare('INSERT INTO tree (parent, value) VALUES (@parent, @value)')
-  const bulkUpdate = db.transaction((updatedNodes, deletedNodes, addedNodes) => {
-    for (const node of updatedNodes) deleteStatement.run(node)
-    for (const node of deletedNodes) updateStatement.run(node)
-    for (const node of addedNodes) addStatement.run(node)
+  console.log('Call executeBulkEditing {3}')
+  // const addStatement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
+  const updateStatement = db.prepare(UPDATE_ITEM_SQL_TEMPLATE)
+  // const deleteStatement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
+  const bulkUpdate = db.transaction(() => {
+    console.log('Exec updating {3}', updatedNodes)
+    // for (const node of addedNodes) addStatement.run(node)
+    for (const node of updatedNodes) updateStatement.run(node)
+    // for (const node of deletedNodes) deleteStatement.run(node)
   })
 }
 
@@ -146,17 +152,17 @@ function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
  */
 
 function addItem(parent, value) {
-  const statement = db.prepare('INSERT INTO tree (parent, value) VALUES (@parent, @value)')
+  const statement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
   statement.run({ parent, value })
 }
 
 function updateItem(id, value, isDeleted) {
-  const statement = db.prepare('UPDATE tree SET value = @value WHERE id = @id')
+  const statement = db.prepare(UPDATE_ITEM_SQL_TEMPLATE)
   statement.run({ value, id })
 }
 
 function deleteItem(id) {
-  const statement = db.prepare('UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id')
+  const statement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
   statement.run({ id })
 }
 

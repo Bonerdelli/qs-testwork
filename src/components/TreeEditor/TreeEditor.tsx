@@ -31,6 +31,7 @@ export const TreeEditor: React.FC = () => {
   }
 
   console.log('confirmOverwriteIds', confirmOverwriteIds)
+  console.log('isChanged', isChanged)
 
   const renderDbTree = () => {
     if (apiErrors.loadData) {
