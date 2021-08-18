@@ -6,8 +6,10 @@ import { getNodes } from '../api/tree'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
+  nodeIds: TreeNode['id'][]
   lastNodeId: number
   isChanged: boolean
+  isLoading: boolean
   apiError: string | null
 
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -15,6 +17,7 @@ export interface CashedTreeNodesStoreModel {
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   clearAddedAndDeleted: Action<CashedTreeNodesStoreModel>
   refreshNodesById: Thunk<CashedTreeNodesStoreModel, TreeNode['id'][]>
+  setLoading: Action<CashedTreeNodesStoreModel, boolean>
 
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
   restoreNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -32,7 +35,9 @@ const getNodeIndex = (
 
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
+  nodeIds: [],
   lastNodeId: 0,
+  isLoading: false,
   isChanged: false,
   apiError: null,
 
@@ -46,10 +51,19 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.lastNodeId = node.id
     }
     delete node.hasChilds
-    state.nodes = [
-      ...state.nodes,
-      node,
-    ]
+    if (!state.nodes.length) {
+      state.nodes = [node]
+      state.nodeIds = [node.id]
+    } else {
+      state.nodes = [
+        ...state.nodes,
+        node,
+      ]
+      state.nodeIds = [
+        ...state.nodeIds,
+        node.id,
+      ]
+    }
   }),
 
   reloadNode: action((state, payload) => {
@@ -61,8 +75,10 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     delete node.hasChilds
     if (index === -1) {
       state.nodes.push(node)
+      state.nodeIds.push(node.id)
     } else {
       state.nodes[index] = node
+      state.nodeIds[index] = node.id
     }
   }),
 
@@ -71,6 +87,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
       state.nodes.splice(index, 1)
+      state.nodeIds.splice(index, 1)
       state.nodes = [
         ...state.nodes,
       ]
@@ -79,23 +96,33 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
 
   clearAddedAndDeleted: action((state) => {
     const cleared = state.nodes.filter(node => !node.isNew && !node.isDeleted)
+    state.nodeIds = cleared.map(node => node.id)
     state.nodes = cleared
   }),
 
   refreshNodesById: thunk(async (actions, payload) => {
-    const { setApiError, reloadNode, setUnchanged } = actions
+    const {
+      setApiError,
+      reloadNode,
+      setUnchanged,
+      setLoading,
+    } = actions
+    setLoading(true)
     setApiError(null)
     const result = await getNodes(payload)
     if ((result as ApiErrorResponse).error) {
       setApiError((result as ApiErrorResponse).error.message)
+      setLoading(false)
       return
     }
     if (Array.isArray(result)) {
       result.forEach(node => reloadNode(node))
       setUnchanged()
+      setTimeout(() => setLoading(false)) // Sorry
       return
     }
     setApiError('Сервер вернул пустой результат')
+    setLoading(false)
   }),
 
   removeNode: action((state, payload) => {
@@ -130,6 +157,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (index !== -1) {
       state.isChanged = true
       ++state.lastNodeId
+      state.nodeIds.push(lastNodeId + 1)
       state.nodes.push({
         id: lastNodeId + 1,
         parent: id,
@@ -157,11 +185,16 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     state.apiError = payload
   }),
 
+  setLoading: action((state, payload) => {
+    state.isLoading = payload
+  }),
+
   setUnchanged: action((state) => {
     state.isChanged = false
   }),
 
   clear: action((state) => {
     state.nodes = []
+    state.nodeIds = []
   }),
 }

@@ -24,6 +24,7 @@ export interface DbTreeStoreModel {
   setLoading: Action<DbTreeStoreModel, boolean>
   setBranchNodes: Action<DbTreeStoreModel, [TreeNode['id'], TreeNode[]]>
   loadBranch: Thunk<DbTreeStoreModel, TreeNode>
+  clear: Action<DbTreeStoreModel>
 
   // Editing
   saveChanges: Thunk<DbTreeStoreModel, [TreeNode[], TreeNode['id'][]?]>
@@ -174,6 +175,10 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
       loadData: null,
       saveChanges: null,
     }
+  }),
+
+  clear: action((state) => {
+    state.tree = undefined
   }),
 
 }

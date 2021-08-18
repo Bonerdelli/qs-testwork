@@ -2,7 +2,7 @@ import { Button } from 'antd'
 import { DoubleRightOutlined } from '@ant-design/icons'
 
 import { TREE_ROOT_NODE_ID } from '../../helpers/tree'
-import { useStoreActions } from '../../store'
+import { useStoreState, useStoreActions } from '../../store'
 import { TreeDataNode } from '../../types'
 import { execOnAntdEvent } from '../../helpers/antd'
 
@@ -16,6 +16,7 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
   dataNode,
 }) => {
   const { key, treeNode } = dataNode
+  const { nodeIds: cashedNodeIds } = useStoreState(state => state.cashedTreeNodes)
   const { loadNode } = useStoreActions(state => state.cashedTreeNodes)
 
   const renderActionButtons = () => (
@@ -24,6 +25,7 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
         type="link"
         shape="circle"
         icon={<DoubleRightOutlined />}
+        disabled={!treeNode || cashedNodeIds?.includes(treeNode.id)}
         onClick={execOnAntdEvent(
           () => treeNode && loadNode(treeNode),
         )}

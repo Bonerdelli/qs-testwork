@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Tree, Empty } from 'antd'
+import { Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'
 
 import { CachedTreeNode } from './CachedTreeNode'
@@ -23,6 +23,9 @@ export const CachedTreeView: React.FC = () => {
       const keys = nodes.map(node => node.id)
       setTreeData(treeNodes)
       setExpandedKeys(keys)
+    } else {
+      setTreeData([])
+      setExpandedKeys([])
     }
   }, [nodes])
 
@@ -36,7 +39,7 @@ export const CachedTreeView: React.FC = () => {
     return <CachedTreeNode dataNode={node} />
   }
 
-  return treeData?.length ? (
+  return (
     <Tree
       treeData={treeData}
       draggable={false}
@@ -48,11 +51,6 @@ export const CachedTreeView: React.FC = () => {
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={(node: TreeDataNode) => renderNode(node)}
       className="cashed-tree"
-    />
-  ) : (
-    <Empty
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={(<>Загрузите элементы,<br /> чтобы начать редактирование</>)}
     />
   )
 }

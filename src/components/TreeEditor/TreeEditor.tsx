@@ -1,7 +1,7 @@
 // TODO: hide button labels based on screen width
 
 import { useEffect, useState } from 'react'
-import { Row, Col, Card, Skeleton, Popconfirm, Modal, Result, Tooltip, Button } from 'antd'
+import { Row, Col, Card, Skeleton, Popconfirm, Modal, Result, Empty, Tooltip, Button } from 'antd'
 import {
   ReloadOutlined,
   DoubleLeftOutlined,
@@ -19,9 +19,9 @@ import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
   const { tree, isLoading, apiErrors, confirmOverwriteIds, savedSuccessfully, addedNodeIds } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isChanged, apiError: cashedApiError } = useStoreState(state => state.cashedTreeNodes)
-  const { clear: cashedNodesClear, clearAddedAndDeleted, refreshNodesById } = useStoreActions(state => state.cashedTreeNodes)
-  const { reloadTree, saveChanges } = useStoreActions(state => state.dbTree)
+  const { nodes: cashedNodes, isLoading: isCashedNodesLoading, isChanged, apiError: cashedApiError } = useStoreState(state => state.cashedTreeNodes)
+  const { clear: cashedNodesClear, clearAddedAndDeleted, refreshNodesById, setLoading: setCashedNodesLoading } = useStoreActions(state => state.cashedTreeNodes)
+  const { clear: clearTree, reloadTree, saveChanges } = useStoreActions(state => state.dbTree)
 
   const [confirmationModalOpened, setConfirmationModalOpened] = useState<boolean>(false)
 
@@ -35,8 +35,12 @@ export const TreeEditor: React.FC = () => {
 
   useEffect(() => {
     if (savedSuccessfully) {
+      clearTree()
       reloadTree()
-      const nodeIds = cashedNodes.map(node => node.id)
+      setCashedNodesLoading(true)
+      const nodeIds = cashedNodes
+        .filter(node => !node.isDeleted)
+        .map(node => node.id)
       clearAddedAndDeleted()
       refreshNodesById([
         ...addedNodeIds ?? [],
@@ -50,7 +54,11 @@ export const TreeEditor: React.FC = () => {
     refreshNodesById(ids)
   }
 
-  const handleOwervriteConfirmation = () => {
+  const handleSave = () => {
+    saveChanges([cashedNodes])
+  }
+
+  const handleSaveWithOwervrite = () => {
     saveChanges([cashedNodes, confirmOverwriteIds])
     setConfirmationModalOpened(false)
   }
@@ -73,6 +81,25 @@ export const TreeEditor: React.FC = () => {
     }
     return (
       <DBTreeView />
+    )
+  }
+
+  const renderCachedTreeView = () => {
+    if (isCashedNodesLoading) {
+      return (
+        <Skeleton active />
+      )
+    }
+    if (!cashedNodes.length) {
+      return (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={(<>Загрузите элементы,<br /> чтобы начать редактирование</>)}
+        />
+      )
+    }
+    return (
+      <CachedTreeView />
     )
   }
 
@@ -112,7 +139,7 @@ export const TreeEditor: React.FC = () => {
                 key="save"
                 danger={!!apiErrors.saveChanges}
                 disabled={cashedNodes?.length === 0 || !isChanged}
-                onClick={() => saveChanges([cashedNodes])}
+                onClick={handleSave}
               >
                 {apiErrors.saveChanges ? (
                   <Tooltip title={apiErrors.saveChanges}>
@@ -167,14 +194,14 @@ export const TreeEditor: React.FC = () => {
               </Popconfirm>,
             ]}
           >
-            <CachedTreeView />
+            {renderCachedTreeView()}
           </Card>
         </Col>
       </Row>
       <Modal
         title="Требуется подтверждение"
         visible={confirmationModalOpened}
-        onOk={handleOwervriteConfirmation}
+        onOk={handleSaveWithOwervrite}
         onCancel={() => setConfirmationModalOpened(false)}
         okText="Перезаписать"
         cancelText="Отмена"
