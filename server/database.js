@@ -48,6 +48,18 @@ function getItem(id) {
 }
 
 /**
+ * Retrieve a couple of items by identifiers
+ * @param {number} id – Node identifier
+ * @return TreeNode
+ */
+function getItems(ids) {
+  const idsValue = ids.map(id => +id).join(',')
+  const sql = `SELECT * FROM tree WHERE id IN (${idsValue})`
+  const statement = db.prepare(sql)
+  return statement.all()
+}
+
+/**
  * Retrieve tree branch by identifier
  * @param {number} id – Node identifier
  * @return TreeNode
@@ -159,9 +171,17 @@ module.exports = {
   TREE_ROOT_NODE_ID,
   initDb,
   db,
+
   getItem,
+  getItems,
   getBranch,
   getSubtree,
+
+  addItem,
+  updateItem,
+  deleteItem,
+  restoreItem,
+
   getNodesUpdatedDateTime,
   executeBulkEditing,
 }

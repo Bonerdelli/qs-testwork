@@ -8,6 +8,7 @@ import {
   ClearOutlined,
   SyncOutlined,
   ExclamationCircleFilled,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
 import { useStoreState, useStoreActions } from '../../store'
@@ -18,15 +19,15 @@ import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
   const { tree, isLoading, apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
-
-  const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, isChanged, apiError: cashedApiError } = useStoreState(state => state.cashedTreeNodes)
+  const { clear: cashedNodesClear, refreshNodesById } = useStoreActions(state => state.cashedTreeNodes)
   const { reloadTree, saveChanges } = useStoreActions(state => state.dbTree)
 
   useEffect(() => reloadTree(), [])
 
-  const handleSync = () => {
-
+  const handleCacheReload = () => {
+    const ids = cashedNodes.map(node => node.id)
+    refreshNodesById(ids)
   }
 
   console.log('confirmOverwriteIds', confirmOverwriteIds)
@@ -36,6 +37,7 @@ export const TreeEditor: React.FC = () => {
       return (
         <Result
           status="error"
+          icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
           title="Ошибка загрузки данных"
           subTitle={apiErrors.loadData}
         />
@@ -104,7 +106,7 @@ export const TreeEditor: React.FC = () => {
                   Продолжить?
                 </>
               )}
-              onConfirm={() => cashedNodesClear()}
+              onConfirm={() => handleCacheReload()}
               okText="Да"
               cancelText="Нет"
             >
@@ -113,9 +115,13 @@ export const TreeEditor: React.FC = () => {
                 type="text"
                 key="save"
                 disabled={cashedNodes?.length === 0}
-                onClick={handleSync}
+                danger={!!cashedApiError}
               >
-                <SyncOutlined />
+                {cashedApiError ? (
+                  <Tooltip title={cashedApiError}>
+                    <ExclamationCircleFilled style={{ color: 'red' }} />
+                  </Tooltip>
+                ) : <SyncOutlined />}
                 Перечитать
               </Button>
             </Popconfirm>,

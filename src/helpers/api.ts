@@ -5,6 +5,7 @@
  * @package qs-test-work
  */
 import { notification } from 'antd'
+// import { ExclamationCircleFilled } from '@ant-design/icons'
 import request, { Response } from 'superagent'
 
 export const API_URL = process.env.API_URL || 'http://localhost:3001'
@@ -29,8 +30,7 @@ export interface ApiSuccessResponse {
   deletedRowsCount?: number
 }
 
-export type ApiCrudResponse<T = void> = T | ApiErrorResponse | ApiSuccessResponse
-export type ApiCrudSuccessResponse<T = void> = T | ApiSuccessResponse
+export type ApiCrudResponse<T = ApiSuccessResponse> = T | ApiErrorResponse
 
 /**
  * Fetch and parse JSON from backend
@@ -160,7 +160,9 @@ export async function del<T = void>(
 /**
  * Helper function to check if request was successful
  */
-export function isSuccessful<T = void>(result: ApiCrudResponse<T>): boolean {
+export function isSuccessful<T = void>(
+  result: ApiCrudResponse<T | ApiSuccessResponse>,
+): boolean {
   if (typeof result === 'undefined') {
     return false
   }
@@ -193,9 +195,13 @@ function handleApiError(
   } else {
     console.error('API Error', error?.message) // eslint-disable-line no-console
     notification.error({
+      // icon: (
+      //   <ExclamationCircleFilled style={{ color: 'red' }} />
+      // ),
       message: 'Ошибка выполнения запроса',
       description: error?.message,
       placement: 'bottomRight',
+      // size: 'small',
     })
   }
   return error ? { error } : {

@@ -12,8 +12,12 @@ const { TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH } = require('../config')
 
 const {
   db,
-  getBranch, getSubtree,
-  addItem, updateItem, deleteItem,
+  getItems: dbGetItems,
+  getBranch: dbGetBranch,
+  getSubtree: dbGetSubtree,
+  addItem: dbAddItem,
+  updateItem: dbUpdateItem,
+  deleteItem: dbDeleteItem,
   getNodesUpdatedDateTime,
   executeBulkEditing,
 } = require('./database')
@@ -32,20 +36,26 @@ const handleApiError = (res, error) => {
 }
 
 const getTree = (req, res) => {
-  const subtree = getSubtree(TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH)
+  const subtree = dbGetSubtree(TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH)
+  sendJson(res, subtree)
+}
+
+const getTreeNodes = (req, res) => {
+  const { ids } = req.body
+  const subtree = dbGetSubtree(TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH)
   sendJson(res, subtree)
 }
 
 const getTreeBranch = (req, res) => {
   const { id } = req.params
-  const branch = getBranch(id)
+  const branch = dbGetBranch(id)
   sendJson(res, branch)
 }
 
 const addTreeNode = (req, res) => {
   const { parent, value } = req.body
   try {
-    addItem(parent, value)
+    dbAddItem(parent, value)
   } catch(e) {
     return handleApiError(res, e)
   }
@@ -56,7 +66,7 @@ const updateTreeNode = (req, res) => {
   const { nodeId } = req.params
   const { value } = req.body
   try {
-    updateItem(nodeId, value)
+    dbUpdateItem(nodeId, value)
   } catch(e) {
     return handleApiError(res, e)
   }
@@ -66,7 +76,7 @@ const updateTreeNode = (req, res) => {
 const deleteTreeNode = (req, res) => {
   const { nodeId } = req.params
   try {
-    deleteItem(nodeId)
+    dbDeleteItem(nodeId)
   } catch(e) {
     return handleApiError(res, e)
   }
@@ -112,8 +122,11 @@ const bulkUpdateTreeNodes = async (req, res) => {
 module.exports = {
   getTree,
   getTreeBranch,
-  bulkUpdateTreeNodes,
+  getTreeNodes,
+
   addTreeNode,
   updateTreeNode,
   deleteTreeNode,
+
+  bulkUpdateTreeNodes,
 }

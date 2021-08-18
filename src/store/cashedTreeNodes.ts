@@ -1,20 +1,26 @@
-import { Action, action } from 'easy-peasy'
+import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { TreeNode } from '../types'
+import { ApiErrorResponse } from '../helpers/api'
+import { getNodes } from '../api/tree'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
   lastNodeId: number
   isChanged: boolean
+  apiError: string | null
 
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  reloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  refreshNodesById: Thunk<CashedTreeNodesStoreModel, TreeNode['id'][]>
 
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
   restoreNode: Action<CashedTreeNodesStoreModel, TreeNode>
   addChildNode: Action<CashedTreeNodesStoreModel, TreeNode>
   setNodeValue: Action<CashedTreeNodesStoreModel, [TreeNode, string]>
 
+  setApiError: Action<CashedTreeNodesStoreModel, string | null>
   setUnchanged: Action<CashedTreeNodesStoreModel>
   clear: Action<CashedTreeNodesStoreModel>
 }
@@ -27,6 +33,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
   lastNodeId: 0,
   isChanged: false,
+  apiError: null,
 
   loadNode: action((state, payload) => {
     const { childs, ...node } = payload
@@ -44,6 +51,19 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     ]
   }),
 
+  reloadNode: action((state, payload) => {
+    const { childs, ...node } = payload
+    const index = getNodeIndex(state.nodes, node.id)
+    if (index === -1) {
+      return
+    }
+    if (node.id > state.lastNodeId) {
+      state.lastNodeId = node.id
+    }
+    delete node.hasChilds
+    state.nodes[index] = node
+  }),
+
   unloadNode: action((state, payload) => {
     const { id } = payload
     const index = getNodeIndex(state.nodes, id)
@@ -53,6 +73,21 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
         ...state.nodes,
       ]
     }
+  }),
+
+  refreshNodesById: thunk(async (actions, payload) => {
+    const { setApiError, reloadNode } = actions
+    setApiError(null)
+    const result = await getNodes(payload)
+    if ((result as ApiErrorResponse).error) {
+      setApiError((result as ApiErrorResponse).error.message)
+      return
+    }
+    if (Array.isArray(result)) {
+      result.forEach(node => reloadNode(node))
+      return
+    }
+    setApiError('Сервер вернул пустой результат')
   }),
 
   removeNode: action((state, payload) => {
@@ -108,6 +143,10 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
         value,
       }
     }
+  }),
+
+  setApiError: action((state, payload) => {
+    state.apiError = payload
   }),
 
   setUnchanged: action((state) => {
