@@ -85,7 +85,7 @@ const deleteTreeNode = (req, res) => {
 
 const bulkUpdateTreeNodes = async (req, res) => {
   const {
-    overwriteRemoteChanges,
+    confirmForOverwriteIds = [],
     updatedNodes,
     deletedNodes,
     addedNodes,
@@ -96,27 +96,30 @@ const bulkUpdateTreeNodes = async (req, res) => {
     // Check if confirmation to override changes needed
     const updatedNodeIds = updatedNodes.map(node => node.id)
     const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
-    overwriteConfirmRequired = updatedNodes.filter((node, index) => {
-      node.updated_at !== nodesUpdatedAt[index]
-    })
+    overwriteConfirmRequired = updatedNodes
+      .filter((node, index) => node.updated_at !== nodesUpdatedAt[index])
+      .map(node => node.id)
+      .filter(id => !confirmForOverwriteIds.includes(id))
   }
 
   if (overwriteConfirmRequired.length > 0) {
-    res.status(409)
-    sendJson(res, {
+    return sendJson(res, {
       success: false,
       overwriteConfirmRequired,
     })
   }
 
+  let addedNodeIds
   try {
-    console.log('Start updating')
-    executeBulkEditing(updatedNodes, deletedNodes, addedNodes)
+    addedNodeIds = executeBulkEditing(updatedNodes, deletedNodes, addedNodes)
   } catch (e) {
     return handleApiError(res, e)
   }
 
-  sendJson(res, { success: true })
+  sendJson(res, {
+    success: true,
+    addedNodeIds,
+  })
 
 }
 

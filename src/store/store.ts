@@ -26,13 +26,13 @@ const persistRootConfig: PersistConfig<AppStoreModel> = {
   ],
 }
 
-const model = {
+const appStoreModel = {
   dbTree: dbTreeStoreModel,
   cashedTreeNodes: cashedTreeNodesStoreModel,
   nodeEdit: nodeEditModel,
 }
 
-export const store = createStore<AppStoreModel>(model, {
+export const store = createStore<AppStoreModel>(appStoreModel, {
   reducerEnhancer: reducer => persistReducer(
     persistRootConfig,
     reducer,

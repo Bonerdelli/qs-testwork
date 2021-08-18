@@ -10,7 +10,7 @@ const treeData = require('../data/tree.json')
 const { TREE_ROOT_NODE_ID } = require('../config')
 
 const ADD_ITEM_SQL_TEMPLATE = 'INSERT INTO tree (parent, value) VALUES (@parent, @value)'
-const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value WHERE id = @id'
+const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value, updated_at = DATETIME(\'now\') WHERE id = @id'
 const DELETE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id'
 
 const db = new Database(':memory:')
@@ -132,18 +132,23 @@ function getNodesUpdatedDateTime(ids) {
 
 /**
  * Execute bulk editing of nodes in a single transaction
+ * @return number[] Identifiers of newly inserted nodes
  */
 function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
-  console.log('Call executeBulkEditing {3}')
-  // const addStatement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
+  const addedNodeIds = []
+  const addStatement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
   const updateStatement = db.prepare(UPDATE_ITEM_SQL_TEMPLATE)
-  // const deleteStatement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
+  const deleteStatement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
   const bulkUpdate = db.transaction(() => {
-    console.log('Exec updating {3}', updatedNodes)
-    // for (const node of addedNodes) addStatement.run(node)
+    for (const node of addedNodes) {
+      const info = addStatement.run(node)
+      addedNodeIds.push(info.lastInsertRowid)
+    }
     for (const node of updatedNodes) updateStatement.run(node)
-    // for (const node of deletedNodes) deleteStatement.run(node)
+    for (const node of deletedNodes) deleteStatement.run(node)
   })
+  bulkUpdate()
+  return addedNodeIds
 }
 
 /**

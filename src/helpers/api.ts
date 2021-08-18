@@ -14,10 +14,12 @@ export const REQUEST_MAX_TIME = 20000 // in milliseconds
 
 export interface ApiError {
   code?: string
+  status?: number
   message: string
 }
 
 export interface ApiErrorResponse {
+  statusCode?: number
   error: ApiError
 }
 

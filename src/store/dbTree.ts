@@ -1,7 +1,7 @@
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getBranch } from '../api/tree'
-import { ApiErrorResponse } from '../helpers/api'
+import { ApiError, ApiErrorResponse } from '../helpers/api'
 
 import { TreeNode } from '../types'
 
@@ -11,10 +11,12 @@ type ApiErrorTypes = 'loadData' | 'saveChanges'
 export interface DbTreeStoreModel {
   tree?: TreeNode
   treeNodes: TreeNodeMap // For quick node getting
-  isLoading: boolean
 
-  confirmOverwriteIds?: TreeNode['id'][]
+  isLoading: boolean
+  savedSuccessfully?: boolean
   apiErrors: Record<ApiErrorTypes, string | null>
+  confirmOverwriteIds?: TreeNode['id'][]
+  addedNodeIds?: TreeNode['id'][]
 
   // Data retrieving
   setTree: Action<DbTreeStoreModel, TreeNode>
@@ -24,7 +26,9 @@ export interface DbTreeStoreModel {
   loadBranch: Thunk<DbTreeStoreModel, TreeNode>
 
   // Editing
-  saveChanges: Thunk<DbTreeStoreModel, TreeNode[]>
+  saveChanges: Thunk<DbTreeStoreModel, [TreeNode[], TreeNode['id'][]?]>
+  setSavedSuccessfully: Action<DbTreeStoreModel, boolean>
+  setAddedNodeIds: Action<DbTreeStoreModel, TreeNode['id'][]>
   setOverwriteConfirmation: Action<DbTreeStoreModel, TreeNode['id'][]>
   setApiError: Action<DbTreeStoreModel, [ApiErrorTypes, string | null]>
   clearApiErrors: Action<DbTreeStoreModel>
@@ -44,6 +48,7 @@ const treeReducer = (item: TreeNode, acc: TreeNodeMap): TreeNodeMap => {
 export const dbTreeStoreModel: DbTreeStoreModel = {
   isLoading: false,
   treeNodes: {},
+
   apiErrors: {
     loadData: null,
     saveChanges: null,
@@ -97,8 +102,8 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
 
   loadBranch: thunk(async (actions, payload) => {
     const { setLoading, setBranchNodes } = actions
-    setLoading(true)
     const { id } = payload
+    setLoading(true)
     const node = await getBranch(id)
     if (node?.childs) {
       setBranchNodes([id, node.childs])
@@ -110,22 +115,49 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
    * Editing
    */
   saveChanges: thunk(async (actions, payload) => {
-    const { setApiError, setOverwriteConfirmation } = actions
-    const result = await saveTreeNodes(payload)
-    if ((result as ApiErrorResponse)?.error) {
-      const message = (result as ApiErrorResponse)?.error.message ?? 'Неизвестная ошибка'
-      setApiError(['saveChanges', message])
+    const {
+      setApiError,
+      setOverwriteConfirmation,
+      setSavedSuccessfully,
+      setAddedNodeIds,
+    } = actions
+    const [nodes, confirmForOverwriteIds] = payload
+
+    const apiErrorHandler = (err?: ApiError) => {
+      if (err?.status !== 409) {
+        const message = err?.message ?? 'Неизвестная ошибка'
+        setApiError(['saveChanges', message])
+      }
+    }
+
+    setSavedSuccessfully(false)
+    const result = await saveTreeNodes(
+      nodes,
+      confirmForOverwriteIds,
+      apiErrorHandler,
+    ) as TreeBulkUpdateResponse
+
+    if (result.overwriteConfirmRequired) {
+      setOverwriteConfirmation(result.overwriteConfirmRequired)
       return
     }
-    const typedResult = result as TreeBulkUpdateResponse
-    if (typedResult.success) {
+    if (result.addedNodeIds) {
+      setAddedNodeIds(result.addedNodeIds)
+    }
+    if (result.success) {
+      setSavedSuccessfully(true)
       return
     }
-    if (typedResult.overwriteConfirmRequired) {
-      setOverwriteConfirmation(typedResult.overwriteConfirmRequired)
-      return
-    }
+
     setApiError(['saveChanges', 'Не удалось сохранить изменения'])
+  }),
+
+  setSavedSuccessfully: action((state, payload) => {
+    state.savedSuccessfully = payload
+  }),
+
+  setAddedNodeIds: action((state, payload) => {
+    state.addedNodeIds = payload
   }),
 
   setOverwriteConfirmation: action((state, payload) => {

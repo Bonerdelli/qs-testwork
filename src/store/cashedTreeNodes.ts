@@ -13,6 +13,7 @@ export interface CashedTreeNodesStoreModel {
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   reloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  clearAddedAndDeleted: Action<CashedTreeNodesStoreModel>
   refreshNodesById: Thunk<CashedTreeNodesStoreModel, TreeNode['id'][]>
 
   removeNode: Action<CashedTreeNodesStoreModel, TreeNode>
@@ -54,14 +55,15 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   reloadNode: action((state, payload) => {
     const { childs, ...node } = payload
     const index = getNodeIndex(state.nodes, node.id)
-    if (index === -1) {
-      return
-    }
     if (node.id > state.lastNodeId) {
       state.lastNodeId = node.id
     }
     delete node.hasChilds
-    state.nodes[index] = node
+    if (index === -1) {
+      state.nodes.push(node)
+    } else {
+      state.nodes[index] = node
+    }
   }),
 
   unloadNode: action((state, payload) => {
@@ -73,6 +75,11 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
         ...state.nodes,
       ]
     }
+  }),
+
+  clearAddedAndDeleted: action((state) => {
+    const cleared = state.nodes.filter(node => !node.isNew && !node.isDeleted)
+    state.nodes = cleared
   }),
 
   refreshNodesById: thunk(async (actions, payload) => {

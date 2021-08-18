@@ -6,25 +6,7 @@
  */
 
 import { TreeNode } from '../types'
-import { ApiErrorResponse, getJson, post, put, del, isSuccessful } from '../helpers/api'
-
-/**
- * Handle of saving local tree in the database
- */
-export async function saveTreeNodes(treeNodes: TreeNode[]): Promise<TreeBulkUpdateResponse | ApiErrorResponse> {
-  const updatedNodes = treeNodes.filter(n => n.isUpdated && !n.isDeleted && !n.isNew)
-  const deletedNodes = treeNodes.filter(n => n.isDeleted)
-  const addedNodes = treeNodes.filter(n => n.isNew)
-  const payload = {
-    updatedNodes,
-    deletedNodes,
-    addedNodes,
-  }
-
-  const result = await post<TreeBulkUpdateResponse>('/tree/bulk-update', payload)
-  console.log('saveTreeNodes result', result)
-  return result
-}
+import { ApiErrorResponse, ApiError, getJson, post, put, del, isSuccessful } from '../helpers/api'
 
 /**
  * Get a root tree node with subtree
@@ -62,7 +44,32 @@ export interface TreeBulkUpdateRequest {
 
 export interface TreeBulkUpdateResponse {
   success: boolean
+  addedNodeIds?: TreeNode['id'][]
   overwriteConfirmRequired?: TreeNode['id'][]
+}
+
+export async function saveTreeNodes(
+  treeNodes: TreeNode[],
+  confirmForOverwriteIds?: TreeNode['id'][],
+  errorHandler?: (error?: ApiError) => void,
+): Promise<TreeBulkUpdateResponse | ApiErrorResponse> {
+  const updatedNodes = treeNodes.filter(n => n.isUpdated && !n.isDeleted && !n.isNew)
+  const deletedNodes = treeNodes.filter(n => n.isDeleted)
+  const addedNodes = treeNodes.filter(n => n.isNew)
+  const payload = {
+    confirmForOverwriteIds,
+    updatedNodes,
+    deletedNodes,
+    addedNodes,
+  }
+
+  const result = await post<TreeBulkUpdateResponse>(
+    '/tree/bulk-update',
+    payload,
+    errorHandler,
+  )
+
+  return result
 }
 
 /**
