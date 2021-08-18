@@ -1,6 +1,6 @@
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
-import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getNode } from '../api/tree'
+import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getBranch } from '../api/tree'
 import { ApiErrorResponse } from '../helpers/api'
 
 import { TreeNode } from '../types'
@@ -99,7 +99,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     const { setLoading, setBranchNodes } = actions
     setLoading(true)
     const { id } = payload
-    const node = await getNode(id)
+    const node = await getBranch(id)
     if (node?.childs) {
       setBranchNodes([id, node.childs])
     }

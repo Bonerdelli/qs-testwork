@@ -39,6 +39,7 @@ export function treeDataToNodes(tree: TreeNode): TreeDataNode {
  */
 export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
   const dataNodes = treeNodes.map(nodeMapper) as TreeDataNodeExt[]
+  dataNodes.forEach(node => delete node.isLeaf) // Because we have partial hierarchy
   const hierarchyBuilder = (node: TreeDataNode) => {
     const childs = dataNodes.filter(n => n.treeNode?.parent === node.treeNode?.id)
     if (childs.length > 0) {

@@ -23,9 +23,7 @@ export const TreeEditor: React.FC = () => {
   const { clear: cashedNodesClear } = useStoreActions(state => state.cashedTreeNodes)
   const { reloadTree, saveChanges } = useStoreActions(state => state.dbTree)
 
-  useEffect(() => {
-    reloadTree()
-  }, [])
+  useEffect(() => reloadTree(), [])
 
   const handleSync = () => {
 
