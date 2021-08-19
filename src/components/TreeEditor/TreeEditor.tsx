@@ -23,9 +23,25 @@ import {
 import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
-  const { tree, isLoading, apiErrors, savedSuccessfully, addedNodeIds } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isLoading: isCashedNodesLoading } = useStoreState(state => state.cashedTreeNodes)
-  const { clearAddedAndDeleted, refreshNodesById, setLoading: setCashedNodesLoading } = useStoreActions(state => state.cashedTreeNodes)
+  const {
+    tree,
+    isLoading,
+    apiErrors,
+    savedSuccessfully,
+    addedNodeIds,
+  } = useStoreState(state => state.dbTree)
+
+  const {
+    nodes: cashedNodes,
+    isLoading: isCashedNodesLoading,
+  } = useStoreState(state => state.cashedTreeNodes)
+
+  const {
+    clearAddedAndDeleted,
+    refreshNodesById,
+    setLoading: setCashedNodesLoading,
+  } = useStoreActions(state => state.cashedTreeNodes)
+
   const { clear: clearTree, reloadTree } = useStoreActions(state => state.dbTree)
 
   useEffect(() => {
@@ -95,14 +111,14 @@ export const TreeEditor: React.FC = () => {
 
   return (
     <>
-      <Row justify="center">
+      <Row justify="center" className="tree-editor-layout">
         <Col span={10}>
           <Card
             size="small"
             className="tree-card"
             title="База данных"
             actions={[
-              <ReloadTreeActionButton title="Обновить" />,
+              <ReloadTreeActionButton key="reload" title="Обновить" />,
             ]}
           >
             {renderDbTree()}
@@ -114,9 +130,9 @@ export const TreeEditor: React.FC = () => {
             className="tree-card"
             title="Редактирование (локальный кэш)"
             actions={[
-              <SaveChangesActionButton title="Сохранить" />,
-              <ReloadCacheActionButton title="Перечитать" />,
-              <ClearCacheActionButton title="Очистить" />,
+              <SaveChangesActionButton key="save" title="Сохранить" />,
+              <ReloadCacheActionButton key="reload" title="Перечитать" />,
+              <ClearCacheActionButton key="clear" title="Очистить" />,
             ]}
           >
             {renderCachedTreeView()}

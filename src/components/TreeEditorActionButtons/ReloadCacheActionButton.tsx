@@ -52,7 +52,7 @@ export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) 
         disabled={cashedNodes?.length === 0}
         danger={!!apiError}
       >
-        {renderIcon}
+        {renderIcon()}
         {title}
       </Button>
     </Popconfirm>

@@ -1,5 +1,3 @@
-/* TODO: move outside of DBTreeView */
-
 .tree-node {
   /* font-size: .85rem; */
   white-space: nowrap;
@@ -39,11 +37,9 @@
   font-size: 1.5em
 }
 
-
 /**
  * Override antd styles for cashed tree
  */
-
 
 .cashed-tree.ant-tree .ant-badge.tree-node-status-badge {
   position: absolute;

@@ -10,7 +10,7 @@ import { useStoreActions, useStoreState } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
 import { execOnAntdEvent } from '../../helpers/antd'
 
-import '../DBTreeView/DBTreeNode.css'
+import '../TreeNode/TreeNode.css'
 
 export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   dataNode,

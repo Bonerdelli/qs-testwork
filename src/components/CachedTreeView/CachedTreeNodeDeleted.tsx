@@ -5,7 +5,7 @@ import { useStoreActions } from '../../store'
 import { TreeNodeProps } from '../TreeNode/types'
 import { execOnAntdEvent } from '../../helpers/antd'
 
-import '../DBTreeView/DBTreeNode.css'
+import '../TreeNode/TreeNode.css'
 
 export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   dataNode,

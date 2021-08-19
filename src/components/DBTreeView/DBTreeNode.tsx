@@ -6,7 +6,7 @@ import { useStoreState, useStoreActions } from '../../store'
 import { TreeDataNode } from '../../types'
 import { execOnAntdEvent } from '../../helpers/antd'
 
-import './DBTreeNode.css'
+import '../TreeNode/TreeNode.css'
 
 export interface DBTreeNodeProps {
   dataNode: TreeDataNode

@@ -1,6 +1,10 @@
 <!-- TODO: Te sample back-end based on Express uses SQLite database (written in plain JS) -->
 <!-- TODO: Known limitations: No i18n support, Out of tests coverage, No mobile layout support, only one level of new nodes allowed -->
 
+<!-- Notes for test work -->
+<!-- LESS or any other style preprocessor aren't used, as styles is not complex -->
+<!-- Styled components aren't used, because of antd framework -->
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

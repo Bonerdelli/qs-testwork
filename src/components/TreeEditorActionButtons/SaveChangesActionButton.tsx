@@ -20,6 +20,7 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
   useEffect(() => {
     if (confirmOverwriteIds?.length) {
       setConfirmationModalOpened(true)
+      console.log('setConfirmationModalOpened(true)')
     }
   }, [confirmOverwriteIds])
 
@@ -35,8 +36,8 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
   const renderIcon = () => {
     if (confirmOverwriteIds?.length) {
       return (
-        <Tooltip title={apiErrors.saveChanges}>
-          <WarningFilled style={{ color: 'yellow' }} />
+        <Tooltip title="Требуется подтверждение">
+          <WarningFilled style={{ color: '#ffb220' }} />
         </Tooltip>
       )
     }

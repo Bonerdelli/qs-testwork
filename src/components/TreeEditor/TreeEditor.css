@@ -12,7 +12,7 @@
 /**
  * Fix of header overlap
  */
-.ant-card-head {
+.tree-editor-layout .ant-card-head {
   position: relative;
   z-index: 50;
 }
