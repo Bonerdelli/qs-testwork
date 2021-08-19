@@ -21,7 +21,7 @@ export const CachedTreeView: React.FC = () => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
       const keys = nodes.map(node => node.id)
-      setTreeData(treeNodes)
+      setTimeout(() => setTreeData(treeNodes)) // Prevents animation flickering
       setExpandedKeys(keys)
     } else {
       setTreeData([])
@@ -47,7 +47,6 @@ export const CachedTreeView: React.FC = () => {
       expandedKeys={expandedKeys}
       selectedKeys={[activeId ?? 0]}
       defaultExpandedKeys={expandedKeys}
-      // onClick={(key) => setExpandedKeys(key)}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={(node: TreeDataNode) => renderNode(node)}
       className="cashed-tree"

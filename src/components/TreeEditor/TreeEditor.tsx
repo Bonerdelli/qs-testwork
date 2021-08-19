@@ -1,5 +1,7 @@
 // TODO: hide button labels based on screen width
 
+/* eslint-disable no-nested-ternary */
+
 import { useEffect, useState } from 'react'
 import { Row, Col, Card, Skeleton, Popconfirm, Modal, Result, Empty, Tooltip, Button } from 'antd'
 import {
@@ -9,11 +11,14 @@ import {
   SyncOutlined,
   ExclamationCircleFilled,
   ExclamationCircleOutlined,
+  WarningFilled,
 } from '@ant-design/icons'
 
 import { useStoreState, useStoreActions } from '../../store'
 import { DBTreeView } from '../DBTreeView'
 import { CachedTreeView } from '../CachedTreeView'
+
+import { SaveChangesActionButton } from '../TreeEditorActionButtons'
 
 import './TreeEditor.css'
 
@@ -25,13 +30,20 @@ export const TreeEditor: React.FC = () => {
 
   const [confirmationModalOpened, setConfirmationModalOpened] = useState<boolean>(false)
 
-  useEffect(() => reloadTree(), [])
+  useEffect(() => {
+    setCashedNodesLoading(true)
+    reloadTree()
+  }, [])
 
   useEffect(() => {
     if (confirmOverwriteIds?.length) {
       setConfirmationModalOpened(true)
     }
   }, [confirmOverwriteIds])
+
+  useEffect(() => {
+    setCashedNodesLoading(false)
+  }, [cashedNodes])
 
   useEffect(() => {
     if (savedSuccessfully) {
@@ -90,7 +102,7 @@ export const TreeEditor: React.FC = () => {
         <Skeleton active />
       )
     }
-    if (!cashedNodes.length) {
+    if (!cashedNodes?.length) {
       return (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -141,7 +153,11 @@ export const TreeEditor: React.FC = () => {
                 disabled={cashedNodes?.length === 0 || !isChanged}
                 onClick={handleSave}
               >
-                {apiErrors.saveChanges ? (
+                {confirmOverwriteIds?.length ? (
+                  <Tooltip title={apiErrors.saveChanges}>
+                    <WarningFilled style={{ color: 'yellow' }} />
+                  </Tooltip>
+                ) : apiErrors.saveChanges ? (
                   <Tooltip title={apiErrors.saveChanges}>
                     <ExclamationCircleFilled style={{ color: 'red' }} />
                   </Tooltip>
@@ -215,6 +231,7 @@ export const TreeEditor: React.FC = () => {
             <li key={id.toString()}>{id}</li>
           ))}
         </ul>
+        <SaveChangesActionButton title="test" />
       </Modal>
     </>
   )
