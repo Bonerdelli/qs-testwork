@@ -50,6 +50,7 @@ export const TreeEditor: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    console.log('TreeEditor : Initialize')
     setCashedNodesLoading(false)
   }, [cashedNodes])
 

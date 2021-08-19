@@ -15,12 +15,18 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
   const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
   const { saveChanges } = useStoreActions(state => state.dbTree)
 
-  const [confirmationModalOpened, setConfirmationModalOpened] = useState<boolean>(false)
+  const [modalOpened, setModalOpened] = useState<boolean>(false)
+  const [nodeIds, setNodeIds] = useState<number[]>([])
+
+  useEffect(() => {
+    console.log('SaveChangesActionButton : Initialize')
+  }, [])
 
   useEffect(() => {
     if (confirmOverwriteIds?.length) {
-      setConfirmationModalOpened(true)
-      console.log('setConfirmationModalOpened(true)')
+      console.log('setNodeIds', confirmOverwriteIds)
+      setNodeIds([...confirmOverwriteIds])
+      setModalOpened(true)
     }
   }, [confirmOverwriteIds])
 
@@ -29,12 +35,12 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
   }
 
   const handleSaveWithOwervrite = () => {
-    saveChanges([cashedNodes, confirmOverwriteIds])
-    setConfirmationModalOpened(false)
+    saveChanges([cashedNodes, nodeIds])
+    setModalOpened(false)
   }
 
   const renderIcon = () => {
-    if (confirmOverwriteIds?.length) {
+    if (nodeIds?.length) {
       return (
         <Tooltip title="Требуется подтверждение">
           <WarningFilled style={{ color: '#ffb220' }} />
@@ -68,9 +74,9 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
       </Button>
       <Modal
         title="Требуется подтверждение"
-        visible={confirmationModalOpened}
+        visible={modalOpened}
         onOk={handleSaveWithOwervrite}
-        onCancel={() => setConfirmationModalOpened(false)}
+        onCancel={() => setModalOpened(false)}
         okText="Перезаписать"
         cancelText="Отмена"
       >
@@ -79,7 +85,7 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
           Перезаписать изменения с текущими (локальными) правками?
         </p>
         <ul>
-          {confirmOverwriteIds?.map(id => (
+          {nodeIds?.map(id => (
             <li key={id.toString()}>{id}</li>
           ))}
         </ul>
