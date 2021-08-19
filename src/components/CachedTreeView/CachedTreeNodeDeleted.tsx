@@ -1,11 +1,11 @@
 import { Button, Badge, Popconfirm } from 'antd'
 import { UndoOutlined, ClearOutlined } from '@ant-design/icons'
 
-import { useStoreActions } from '../../store'
-import { TreeNodeProps } from '../TreeNode/types'
-import { execOnAntdEvent } from '../../helpers/antd'
+import { useStoreActions } from 'library/store'
+import { TreeNodeProps } from 'components/TreeNode/types'
+import { execOnAntdEvent } from 'library/helpers/antd'
 
-import '../TreeNode/TreeNode.css'
+import 'components/TreeNode/TreeNode.css'
 
 export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   dataNode,

@@ -5,10 +5,14 @@
 
 import { useState, useEffect } from 'react'
 import { Modal, Tooltip, Button } from 'antd'
-import { WarningFilled, ExclamationCircleFilled, DoubleLeftOutlined } from '@ant-design/icons'
-import { ActionButtonProps } from './types.d'
+import {
+  WarningFilled,
+  ExclamationCircleFilled,
+  DoubleLeftOutlined,
+} from '@ant-design/icons'
 
-import { useStoreState, useStoreActions } from '../../store'
+import { ActionButtonProps } from './types'
+import { useStoreState, useStoreActions } from 'library/store'
 
 export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)

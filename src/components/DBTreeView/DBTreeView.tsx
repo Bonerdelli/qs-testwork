@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 
-import { TreeDataNode } from '../../types'
-import { treeDataToNodes, getLeafNodeKeys } from '../../helpers/tree'
-import { antdTreeUseExpandedState } from '../../helpers/antd'
-import { useStoreState, useStoreActions } from '../../store'
+import { TreeDataNode } from 'library/types'
+import { treeDataToNodes, getLeafNodeKeys } from 'library/helpers/tree'
+import { antdTreeUseExpandedState } from 'library/helpers/antd'
+import { useStoreState, useStoreActions } from 'library/store'
 import { DBTreeNode } from './DBTreeNode'
 
 export const DBTreeView: React.FC = () => {

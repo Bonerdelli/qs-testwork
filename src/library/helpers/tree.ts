@@ -1,4 +1,4 @@
-import { TreeNode, TreeDataNode } from '../types'
+import { TreeNode, TreeDataNode } from 'library/types'
 
 export const TREE_ROOT_NODE_ID = 1
 

@@ -5,9 +5,9 @@
 
 import { Button } from 'antd'
 import { ReloadOutlined } from '@ant-design/icons'
-import { ActionButtonProps } from './types.d'
+import { ActionButtonProps } from './types'
 
-import { useStoreActions } from '../../store'
+import { useStoreActions } from 'library/store'
 
 export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { reloadTree } = useStoreActions(state => state.dbTree)

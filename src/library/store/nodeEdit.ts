@@ -1,6 +1,6 @@
 import { Action, action } from 'easy-peasy'
 
-import { TreeNode } from '../types'
+import { TreeNode } from 'library/types'
 
 export interface NodeEditStoreModel {
   activeId?: TreeNode['id'] | undefined

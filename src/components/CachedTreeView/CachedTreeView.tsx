@@ -5,10 +5,10 @@ import { DataNode } from 'antd/es/tree'
 import { CachedTreeNode } from './CachedTreeNode'
 import { CachedTreeNodeDeleted } from './CachedTreeNodeDeleted'
 import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
-import { cashedTreeItemsToNodes } from '../../helpers/tree'
-import { antdTreeUseExpandedState } from '../../helpers/antd'
-import { useStoreState } from '../../store'
-import { TreeDataNode } from '../../types'
+import { cashedTreeItemsToNodes } from 'library/helpers/tree'
+import { antdTreeUseExpandedState } from 'library/helpers/antd'
+import { useStoreState } from 'library/store'
+import { TreeDataNode } from 'library/types'
 
 export const CachedTreeView: React.FC = () => {
   const { nodes } = useStoreState(state => state.cashedTreeNodes)

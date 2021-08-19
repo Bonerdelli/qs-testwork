@@ -1,9 +1,14 @@
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
-import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getBranch } from '../api/tree'
-import { ApiError, ApiErrorResponse } from '../helpers/api'
+import { ApiError, ApiErrorResponse } from 'library/helpers/api'
+import {
+  TreeBulkUpdateResponse,
+  saveTreeNodes,
+  getTree,
+  getBranch,
+} from 'library/api/tree'
 
-import { TreeNode } from '../types'
+import { TreeNode } from 'library/types'
 
 type TreeNodeMap = Record<TreeNode['id'], TreeNode>
 type ApiErrorTypes = 'loadData' | 'saveChanges'

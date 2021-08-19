@@ -11,6 +11,5 @@
 [ ] npx browserslist@latest --update-db
 [ ] hide button labels based on screen width
 [x] move out actions outside component
-
-Сообщение:
-В принципе всё описано в readme
+[ ] change title and favicon
+[ ] put test work description in repo

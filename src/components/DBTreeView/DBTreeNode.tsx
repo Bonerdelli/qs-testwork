@@ -1,12 +1,12 @@
 import { Button } from 'antd'
 import { DoubleRightOutlined } from '@ant-design/icons'
 
-import { TREE_ROOT_NODE_ID } from '../../helpers/tree'
-import { useStoreState, useStoreActions } from '../../store'
-import { TreeDataNode } from '../../types'
-import { execOnAntdEvent } from '../../helpers/antd'
+import { TREE_ROOT_NODE_ID } from 'library/helpers/tree'
+import { useStoreState, useStoreActions } from 'library/store'
+import { TreeDataNode } from 'library/types'
+import { execOnAntdEvent } from 'library/helpers/antd'
 
-import '../TreeNode/TreeNode.css'
+import 'components/TreeNode/TreeNode.css'
 
 export interface DBTreeNodeProps {
   dataNode: TreeDataNode

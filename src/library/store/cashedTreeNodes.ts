@@ -1,8 +1,8 @@
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
-import { TreeNode } from '../types'
-import { ApiErrorResponse } from '../helpers/api'
-import { getNodes } from '../api/tree'
+import { TreeNode } from 'library/types'
+import { ApiErrorResponse } from 'library/helpers/api'
+import { getNodes } from 'library/api/tree'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]

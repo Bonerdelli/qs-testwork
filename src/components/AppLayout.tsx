@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 
-import { TreeEditor } from './TreeEditor'
+import { TreeEditor } from 'components/TreeEditor'
 
 const { Content } = Layout
 

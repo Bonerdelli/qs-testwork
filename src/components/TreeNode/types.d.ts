@@ -1,4 +1,4 @@
-import { TreeDataNode } from '../../types'
+import { TreeDataNode } from 'library/types'
 
 export interface TreeNodeProps {
   dataNode: TreeDataNode

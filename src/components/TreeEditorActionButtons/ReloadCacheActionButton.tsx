@@ -5,9 +5,9 @@
 
 import { Popconfirm, Tooltip, Button } from 'antd'
 import { ExclamationCircleFilled, SyncOutlined } from '@ant-design/icons'
-import { ActionButtonProps } from './types.d'
+import { ActionButtonProps } from './types'
 
-import { useStoreState, useStoreActions } from '../../store'
+import { useStoreState, useStoreActions } from 'library/store'
 
 export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { nodes: cashedNodes, apiError } = useStoreState(state => state.cashedTreeNodes)

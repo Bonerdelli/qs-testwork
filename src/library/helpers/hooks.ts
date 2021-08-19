@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 
-import { ApiError, getJson } from './api'
+import { ApiError, getJson } from 'library/helpers/api'
 
 export type UseApiDataHookValue<T> = [
   T | undefined,

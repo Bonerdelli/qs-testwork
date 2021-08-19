@@ -5,8 +5,16 @@
  * @package qs-test-work
  */
 
-import { TreeNode } from '../types'
-import { ApiErrorResponse, ApiError, getJson, post, put, del, isSuccessful } from '../helpers/api'
+import { TreeNode } from 'library/types'
+import {
+  ApiErrorResponse,
+  ApiError,
+  getJson,
+  post,
+  put,
+  del,
+  isSuccessful,
+} from 'library/helpers/api'
 
 /**
  * Get a root tree node with subtree

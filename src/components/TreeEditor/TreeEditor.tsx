@@ -9,16 +9,16 @@ import { useEffect } from 'react'
 import { Row, Col, Card, Skeleton, Result, Empty } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
-import { useStoreState, useStoreActions } from '../../store'
-import { DBTreeView } from '../DBTreeView'
-import { CachedTreeView } from '../CachedTreeView'
+import { useStoreState, useStoreActions } from 'library/store'
+import { DBTreeView } from 'components/DBTreeView'
+import { CachedTreeView } from 'components/CachedTreeView'
 
 import {
   ClearCacheActionButton,
   ReloadCacheActionButton,
   ReloadTreeActionButton,
   SaveChangesActionButton,
-} from '../TreeEditorActionButtons'
+} from 'components/TreeEditorActionButtons'
 
 import './TreeEditor.css'
 
