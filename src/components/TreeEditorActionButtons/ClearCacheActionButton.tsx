@@ -5,9 +5,8 @@
 
 import { Popconfirm, Button } from 'antd'
 import { ClearOutlined } from '@ant-design/icons'
-import { ActionButtonProps } from './types'
-
 import { useStoreState, useStoreActions } from 'library/store'
+import { ActionButtonProps } from './types'
 
 export const ClearCacheActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)

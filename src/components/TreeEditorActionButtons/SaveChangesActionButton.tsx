@@ -11,8 +11,8 @@ import {
   DoubleLeftOutlined,
 } from '@ant-design/icons'
 
-import { ActionButtonProps } from './types'
 import { useStoreState, useStoreActions } from 'library/store'
+import { ActionButtonProps } from './types'
 
 export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
