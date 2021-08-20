@@ -28,7 +28,6 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
 
   useEffect(() => {
     if (confirmOverwriteIds?.length) {
-      console.log('setNodeIds', confirmOverwriteIds)
       setNodeIds([...confirmOverwriteIds])
       setModalOpened(true)
     }
@@ -93,7 +92,6 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
             <li key={id.toString()}>{id}</li>
           ))}
         </ul>
-        <SaveChangesActionButton title="test" />
       </Modal>
     </>
   )
