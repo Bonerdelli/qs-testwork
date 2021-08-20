@@ -1,23 +1,26 @@
 {
-  "name": "qc-testwork-client",
+  "name": "qs-test-work",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.9",
+    "easy-peasy": "^5.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3"
+    "react-scripts": "4.0.3",
+    "redux-persist": "^6.0.0",
+    "superagent": "^6.1.0"
   },
   "scripts": {
-    "start:client": "react-scripts start",
+    "start:client": "react-app-rewired start",
     "start:server": "node server/index.js",
     "start": "run-p start:client start:server",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "lint": "eslint ./src -f table --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src -f table --fix --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --check ./src",
@@ -50,6 +53,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/superagent": "^4.1.12",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "better-sqlite3": "^7.4.3",
@@ -63,6 +67,8 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
+    "react-app-rewire-alias": "^1.0.3",
+    "react-app-rewired": "^2.1.8",
     "typescript": "^4.3.5"
   }
 }

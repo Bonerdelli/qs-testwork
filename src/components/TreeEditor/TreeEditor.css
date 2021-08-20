@@ -1,0 +1,22 @@
+.tree-card {
+  height: 100%;
+}
+
+.tree-card .ant-card-body {
+  min-height: 240px;
+  height: 100%;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+/**
+ * Fix of header overlap
+ */
+.tree-editor-layout .ant-card-head {
+  position: relative;
+  z-index: 50;
+}
+
+.tree-editor-empty {
+  padding-top: 10vh;
+}

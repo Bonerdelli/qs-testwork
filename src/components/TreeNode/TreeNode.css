@@ -1,0 +1,91 @@
+.tree-node {
+  white-space: nowrap;
+}
+
+.tree-node > div {
+  height: 1.5em;
+  line-height: 1.5em;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.tree-node-value {
+  max-width: 20em;
+  /* overflow: hidden; */
+  text-overflow: ellipsis;
+}
+
+.tree-node-value.disabled {
+  opacity: 0.5;
+}
+
+.tree-node-actions {
+  margin-left: .2em;
+  position: relative;
+  top: -0.05em;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition-property: opacity;
+  /* TODO: import duration from antd source after switch to LESS */
+  transition-duration: 250ms;
+}
+
+.tree-node-actions .ant-btn {
+  font-size: 1.5em
+}
+
+/**
+ * Override antd styles
+ */
+
+.cashed-tree.ant-tree .ant-badge.tree-node-status-badge {
+  position: absolute;
+  left: -8px;
+}
+
+.cashed-tree.ant-tree .ant-tree-node-content-wrapper {
+  margin-left: 4px !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.tree-node-actions .ant-btn:not([disabled]):hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: transparent;
+}
+
+.tree-node-edit-input {
+  display: inline-block;
+  margin-top: 1px;
+  margin-left: 1px;
+  margin-right: -0.2em;
+}
+
+.tree-node-edit-input .ant-input {
+  position: relative;
+  min-width: 4em;
+  max-width: 15em;
+  height: 1.68em;
+  left: -0.35em;
+  top: -0.05em;
+  padding: 0px 3px;
+}
+
+.ant-tree-node-content-wrapper:hover .tree-node-actions,
+.ant-tree-treenode-selected .ant-tree-node-content-wrapper .tree-node-actions,
+.tree-node.active .tree-node-actions {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tree-node.active {
+  margin-bottom: -1px;
+}
+
+.ant-card-body {
+  background-color: #fff;
+}

@@ -1,13 +1,17 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const cors = require('cors')
 
+const { initDb } = require('./database')
 const {
-  TREE_ROOT_NODE_ID,
-  db,
-  initDb,
-  getLeaf,
-  getSubtree,
-} = require('./database')
+  getTree,
+  getTreeBranch,
+  getTreeNodes,
+  bulkUpdateTreeNodes,
+  addTreeNode,
+  updateTreeNode,
+  deleteTreeNode,
+} = require('./tree-api')
 
 const PORT = process.env.PORT || 3001
 
@@ -16,23 +20,27 @@ const corsOptions = {
 };
 
 const app = express()
+const treeRouter = express.Router()
+
+app.use(bodyParser.json())
 app.use(cors(corsOptions))
 
-const sendJson = (res, data) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(data));
-}
+treeRouter.param(['id'], (req, res, next, value) => {
+  next()
+})
 
-app.get('/tree', function(req, res) {
-  const subtree = getSubtree(1, 2) // TODO: put it to constants
-  sendJson(res, subtree)
-});
+treeRouter.get('/', getTree)
+treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
+treeRouter.post('/nodes', getTreeNodes)
+treeRouter.get('/:id', getTreeBranch)
 
-app.get('/tree/:nodeId', function(req, res) {
-  const { nodeId } = req.params
-  const leaf = getLeaf(nodeId)
-  sendJson(res, leaf)
-});
+// NOTE: only bulk editing implemented
+// treeRouter.route('/:id')
+//   .post(addTreeNode)
+//   .patch(updateTreeNode)
+//   .delete(deleteTreeNode)
+
+app.use('/tree', treeRouter)
 
 app.listen(PORT, async () => {
   try {

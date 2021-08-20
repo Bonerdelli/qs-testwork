@@ -1,0 +1,15 @@
+[ ] Проверить верстку на разных соотн. сторон
+[ ] Посмотреть как на мобильниках выглядит
+[ ] Разобрать тудушки в коде
+[ ] Дописать ридми
+
+[x] Получать обновленные узлы после сохранения
+[x] Убрать кнопку с уже загруженных узлов
+[-] Store expanded keys to auto-load branches
+[ ] Запретить добавление более 1-го ур-ня или пофиксить
+
+[ ] npx browserslist@latest --update-db
+[ ] hide button labels based on screen width
+[x] move out actions outside component
+[ ] change title and favicon
+[ ] put test work description in repo
