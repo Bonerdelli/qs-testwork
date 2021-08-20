@@ -51,19 +51,8 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.lastNodeId = node.id
     }
     delete node.hasChilds
-    if (!state.nodes.length) {
-      state.nodes = [node]
-      state.nodeIds = [node.id]
-    } else {
-      state.nodes = [
-        ...state.nodes,
-        node,
-      ]
-      state.nodeIds = [
-        ...state.nodeIds,
-        node.id,
-      ]
-    }
+    state.nodes.push(node)
+    state.nodeIds.push(node.id)
   }),
 
   reloadNode: action((state, payload) => {

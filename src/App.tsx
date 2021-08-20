@@ -16,7 +16,6 @@ function App(): JSX.Element {
   const renderLoading = () => (
     <Spin />
   )
-  console.log('App : Initialize')
   return (
     <PersistGate loading={renderLoading()} persistor={persistor}>
       <StoreProvider store={store}>

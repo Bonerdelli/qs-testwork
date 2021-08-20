@@ -54,6 +54,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
       <Button
         type="text"
         shape="circle"
+        disabled={treeNode?.isNew}
         icon={<PlusCircleOutlined style={{ color: '#52c41a' }} />}
         onClick={execOnAntdEvent(addNode)}
         title="Добавить"

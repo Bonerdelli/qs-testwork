@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Input } from 'antd'
 import {
   CheckOutlined,
@@ -15,20 +15,34 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
-  const { setNodeValue, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { setNodeValue } = useStoreActions(state => state.cashedTreeNodes)
   const { setActiveId } = useStoreActions(state => state.nodeEdit)
+
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
+  const [initialValue, setInitialValue] = useState<string>()
+
+  useEffect(() => {
+    setInitialValue(treeNode?.value)
+  }, [])
+
+  useEffect(() => {
+    if (treeNode?.isNew) {
+      // Immediatly set edited value for a new nodes
+      setNodeValue([treeNode, editedValue])
+    }
+  }, [editedValue])
 
   const confirmEdit = () => {
     if (treeNode && editedValue) {
+      setInitialValue(editedValue)
       setNodeValue([treeNode, editedValue])
       setTimeout(() => setActiveId(undefined))
     }
   }
 
   const cancelEdit = () => {
-    if (treeNode?.isNew) {
-      unloadNode(treeNode)
+    if (treeNode && initialValue) {
+      setNodeValue([treeNode, initialValue])
     }
     setActiveId(undefined)
   }

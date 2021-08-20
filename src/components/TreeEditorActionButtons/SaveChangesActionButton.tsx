@@ -23,10 +23,6 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
   const [nodeIds, setNodeIds] = useState<number[]>([])
 
   useEffect(() => {
-    console.log('SaveChangesActionButton : Initialize')
-  }, [])
-
-  useEffect(() => {
     if (confirmOverwriteIds?.length) {
       setNodeIds([...confirmOverwriteIds])
       setModalOpened(true)

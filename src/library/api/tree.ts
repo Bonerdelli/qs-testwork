@@ -61,9 +61,10 @@ export async function saveTreeNodes(
   confirmForOverwriteIds?: TreeNode['id'][],
   errorHandler?: (error?: ApiError) => void,
 ): Promise<TreeBulkUpdateResponse | ApiErrorResponse> {
-  const updatedNodes = treeNodes.filter(n => n.isUpdated && !n.isDeleted && !n.isNew)
-  const deletedNodes = treeNodes.filter(n => n.isDeleted)
-  const addedNodes = treeNodes.filter(n => n.isNew)
+  const nodesToUpdate = treeNodes.filter(n => n.value && (n.isUpdated || n.isDeleted))
+  const updatedNodes = nodesToUpdate.filter(n => n.isUpdated && !n.isDeleted && !n.isNew)
+  const deletedNodes = nodesToUpdate.filter(n => n.isDeleted)
+  const addedNodes = nodesToUpdate.filter(n => n.isNew)
   const payload = {
     confirmForOverwriteIds,
     updatedNodes,

@@ -16,3 +16,7 @@
   position: relative;
   z-index: 50;
 }
+
+.tree-editor-empty {
+  padding-top: 10vh;
+}

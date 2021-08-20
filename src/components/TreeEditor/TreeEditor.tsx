@@ -50,8 +50,7 @@ export const TreeEditor: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('TreeEditor : Initialize')
-    setCashedNodesLoading(false)
+    setTimeout(() => setCashedNodesLoading(false))
   }, [cashedNodes])
 
   useEffect(() => {
@@ -100,6 +99,7 @@ export const TreeEditor: React.FC = () => {
     if (!cashedNodes?.length) {
       return (
         <Empty
+          className="tree-editor-empty"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={(<>Загрузите элементы,<br /> чтобы начать редактирование</>)}
         />
