@@ -1,4 +1,6 @@
 /**
+ * Action button component to save local changes into database
+ *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
  */

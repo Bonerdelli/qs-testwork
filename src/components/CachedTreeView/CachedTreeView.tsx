@@ -1,3 +1,10 @@
+/**
+ * Component for displaying cashed tree
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'

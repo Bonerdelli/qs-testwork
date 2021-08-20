@@ -1,6 +1,3 @@
-// TODO:
-// TODO:
-
 import { StoreProvider } from 'easy-peasy'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Spin } from 'antd'

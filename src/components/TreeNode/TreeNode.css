@@ -1,5 +1,4 @@
 .tree-node {
-  /* font-size: .85rem; */
   white-space: nowrap;
 }
 
@@ -29,7 +28,7 @@
   opacity: 0;
 
   transition-property: opacity;
-  /* TODO: import duration from antd source when switch to LESS */
+  /* TODO: import duration from antd source after switch to LESS */
   transition-duration: 250ms;
 }
 
@@ -38,7 +37,7 @@
 }
 
 /**
- * Override antd styles for cashed tree
+ * Override antd styles
  */
 
 .cashed-tree.ant-tree .ant-badge.tree-node-status-badge {
@@ -49,11 +48,6 @@
 .cashed-tree.ant-tree .ant-tree-node-content-wrapper {
   margin-left: 4px !important;
 }
-
-/**
- * Override antd styles
- * TODO: move into atnd-override.css
- */
 
 .ant-tree .ant-tree-node-content-wrapper:hover {
   background-color: rgba(0, 0, 0, 0.03) !important;
@@ -69,7 +63,6 @@
   margin-top: 1px;
   margin-left: 1px;
   margin-right: -0.2em;
-  /* width: auto; */
 }
 
 .tree-node-edit-input .ant-input {

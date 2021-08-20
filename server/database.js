@@ -1,5 +1,5 @@
 /**
- * Handling of sample database
+ * Handling of sample tree database
  *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work

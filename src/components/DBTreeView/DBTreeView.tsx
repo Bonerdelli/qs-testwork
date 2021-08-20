@@ -1,3 +1,10 @@
+/**
+ * Component for displaying database tree
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 

@@ -1,3 +1,10 @@
+/**
+ * Component for displaying database tree item
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Button } from 'antd'
 import { DoubleRightOutlined } from '@ant-design/icons'
 
@@ -42,18 +49,3 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
     </div>
   )
 }
-
-// <Tooltip
-//   placement="bottom"
-//   title="Загрузить для редактирования"
-//   mouseEnterDelay={500}
-// >
-//   <Button
-//     type="link"
-//     shape="circle"
-//     icon={<DoubleRightOutlined />}
-//     onClick={handleLoadClick}
-//     title=""
-//     size="small"
-//   />
-// </Tooltip>

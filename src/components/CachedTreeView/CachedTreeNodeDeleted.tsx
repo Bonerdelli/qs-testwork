@@ -1,3 +1,10 @@
+/**
+ * Component for displaying deleted node of cashed tree
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Button, Badge, Popconfirm } from 'antd'
 import { UndoOutlined, ClearOutlined } from '@ant-design/icons'
 

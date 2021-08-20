@@ -1,3 +1,10 @@
+/**
+ * Component for displaying cashed tree node
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Button, Badge, Popconfirm } from 'antd'
 import {
   EditOutlined,

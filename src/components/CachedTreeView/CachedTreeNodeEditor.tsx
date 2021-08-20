@@ -1,3 +1,10 @@
+/**
+ * Component for displaying cashed tree node in editing mode
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { useState, useEffect } from 'react'
 import { Button, Input } from 'antd'
 import {

@@ -1,12 +1,9 @@
 /**
- * Handlers of Tree CRUD API endpoints
+ * Handler functions for Tree CRUD API endpoints
  *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
  */
-
-
-// TODO: rename to tree
 
 const { TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH } = require('../config')
 
@@ -102,8 +99,6 @@ const bulkUpdateTreeNodes = async (req, res) => {
       .map(node => node.id)
       .filter(id => !confirmForOverwriteIds.includes(id))
   }
-
-  console.log('overwriteConfirmRequired', overwriteConfirmRequired)
 
   if (overwriteConfirmRequired.length > 0) {
     return sendJson(res, {

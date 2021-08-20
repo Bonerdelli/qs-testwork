@@ -1,4 +1,6 @@
 /**
+ * Clear cache action button component
+ *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
  */
