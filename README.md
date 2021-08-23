@@ -13,7 +13,7 @@ See task description in the TASK.md (in russian)
   * Separated API layer
     
 * Sample backend application based on Express. Written in plain JS
-  * Uses SQLite database filled with sample data
+  * Uses SQLite database with sample data
   * Transactional bulk-update of edited nodes
 
 ### Notes of constraints
