@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'
 
-import { useStoreState } from 'library/store'
+import { useStoreState, useStoreActions } from 'library/store'
 import { TreeDataNode } from 'library/types'
 import { cashedTreeItemsToNodes } from 'library/helpers/tree'
 import { antdTreeUseExpandedState } from 'library/helpers/antd'
@@ -19,7 +19,8 @@ import { CachedTreeNode } from './CachedTreeNode'
 
 export const CachedTreeView: React.FC = () => {
   const { nodes } = useStoreState(state => state.cashedTreeNodes)
-  const { activeId } = useStoreState(state => state.nodeEdit)
+  const { activeId, editingId } = useStoreState(state => state.nodeEdit)
+  const { setActiveId } = useStoreActions(state => state.nodeEdit)
 
   const [treeData, setTreeData] = useState<DataNode[]>()
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
@@ -28,7 +29,7 @@ export const CachedTreeView: React.FC = () => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
       const keys = nodes.map(node => node.id)
-      if (treeNodes.length > 1 && !activeId) {
+      if (treeNodes.length > 1 && !editingId) {
         // Workaround that prevents animation flickering
         setTimeout(() => setTreeData(treeNodes))
       } else {
@@ -45,7 +46,7 @@ export const CachedTreeView: React.FC = () => {
     if (node.treeNode?.deletedAt) {
       return <CachedTreeNodeDeleted dataNode={node} />
     }
-    if (node.treeNode?.id === activeId) {
+    if (node.treeNode?.id === editingId) {
       return <CachedTreeNodeEditor dataNode={node} />
     }
     return <CachedTreeNode dataNode={node} />
@@ -58,6 +59,7 @@ export const CachedTreeView: React.FC = () => {
       defaultExpandAll
       expandedKeys={expandedKeys}
       selectedKeys={[activeId ?? 0]}
+      onSelect={keys => setActiveId(+keys[0])}
       defaultExpandedKeys={expandedKeys}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={(node: TreeDataNode) => renderNode(node)}

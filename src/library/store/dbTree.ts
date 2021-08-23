@@ -71,7 +71,6 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     if (!state.tree) {
       return
     }
-    // TODO: ref this
     const treeNodes = treeReducer(state.tree, {})
     if (treeNodes?.[id]) {
       treeNodes[id].childs = nodes

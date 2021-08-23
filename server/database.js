@@ -1,5 +1,5 @@
 /**
- * Handling of sample tree database
+ * Handling of sample database
  *
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
@@ -30,7 +30,7 @@ function initDb() {
     'value TEXT, ' +
     'parent INTEGER, ' +
     // NOTE: NUMERIC is recommend SQLite type affinity for Date types
-    'updated_at NUMERIC DEFAULT CURRENT_TIMESTAMP, ' +
+    'updated_at NUMERIC DEFAULT NULL, ' + // NOTE: do not set updated time by default
     'deleted_at NUMERIC DEFAULT NULL' +
   ')')
   // Insert sample data

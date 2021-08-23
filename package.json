@@ -12,6 +12,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
+    "redux": "^4.1.1",
     "redux-persist": "^6.0.0",
     "superagent": "^6.1.0"
   },
@@ -20,7 +21,6 @@
     "start:server": "node server/index.js",
     "start": "run-p start:client start:server",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
     "lint": "eslint ./src -f table --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src -f table --fix --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --check ./src",

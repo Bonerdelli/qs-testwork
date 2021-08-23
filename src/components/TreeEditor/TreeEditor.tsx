@@ -113,7 +113,7 @@ export const TreeEditor: React.FC = () => {
   return (
     <>
       <Row justify="center" className="tree-editor-layout">
-        <Col span={10}>
+        <Col span={12} xl={10}>
           <Card
             size="small"
             className="tree-card"
@@ -125,7 +125,7 @@ export const TreeEditor: React.FC = () => {
             {renderDbTree()}
           </Card>
         </Col>
-        <Col span={10}>
+        <Col span={12} xl={10}>
           <Card
             size="small"
             className="tree-card"

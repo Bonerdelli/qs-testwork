@@ -1,0 +1,13 @@
+.content {
+  min-height: 100%;
+  padding: 10vh 8rem;
+  min-width: 320px;
+}
+
+@media screen and (max-width: 1200px) { /* NOTE: antd xl breakpoint */
+  .content {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+  }
+}

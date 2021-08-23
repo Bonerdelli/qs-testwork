@@ -80,6 +80,9 @@ const deleteTreeNode = (req, res) => {
   sendJson(res, { success: true })
 }
 
+/**
+ * Handler for bulk update of tree nodes in a single transaction
+ */
 const bulkUpdateTreeNodes = async (req, res) => {
   const {
     confirmForOverwriteIds = [],

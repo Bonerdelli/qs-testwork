@@ -28,7 +28,6 @@ const nodeMapper = (item: TreeNode): TreeDataNode => {
 
 /**
  * Map tree data to antd tree nodes
- * TODO: rename to antd nodes?
  */
 export function treeDataToNodes(tree: TreeNode): TreeDataNode {
   return nodeMapper(tree)

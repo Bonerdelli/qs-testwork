@@ -20,3 +20,9 @@
 .tree-editor-empty {
   padding-top: 10vh;
 }
+
+@media screen and (max-width: 1200px) { /* NOTE: antd xl breakpoint */
+  .tree-card .ant-card-body {
+    max-height: calc(100vh - 90px);
+  }
+}

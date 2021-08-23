@@ -23,7 +23,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
 }) => {
   const { treeNode } = dataNode
   const { setNodeValue } = useStoreActions(state => state.cashedTreeNodes)
-  const { setActiveId } = useStoreActions(state => state.nodeEdit)
+  const { setEditingId } = useStoreActions(state => state.nodeEdit)
 
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
   const [initialValue, setInitialValue] = useState<string>()
@@ -43,15 +43,15 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
     if (treeNode && editedValue) {
       setInitialValue(editedValue)
       setNodeValue([treeNode, editedValue])
-      setTimeout(() => setActiveId(undefined))
+      setTimeout(() => setEditingId(undefined))
     }
   }
 
   const cancelEdit = () => {
-    if (treeNode && initialValue) {
+    if (treeNode && initialValue && editedValue !== initialValue) {
       setNodeValue([treeNode, initialValue])
     }
-    setActiveId(undefined)
+    setEditingId(undefined)
   }
 
   const renderActionButtons = () => (
