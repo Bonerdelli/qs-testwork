@@ -1,8 +1,9 @@
 # Tree Editor
 
-Test work implementation for QS. See task description in TASK.md (in russian)
+Test work implementation for QS \
+See task description in the TASK.md (in russian)
 
-## Features
+### Features
 
 * React-based frontend application
   * Written in TypeScript
@@ -15,7 +16,7 @@ Test work implementation for QS. See task description in TASK.md (in russian)
   * Uses SQLite database filled with sample data
   * Transactional bulk-update of edited nodes
 
-## Implementation constraints
+### Notes of constraints
 
 * No localization support
 * Zero tests coverage
@@ -27,6 +28,8 @@ Test work implementation for QS. See task description in TASK.md (in russian)
 Simple adjacency list are used for tree. I suppose to replace it with Nested Sets,
 see a `tryouts/ns-tree` branch for a very draft implementation
 
-## Start the project
+### Start the project
 
-Just run `yarn && yarn start` from a project root
+Just run `yarn && yarn start` from a project root \
+This command will install dependencies and then starts both cliend and server applications
+To start its separately, use `yarn run start:client` and `yarn run start:server` in separated terminals
