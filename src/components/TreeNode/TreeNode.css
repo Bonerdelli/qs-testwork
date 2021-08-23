@@ -89,3 +89,13 @@
 .ant-card-body {
   background-color: #fff;
 }
+
+/**
+ * A draft responsive layout
+ */
+
+@media screen and (max-width: 740px) {
+  .ant-card-actions .ant-btn .title {
+    display: none;
+  }
+}

@@ -24,10 +24,11 @@ export const ClearCacheActionButton: React.FC<ActionButtonProps> = ({ title }) =
       <Button
         size="small"
         type="text"
+        title={title}
         disabled={cashedNodes?.length === 0}
       >
         <ClearOutlined />
-        {title}
+        <span className="title">{title}</span>
       </Button>
     </Popconfirm>
   )

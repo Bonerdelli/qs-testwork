@@ -66,12 +66,13 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
         size="small"
         type="text"
         key="save"
+        title={title}
         danger={!!apiErrors.saveChanges}
         disabled={cashedNodes?.length === 0 || !isChanged}
         onClick={handleSave}
       >
         {renderIcon()}
-        {title}
+        <span className="title">{title}</span>
       </Button>
       <Modal
         title="Требуется подтверждение"

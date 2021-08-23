@@ -17,10 +17,11 @@ export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) =
       size="small"
       type="text"
       key="reload"
+      title={title}
       onClick={() => reloadTree()}
     >
       <ReloadOutlined />
-      {title}
+      <span className="title">{title}</span>
     </Button>
   )
 }

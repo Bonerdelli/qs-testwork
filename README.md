@@ -20,7 +20,6 @@ See task description in the TASK.md (in russian)
 
 * No localization support
 * Zero tests coverage
-* No mobile layout support
 * Only one level of newly added nodes are allowed
 * Based on `react-create-app`, but in a serious project we should prefer customly configured builder
 * LESS or any other style preprocessor aren't used, because styles is not complex
