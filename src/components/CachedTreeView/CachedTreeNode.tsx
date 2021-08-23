@@ -23,13 +23,14 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   dataNode,
 }) => {
   const { treeNode } = dataNode
+  const { activeId } = useStoreState(state => state.nodeEdit)
   const { lastNodeId } = useStoreState(state => state.cashedTreeNodes)
   const { addChildNode, unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
-  const { setActiveId } = useStoreActions(state => state.nodeEdit)
+  const { setEditingId, setActiveId } = useStoreActions(state => state.nodeEdit)
 
   const addNode = () => {
     treeNode && addChildNode(treeNode)
-    setTimeout(() => setActiveId(lastNodeId + 1))
+    setTimeout(() => setEditingId(lastNodeId + 1))
   }
 
   const renderStateBage = () => {
@@ -52,9 +53,10 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
         type="text"
         shape="circle"
         icon={<EditOutlined style={{ color: '#faad14' }} />}
-        onClick={execOnAntdEvent(
-          () => setActiveId(treeNode?.id),
-        )}
+        onClick={execOnAntdEvent(() => {
+          setEditingId(treeNode?.id)
+          setActiveId(treeNode?.id)
+        })}
         title="Редактировать"
         size="small"
       />
@@ -104,7 +106,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   )
 
   return (
-    <div className="tree-node">
+    <div className={`tree-node ${activeId === treeNode?.id ? 'active' : ''}`}>
       {renderStateBage()}
       <div className="tree-node-value">{dataNode.title}</div>
       {treeNode && renderActionButtons()}
