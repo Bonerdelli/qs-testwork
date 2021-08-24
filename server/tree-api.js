@@ -118,8 +118,9 @@ const bulkUpdateTreeNodes = async (req, res) => {
       return updatedResult ? updatedResult.updated_at : null
     })
 
-    console.log('nodesUpdatedTheir', updatedNodes.map(node => node.updated_at))
-    console.log('nodesUpdatedOur', nodesUpdatedAt)
+    // Uncomment for debug
+    // console.log('nodesUpdatedTheir', updatedNodes.map(node => node.updated_at))
+    // console.log('nodesUpdatedOur', nodesUpdatedAt)
 
     overwriteConfirmRequired = updatedNodes
       .filter((node, index) => node.updated_at !== nodesUpdatedAt[index])

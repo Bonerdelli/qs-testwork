@@ -29,12 +29,7 @@ export const CachedTreeView: React.FC = () => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
       const keys = nodes.map(node => node.id)
-      if (treeNodes.length > 1 && !editingId) {
-        // Workaround that prevents animation flickering
-        setTimeout(() => setTreeData(treeNodes))
-      } else {
-        setTreeData(treeNodes)
-      }
+      setTreeData(treeNodes)
       setExpandedKeys(keys)
     } else {
       setTreeData([])
