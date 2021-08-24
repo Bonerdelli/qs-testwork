@@ -17,6 +17,8 @@ const {
   deleteItem: dbDeleteItem,
   getNodesUpdatedDateTime,
   executeBulkEditing,
+  cleanDb,
+  initDb,
 } = require('./database')
 
 const sendJson = (res, data, status) => {
@@ -80,6 +82,20 @@ const deleteTreeNode = (req, res) => {
   sendJson(res, { success: true })
 }
 
+const resetTreeData = (req, res) => {
+  // TODO: destructive operation, add some confirmation maybe?
+  try {
+    const transaction = db.transaction(() => {
+      cleanDb()
+      initDb()
+    })
+    transaction()
+  } catch(e) {
+    return handleApiError(res, e)
+  }
+  sendJson(res, { success: true })
+}
+
 /**
  * Handler for bulk update of tree nodes in a single transaction
  */
@@ -134,4 +150,5 @@ module.exports = {
   deleteTreeNode,
 
   bulkUpdateTreeNodes,
+  resetTreeData,
 }

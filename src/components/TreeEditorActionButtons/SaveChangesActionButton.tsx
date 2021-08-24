@@ -14,11 +14,12 @@ import {
 } from '@ant-design/icons'
 
 import { useStoreState, useStoreActions } from 'library/store'
+import { TreeNode } from 'library/types'
 import { ActionButtonProps } from './types'
 
 export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, nodeIds: cashedNodesIds, isChanged } = useStoreState(state => state.cashedTreeNodes)
   const { saveChanges } = useStoreActions(state => state.dbTree)
 
   const [modalOpened, setModalOpened] = useState<boolean>(false)
@@ -35,7 +36,7 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
     saveChanges([cashedNodes])
   }
 
-  const handleSaveWithOwervrite = () => {
+  const handleSaveWithOwervrite = async () => {
     saveChanges([cashedNodes, nodeIds])
     setModalOpened(false)
   }
@@ -58,6 +59,11 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
     return (
       <DoubleLeftOutlined />
     )
+  }
+
+  const getNodeValue = (id: TreeNode['id']) => {
+    const index = cashedNodesIds.indexOf(id)
+    return cashedNodes[index]?.value
   }
 
   return (
@@ -88,7 +94,10 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
         </p>
         <ul>
           {nodeIds?.map(id => (
-            <li key={id.toString()}>{id}</li>
+            <li key={id.toString()}>
+              <strong>{getNodeValue(id)}</strong>
+              <span> (ID: {id})</span>
+            </li>
           ))}
         </ul>
       </Modal>

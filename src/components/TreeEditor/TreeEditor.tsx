@@ -18,6 +18,7 @@ import {
   ReloadCacheActionButton,
   ReloadTreeActionButton,
   SaveChangesActionButton,
+  ResetTreeDataActionButton,
 } from 'components/TreeEditorActionButtons'
 
 import './TreeEditor.css'
@@ -37,7 +38,7 @@ export const TreeEditor: React.FC = () => {
   } = useStoreState(state => state.cashedTreeNodes)
 
   const {
-    clearAddedAndDeleted,
+    clearNodeStatuses,
     refreshNodesById,
     setLoading: setCashedNodesLoading,
   } = useStoreActions(state => state.cashedTreeNodes)
@@ -61,7 +62,7 @@ export const TreeEditor: React.FC = () => {
       const nodeIds = cashedNodes
         .filter(node => !node.isDeleted)
         .map(node => node.id)
-      clearAddedAndDeleted()
+      clearNodeStatuses()
       refreshNodesById([
         ...addedNodeIds ?? [],
         ...nodeIds,
@@ -120,6 +121,7 @@ export const TreeEditor: React.FC = () => {
             title="База данных"
             actions={[
               <ReloadTreeActionButton key="reload" title="Обновить" />,
+              <ResetTreeDataActionButton key="reset" title="Сбросить" />,
             ]}
           >
             {renderDbTree()}

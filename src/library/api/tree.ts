@@ -82,6 +82,14 @@ export async function saveTreeNodes(
 }
 
 /**
+ * Reset tree database to initial state
+ */
+export async function resetTreeData(): Promise<TreeNode | ApiErrorResponse> {
+  const result = await getJson<TreeNode>('/tree/reset-data')
+  return result
+}
+
+/**
  * C(R)UD endpoint handlers
  * NOTE: not used currently, I implemented this before using bulk update function
  */

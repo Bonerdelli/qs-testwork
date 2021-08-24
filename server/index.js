@@ -11,6 +11,7 @@ const {
   addTreeNode,
   updateTreeNode,
   deleteTreeNode,
+  resetTreeData,
 } = require('./tree-api')
 
 const PORT = process.env.PORT || 3001
@@ -31,6 +32,7 @@ treeRouter.param(['id'], (req, res, next, value) => {
 
 treeRouter.get('/', getTree)
 treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
+treeRouter.post('/reset-data', resetTreeData)
 treeRouter.post('/nodes', getTreeNodes)
 treeRouter.get('/:id', getTreeBranch)
 

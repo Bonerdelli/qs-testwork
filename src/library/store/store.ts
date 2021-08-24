@@ -6,7 +6,7 @@ import { CashedTreeNodesStoreModel, cashedTreeNodesStoreModel } from './cashedTr
 import { DbTreeStoreModel, dbTreeStoreModel } from './dbTree'
 import { NodeEditStoreModel, nodeEditModel } from './nodeEdit'
 
-export const STORAGE_KEY_PREFIX = 'qs-testwork'
+export const STORAGE_KEY_PREFIX = 'qs-testwork-1.1.0'
 
 export interface AppStoreModel {
   dbTree: DbTreeStoreModel

@@ -1,3 +1,10 @@
+/**
+ * Tree database application state
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { ApiError, ApiErrorResponse } from 'library/helpers/api'
@@ -6,12 +13,13 @@ import {
   saveTreeNodes,
   getTree,
   getBranch,
+  resetTreeData,
 } from 'library/api/tree'
 
 import { TreeNode } from 'library/types'
 
 type TreeNodeMap = Record<TreeNode['id'], TreeNode>
-type ApiErrorTypes = 'loadData' | 'saveChanges'
+type ApiErrorTypes = 'loadData' | 'saveChanges' | 'resetTree'
 
 export interface DbTreeStoreModel {
   tree?: TreeNode
@@ -26,6 +34,7 @@ export interface DbTreeStoreModel {
   // Data retrieving
   setTree: Action<DbTreeStoreModel, TreeNode>
   reloadTree: Thunk<DbTreeStoreModel>
+  resetTreeData: Thunk<DbTreeStoreModel>
   setLoading: Action<DbTreeStoreModel, boolean>
   setBranchNodes: Action<DbTreeStoreModel, [TreeNode['id'], TreeNode[]]>
   loadBranch: Thunk<DbTreeStoreModel, TreeNode>
@@ -58,6 +67,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
   apiErrors: {
     loadData: null,
     saveChanges: null,
+    resetTree: null,
   },
 
   setTree: action((state, tree) => {
@@ -91,17 +101,36 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     setApiError(['loadData', null])
     setLoading(true)
     const result = await getTree()
-    if ((result as ApiErrorResponse).error) {
+    if ((result as ApiErrorResponse)?.error) {
       setApiError(['loadData', (result as ApiErrorResponse).error.message])
       setLoading(false)
-      return
+      return false
     }
     if (result) {
       setTree(result as TreeNode)
       setLoading(false)
-      return
+      return true
     }
     setApiError(['loadData', 'Сервер вернул пустой результат'])
+    setLoading(false)
+    return false
+  }),
+
+  resetTreeData: thunk(async (actions) => {
+    const { setLoading, setApiError, reloadTree } = actions
+    setApiError(['resetTree', null])
+    setLoading(true)
+    const result = await resetTreeData()
+    if ((result as ApiErrorResponse)?.error) {
+      setApiError(['resetTree', (result as ApiErrorResponse).error.message])
+      setLoading(false)
+      return
+    }
+    if (result) {
+      await reloadTree()
+      return
+    }
+    setApiError(['resetTree', 'Сервер вернул пустой результат'])
     setLoading(false)
   }),
 
@@ -150,6 +179,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
       setAddedNodeIds(result.addedNodeIds)
     }
     if (result.success) {
+      setOverwriteConfirmation([])
       setSavedSuccessfully(true)
       return
     }
@@ -178,6 +208,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     state.apiErrors = {
       loadData: null,
       saveChanges: null,
+      resetTree: null,
     }
   }),
 

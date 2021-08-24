@@ -42,6 +42,13 @@ function initDb() {
 }
 
 /**
+ * Delete database tables
+ */
+function cleanDb() {
+  db.exec('DROP TABLE tree')
+}
+
+/**
  * Retrieve one item by identifier
  * @param {number} id – Node identifier
  * @return TreeNode
@@ -71,7 +78,7 @@ function getItems(ids) {
 function getBranch(id) {
   const node = getItem(id)
   const statement = db.prepare(
-    'SELECT * FROM tree WHERE parent = ? AND deleted_at IS NULL'
+    'SELECT * FROM tree WHERE parent = ?'
   )
   const childs = statement.all(id)
   if (childs.length > 0) {
@@ -112,7 +119,7 @@ function getSubtree(id, maxDepth = 1) {
  */
 function isNodeHasChilds(id) {
   const statement = db.prepare(
-    'SELECT COUNT(*) as count FROM tree WHERE parent = ? AND deleted_at IS NULL'
+    'SELECT COUNT(*) as count FROM tree WHERE parent = ?'
   )
   const result = statement.get(id)
   return result.count > 0
@@ -181,6 +188,7 @@ function restoreItem(id) {
 module.exports = {
   TREE_ROOT_NODE_ID,
   initDb,
+  cleanDb,
   db,
 
   getItem,

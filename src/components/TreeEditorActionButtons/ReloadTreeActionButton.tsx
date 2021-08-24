@@ -5,13 +5,26 @@
  * @package qs-test-work
  */
 
-import { Button } from 'antd'
-import { ReloadOutlined } from '@ant-design/icons'
-import { useStoreActions } from 'library/store'
+import { Button, Tooltip } from 'antd'
+import { ReloadOutlined, ExclamationCircleFilled } from '@ant-design/icons'
+import { useStoreState, useStoreActions } from 'library/store'
 import { ActionButtonProps } from './types'
 
 export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { reloadTree } = useStoreActions(state => state.dbTree)
+  const { apiErrors } = useStoreState(state => state.dbTree)
+  const renderIcon = () => {
+    if (apiErrors.loadData) {
+      return (
+        <Tooltip title={apiErrors.loadData}>
+          <ExclamationCircleFilled style={{ color: 'red' }} />
+        </Tooltip>
+      )
+    }
+    return (
+      <ReloadOutlined />
+    )
+  }
   return (
     <Button
       size="small"
@@ -19,8 +32,9 @@ export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) =
       key="reload"
       title={title}
       onClick={() => reloadTree()}
+      danger={!!apiErrors.loadData}
     >
-      <ReloadOutlined />
+      {renderIcon()}
       <span className="title">{title}</span>
     </Button>
   )
