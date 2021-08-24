@@ -111,7 +111,15 @@ const bulkUpdateTreeNodes = async (req, res) => {
   if (updatedNodes.length) {
     // Check if confirmation to override changes needed
     const updatedNodeIds = updatedNodes.map(node => node.id)
-    const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
+    const nodesUpdatedAtResult = getNodesUpdatedDateTime(updatedNodeIds)
+    console.log('nodesUpdatedAtResult', nodesUpdatedAtResult)
+    const nodesUpdatedAt = updatedNodeIds.map(id => {
+      const updatedResult = nodesUpdatedAtResult.find(node => node.id === id)
+      return updatedResult ? updatedResult.updated_at : null
+    })
+
+    console.log('nodesUpdatedTheir', updatedNodes.map(node => node.updated_at))
+    console.log('nodesUpdatedOur', nodesUpdatedAt)
 
     overwriteConfirmRequired = updatedNodes
       .filter((node, index) => node.updated_at !== nodesUpdatedAt[index])

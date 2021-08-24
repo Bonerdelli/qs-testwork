@@ -26,7 +26,6 @@ import './TreeEditor.css'
 export const TreeEditor: React.FC = () => {
   const {
     tree,
-    isLoading,
     apiErrors,
     savedSuccessfully,
     addedNodeIds,
@@ -43,7 +42,7 @@ export const TreeEditor: React.FC = () => {
     setLoading: setCashedNodesLoading,
   } = useStoreActions(state => state.cashedTreeNodes)
 
-  const { clear: clearTree, reloadTree } = useStoreActions(state => state.dbTree)
+  const { reloadTree } = useStoreActions(state => state.dbTree)
 
   useEffect(() => {
     setCashedNodesLoading(true)
@@ -56,7 +55,6 @@ export const TreeEditor: React.FC = () => {
 
   useEffect(() => {
     if (savedSuccessfully) {
-      clearTree()
       reloadTree()
       setCashedNodesLoading(true)
       const nodeIds = cashedNodes
@@ -81,7 +79,7 @@ export const TreeEditor: React.FC = () => {
         />
       )
     }
-    if (!tree && isLoading) {
+    if (!tree) {
       return (
         <Skeleton active />
       )

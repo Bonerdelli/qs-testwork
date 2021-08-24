@@ -47,6 +47,15 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
     return <></>
   }
 
+  const renderTitle = () => {
+    if (!dataNode.title) {
+      return (
+        <i>(без названия)</i>
+      )
+    }
+    return dataNode.title
+  }
+
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
@@ -108,7 +117,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   return (
     <div className={`tree-node ${activeId === treeNode?.id ? 'active' : ''}`}>
       {renderStateBage()}
-      <div className="tree-node-value">{dataNode.title}</div>
+      <div className="tree-node-value">{renderTitle()}</div>
       {treeNode && renderActionButtons()}
     </div>
   )

@@ -20,6 +20,7 @@ import { ActionButtonProps } from './types'
 export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
   const { nodes: cashedNodes, nodeIds: cashedNodesIds, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const { setEditingId } = useStoreActions(state => state.nodeEdit)
   const { saveChanges } = useStoreActions(state => state.dbTree)
 
   const [modalOpened, setModalOpened] = useState<boolean>(false)
@@ -29,15 +30,19 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
     if (confirmOverwriteIds?.length) {
       setNodeIds([...confirmOverwriteIds])
       setModalOpened(true)
+    } else {
+      setNodeIds([])
     }
   }, [confirmOverwriteIds])
 
   const handleSave = () => {
     saveChanges([cashedNodes])
+    setEditingId(undefined)
   }
 
   const handleSaveWithOwervrite = async () => {
     saveChanges([cashedNodes, nodeIds])
+    setEditingId(undefined)
     setModalOpened(false)
   }
 

@@ -32,7 +32,7 @@ treeRouter.param(['id'], (req, res, next, value) => {
 
 treeRouter.get('/', getTree)
 treeRouter.post('/bulk-update', bulkUpdateTreeNodes)
-treeRouter.post('/reset-data', resetTreeData)
+treeRouter.get('/reset-data', resetTreeData)
 treeRouter.post('/nodes', getTreeNodes)
 treeRouter.get('/:id', getTreeBranch)
 

@@ -7,7 +7,11 @@
 
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
-import { ApiError, ApiErrorResponse } from 'library/helpers/api'
+import {
+  ApiError,
+  ApiErrorResponse,
+  ApiSuccessResponse,
+} from 'library/helpers/api'
 import {
   TreeBulkUpdateResponse,
   saveTreeNodes,
@@ -124,14 +128,15 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     if ((result as ApiErrorResponse)?.error) {
       setApiError(['resetTree', (result as ApiErrorResponse).error.message])
       setLoading(false)
-      return
+      return false
     }
-    if (result) {
+    if ((result as ApiSuccessResponse)?.success) {
       await reloadTree()
-      return
+      return true
     }
     setApiError(['resetTree', 'Сервер вернул пустой результат'])
     setLoading(false)
+    return false
   }),
 
   loadBranch: thunk(async (actions, payload) => {

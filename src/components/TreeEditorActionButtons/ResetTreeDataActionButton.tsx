@@ -13,6 +13,7 @@ import { ActionButtonProps } from './types'
 export const ResetTreeDataActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { resetTreeData } = useStoreActions(state => state.dbTree)
   const { clear: clearCashe } = useStoreActions(state => state.cashedTreeNodes)
+  const { setActiveId, setEditingId } = useStoreActions(state => state.nodeEdit)
   const { apiErrors } = useStoreState(state => state.dbTree)
   const renderIcon = () => {
     if (apiErrors.resetTree) {
@@ -28,7 +29,11 @@ export const ResetTreeDataActionButton: React.FC<ActionButtonProps> = ({ title }
   }
   const handleAction = async () => {
     const result = await resetTreeData()
-    result && clearCashe()
+    if (result) {
+      setEditingId(undefined)
+      setActiveId(undefined)
+      clearCashe()
+    }
   }
   return (
     <Popconfirm

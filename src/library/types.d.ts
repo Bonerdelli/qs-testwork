@@ -6,8 +6,9 @@ export interface TreeNode {
   parent: number
   childs?: TreeNode[]
   hasChilds?: boolean
-  updatedAt?: Date
-  deletedAt?: Date
+  // NOTE: there is no mapping to camelCase for simplify the test work
+  updated_at?: Date | null
+  deleted_at?: Date | null
   // Flags for local nodes editor
   // TODO: separate with UI model?
   isUpdated?: boolean

@@ -8,6 +8,7 @@
 import { TreeNode } from 'library/types'
 import {
   ApiErrorResponse,
+  ApiSuccessResponse,
   ApiError,
   getJson,
   post,
@@ -84,8 +85,8 @@ export async function saveTreeNodes(
 /**
  * Reset tree database to initial state
  */
-export async function resetTreeData(): Promise<TreeNode | ApiErrorResponse> {
-  const result = await getJson<TreeNode>('/tree/reset-data')
+export async function resetTreeData(): Promise<ApiSuccessResponse | ApiErrorResponse> {
+  const result = await getJson<ApiSuccessResponse>('/tree/reset-data')
   return result
 }
 

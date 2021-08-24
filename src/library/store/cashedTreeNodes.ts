@@ -73,7 +73,10 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     delete node.hasChilds
     if (index === -1) {
       state.nodes.push(node)
-      state.nodeIds.push(id)
+      state.nodeIds.push(node.id)
+    } else {
+      state.nodes[index] = node
+      state.nodeIds[index] = node.id
     }
   }),
 
@@ -90,8 +93,11 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   }),
 
   clearNodeStatuses: action((state) => {
-    state.nodes.forEach(node => delete node.isUpdated)
-    const cleared = state.nodes.filter(node => !node.isNew && !node.isDeleted)
+    const cleared = state.nodes.filter(node => !node.isNew)
+    cleared.forEach((node) => {
+      delete node.isDeleted
+      delete node.isUpdated
+    })
     state.nodeIds = cleared.map(node => node.id)
     state.nodes = cleared
     // NOTE: for the future...
@@ -134,7 +140,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        deletedAt: new Date(),
+        deleted_at: new Date(),
         isDeleted: true,
       }
     }
@@ -147,7 +153,9 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        deletedAt: undefined,
+        deleted_at: null,
+        isUpdated: true,
+        isDeleted: false,
       }
     }
   }),
@@ -176,7 +184,6 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        updatedAt: new Date(),
         isUpdated: true,
         value,
       }

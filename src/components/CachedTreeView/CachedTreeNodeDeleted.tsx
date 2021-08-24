@@ -51,7 +51,7 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   )
   return (
     <div className="tree-node">
-      <Badge status="error" className="tree-node-status-badge" />
+      {treeNode?.isDeleted && <Badge status="error" className="tree-node-status-badge" />}
       <div className="tree-node-value disabled">{dataNode.title}</div>
       {renderActionButtons()}
     </div>

@@ -43,7 +43,7 @@ export const CachedTreeView: React.FC = () => {
   }, [nodes])
 
   const renderNode = (node: TreeDataNode) => {
-    if (node.treeNode?.deletedAt) {
+    if (node.treeNode?.deleted_at) {
       return <CachedTreeNodeDeleted dataNode={node} />
     }
     if (node.treeNode?.id === editingId) {

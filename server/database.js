@@ -10,7 +10,7 @@ const treeData = require('../data/tree.json')
 const { TREE_ROOT_NODE_ID } = require('../config')
 
 const ADD_ITEM_SQL_TEMPLATE = 'INSERT INTO tree (parent, value) VALUES (@parent, @value)'
-const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value, updated_at = DATETIME(\'now\') WHERE id = @id'
+const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value, deleted_at = @deleted_at, updated_at = DATETIME(\'now\') WHERE id = @id'
 const DELETE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id'
 
 const db = new Database(':memory:')
@@ -30,7 +30,7 @@ function initDb() {
     'value TEXT, ' +
     'parent INTEGER, ' +
     // NOTE: NUMERIC is recommend SQLite type affinity for Date types
-    'updated_at NUMERIC DEFAULT NULL, ' + // NOTE: do not set updated time by default
+    'updated_at NUMERIC DEFAULT (DATETIME(\'now\')), ' + // NOTE: do not set updated time by default
     'deleted_at NUMERIC DEFAULT NULL' +
   ')')
   // Insert sample data
@@ -77,6 +77,9 @@ function getItems(ids) {
  */
 function getBranch(id) {
   const node = getItem(id)
+  if (node.deleted_at) {
+    return node
+  }
   const statement = db.prepare(
     'SELECT * FROM tree WHERE parent = ?'
   )
@@ -96,6 +99,9 @@ function getBranch(id) {
  */
 function getSubtree(id, maxDepth = 1) {
   const subtree = getBranch(id)
+  if (subtree.deleted_at) {
+    return subtree
+  }
   if (!subtree.childs) {
     return subtree
   }
@@ -104,7 +110,7 @@ function getSubtree(id, maxDepth = 1) {
     subtree.childs = subtree.childs.map(item => getSubtree(item.id, maxDepth - 1))
   } else {
     // Check if each of child node has childs
-    subtree.childs.forEach(item => item.hasChilds = isNodeHasChilds(item.id))
+    subtree.childs.forEach(item => item.hasChilds = !item.deleted_at && isNodeHasChilds(item.id))
   }
   return subtree
 }
@@ -132,9 +138,9 @@ function isNodeHasChilds(id) {
  */
 function getNodesUpdatedDateTime(ids) {
   const idsValue = ids.map(id => +id).join(',')
-  const sql = `SELECT updated_at FROM tree WHERE id IN (${idsValue})`
+  const sql = `SELECT id, updated_at FROM tree WHERE id IN (${idsValue})`
   const statement = db.prepare(sql)
-  return statement.pluck(true).all()
+  return statement.all()
 }
 
 /**

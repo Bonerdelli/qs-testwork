@@ -33,8 +33,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
   }, [])
 
   useEffect(() => {
-    if (treeNode?.isNew) {
-      // Immediatly set edited value for a new nodes
+    if (treeNode) {
       setNodeValue([treeNode, editedValue])
     }
   }, [editedValue])
