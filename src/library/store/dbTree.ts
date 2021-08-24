@@ -28,6 +28,7 @@ type ApiErrorTypes = 'loadData' | 'saveChanges' | 'resetTree'
 export interface DbTreeStoreModel {
   tree?: TreeNode
   treeNodes: TreeNodeMap // For quick node getting
+  expandedKeys: TreeNode['id'][]
 
   isLoading: boolean
   savedSuccessfully?: boolean
@@ -41,6 +42,7 @@ export interface DbTreeStoreModel {
   resetTreeData: Thunk<DbTreeStoreModel>
   setLoading: Action<DbTreeStoreModel, boolean>
   setBranchNodes: Action<DbTreeStoreModel, [TreeNode['id'], TreeNode[]]>
+  setExpandedKeys: Action<DbTreeStoreModel, TreeNode['id'][]>
   loadBranch: Thunk<DbTreeStoreModel, TreeNode>
   clear: Action<DbTreeStoreModel>
 
@@ -67,6 +69,7 @@ const treeReducer = (item: TreeNode, acc: TreeNodeMap): TreeNodeMap => {
 export const dbTreeStoreModel: DbTreeStoreModel = {
   isLoading: false,
   treeNodes: {},
+  expandedKeys: [],
 
   apiErrors: {
     loadData: null,
@@ -101,9 +104,15 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
   }),
 
   reloadTree: thunk(async (actions) => {
-    const { setLoading, setApiError, setTree } = actions
+    const {
+      setLoading,
+      setApiError,
+      clear,
+      setTree,
+    } = actions
     setApiError(['loadData', null])
     setLoading(true)
+    clear()
     const result = await getTree()
     if ((result as ApiErrorResponse)?.error) {
       setApiError(['loadData', (result as ApiErrorResponse).error.message])
@@ -200,6 +209,10 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     state.addedNodeIds = payload
   }),
 
+  setExpandedKeys: action((state, payload) => {
+    state.expandedKeys = payload
+  }),
+
   setOverwriteConfirmation: action((state, payload) => {
     state.confirmOverwriteIds = payload
   }),
@@ -219,6 +232,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
 
   clear: action((state) => {
     state.tree = undefined
+    state.expandedKeys = []
   }),
 
 }

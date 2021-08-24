@@ -148,20 +148,26 @@ function getNodesUpdatedDateTime(ids) {
  * @return number[] Identifiers of newly inserted nodes
  */
 function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
-  const addedNodeIds = []
+  const addedNodeIds = {}
+  addedNodes.sort((a, b) => a.id - b.id)
   const addStatement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
   const updateStatement = db.prepare(UPDATE_ITEM_SQL_TEMPLATE)
   const deleteStatement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
   const bulkUpdate = db.transaction(() => {
     for (const node of addedNodes) {
+      const theirId = node.id
+      delete node.id
+      if (addedNodeIds[node.parent] !== undefined) {
+        node.parent = addedNodeIds[node.parent]
+      }
       const info = addStatement.run(node)
-      addedNodeIds.push(info.lastInsertRowid)
+      addedNodeIds[theirId] = info.lastInsertRowid
     }
     for (const node of updatedNodes) updateStatement.run(node)
     for (const node of deletedNodes) deleteStatement.run(node)
   })
   bulkUpdate()
-  return addedNodeIds
+  return Object.values(addedNodeIds)
 }
 
 /**
