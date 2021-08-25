@@ -17,6 +17,8 @@ import { useStoreActions, useStoreState } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
 import { execOnAntdEvent } from 'library/helpers/antd'
 
+import { TreeDataNode } from 'library/types'
+
 import 'components/TreeNode/TreeNode.css'
 
 export const CachedTreeNode: React.FC<TreeNodeProps> = ({
@@ -28,9 +30,28 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   const { addChildNode, unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
   const { setEditingId, setActiveId } = useStoreActions(state => state.nodeEdit)
 
-  const addNode = () => {
+  const handleNodeAdd = () => {
     treeNode && addChildNode(treeNode)
-    setTimeout(() => setEditingId(lastNodeId + 1))
+    setEditingId(lastNodeId + 1)
+  }
+
+  const removedSubtreeMapper = (item: TreeDataNode) => {
+    if (item.treeNode) {
+      item.treeNode.is_parent_deleted = true
+    }
+    if (item.children) {
+      item.children.map(removedSubtreeMapper)
+    }
+  }
+
+  const handleNodeRemove = () => {
+    if (treeNode) {
+      removeNode(treeNode)
+      if (dataNode.children) {
+        dataNode.children.map(removedSubtreeMapper)
+      }
+    }
+    setEditingId(lastNodeId + 1)
   }
 
   const renderStateBage = () => {
@@ -45,6 +66,15 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
       )
     }
     return <></>
+  }
+
+  const renderTitle = () => {
+    if (!dataNode.title) {
+      return (
+        <i>(без названия)</i>
+      )
+    }
+    return dataNode.title
   }
 
   const renderActionButtons = () => (
@@ -63,9 +93,8 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
       <Button
         type="text"
         shape="circle"
-        disabled={treeNode?.isNew}
         icon={<PlusCircleOutlined style={{ color: '#52c41a' }} />}
-        onClick={execOnAntdEvent(addNode)}
+        onClick={execOnAntdEvent(handleNodeAdd)}
         title="Добавить"
         size="small"
       />
@@ -74,9 +103,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
         type="text"
         shape="circle"
         icon={<DeleteOutlined />}
-        onClick={execOnAntdEvent(
-          () => treeNode && removeNode(treeNode),
-        )}
+        onClick={execOnAntdEvent(handleNodeRemove)}
         title="Удалить"
         size="small"
       />
@@ -108,7 +135,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   return (
     <div className={`tree-node ${activeId === treeNode?.id ? 'active' : ''}`}>
       {renderStateBage()}
-      <div className="tree-node-value">{dataNode.title}</div>
+      <div className="tree-node-value">{renderTitle()}</div>
       {treeNode && renderActionButtons()}
     </div>
   )

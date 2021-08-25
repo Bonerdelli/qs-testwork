@@ -10,7 +10,7 @@ const treeData = require('../data/tree.json')
 const { TREE_ROOT_NODE_ID } = require('../config')
 
 const ADD_ITEM_SQL_TEMPLATE = 'INSERT INTO tree (parent, value) VALUES (@parent, @value)'
-const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value, updated_at = DATETIME(\'now\') WHERE id = @id'
+const UPDATE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET value = @value, deleted_at = @deleted_at, updated_at = DATETIME(\'now\') WHERE id = @id'
 const DELETE_ITEM_SQL_TEMPLATE = 'UPDATE tree SET deleted_at = DATETIME(\'now\') WHERE id = @id'
 
 const db = new Database(':memory:')
@@ -30,7 +30,7 @@ function initDb() {
     'value TEXT, ' +
     'parent INTEGER, ' +
     // NOTE: NUMERIC is recommend SQLite type affinity for Date types
-    'updated_at NUMERIC DEFAULT NULL, ' + // NOTE: do not set updated time by default
+    'updated_at NUMERIC DEFAULT (DATETIME(\'now\')), ' + // NOTE: do not set updated time by default
     'deleted_at NUMERIC DEFAULT NULL' +
   ')')
   // Insert sample data
@@ -39,6 +39,13 @@ function initDb() {
     'VALUES (@id, @value, @parent)'
   )
   insertMany(insert)(treeData)
+}
+
+/**
+ * Delete database tables
+ */
+function cleanDb() {
+  db.exec('DROP TABLE tree')
 }
 
 /**
@@ -52,15 +59,48 @@ function getItem(id) {
 }
 
 /**
+ * Retrieve parent of given item by identifier
+ * @param {number} id – Node identifier
+ * @return TreeNode
+ */
+function getParentItem(id) {
+  const statement = db.prepare('SELECT * FROM tree WHERE parent = ?')
+  return statement.get(id)
+}
+
+/**
  * Retrieve a couple of items by identifiers
  * @param {number} id – Node identifier
  * @return TreeNode
  */
-function getItems(ids) {
+function getItems(ids, checkIsBranchDeleted) {
   const idsValue = ids.map(id => +id).join(',')
   const sql = `SELECT * FROM tree WHERE id IN (${idsValue})`
   const statement = db.prepare(sql)
-  return statement.all()
+  const items = statement.all()
+  if (checkIsBranchDeleted) {
+    // NOTE: there is no simple mapping to prevent unnecessary checkings
+    // e.g. when checking nodes in one branch
+    let deletedParentIds = []
+    const parentIds = items
+      .map(item => item.parent)
+      .filter((item, id, array) => array.indexOf(item) === id)
+
+    parentIds.forEach((parentId) => {
+      if (isBranchDeleted(parentId)) {
+        deletedParentIds.push(parentId)
+      }
+    })
+    console.log('deletedParentIds', deletedParentIds)
+    if (deletedParentIds.length) {
+      deletedParentIds.forEach((deletedParentId) => {
+        items
+          .filter(item => item.parent === deletedParentId)
+          .forEach(item => (item.is_parent_deleted = true))
+      })
+    }
+  }
+  return items
 }
 
 /**
@@ -70,8 +110,11 @@ function getItems(ids) {
  */
 function getBranch(id) {
   const node = getItem(id)
+  if (node.deleted_at) {
+    return node
+  }
   const statement = db.prepare(
-    'SELECT * FROM tree WHERE parent = ? AND deleted_at IS NULL'
+    'SELECT * FROM tree WHERE parent = ?'
   )
   const childs = statement.all(id)
   if (childs.length > 0) {
@@ -89,6 +132,9 @@ function getBranch(id) {
  */
 function getSubtree(id, maxDepth = 1) {
   const subtree = getBranch(id)
+  if (subtree.deleted_at) {
+    return subtree
+  }
   if (!subtree.childs) {
     return subtree
   }
@@ -97,7 +143,7 @@ function getSubtree(id, maxDepth = 1) {
     subtree.childs = subtree.childs.map(item => getSubtree(item.id, maxDepth - 1))
   } else {
     // Check if each of child node has childs
-    subtree.childs.forEach(item => item.hasChilds = isNodeHasChilds(item.id))
+    subtree.childs.forEach(item => item.hasChilds = !item.deleted_at && isNodeHasChilds(item.id))
   }
   return subtree
 }
@@ -112,10 +158,51 @@ function getSubtree(id, maxDepth = 1) {
  */
 function isNodeHasChilds(id) {
   const statement = db.prepare(
-    'SELECT COUNT(*) as count FROM tree WHERE parent = ? AND deleted_at IS NULL'
+    'SELECT COUNT(*) as count FROM tree WHERE parent = ?'
   )
   const result = statement.get(id)
   return result.count > 0
+}
+
+/**
+ * Check is parent of given node has deleted
+ * NOTE: I suppose to use Nested Sets to prevent unnecessary queries
+ *
+ * @param {number} id – Child node identifier
+ * @return boolean
+ */
+function isParentDeleted(id) {
+  const statement = db.prepare(
+    'SELECT deleted_at FROM tree WHERE parent = ?'
+  )
+  const result = statement.get(id)
+  return result.deleted_at !== null
+}
+
+/**
+ * Check is branch contains given node has deleted,
+ * i.e. any parent has deleted state
+ *
+ * NOTE: I suppose to use Nested Sets to prevent unnecessary queries
+ *
+ * @param {number} id – Node identifier
+ * @return boolean
+ */
+function isBranchDeleted(id) {
+  let branchDeleted = false
+  const checkIsDeleted = (id) => {
+    const node = getItem(id)
+    if (!node) {
+      return false
+    }
+    if (node.deleted_at !== null) {
+      return true
+    }
+    if (node.parent !== TREE_ROOT_NODE_ID) {
+      return checkIsDeleted(node.parent)
+    }
+  }
+  return checkIsDeleted(id)
 }
 
 /**
@@ -125,9 +212,9 @@ function isNodeHasChilds(id) {
  */
 function getNodesUpdatedDateTime(ids) {
   const idsValue = ids.map(id => +id).join(',')
-  const sql = `SELECT updated_at FROM tree WHERE id IN (${idsValue})`
+  const sql = `SELECT id, updated_at FROM tree WHERE id IN (${idsValue})`
   const statement = db.prepare(sql)
-  return statement.pluck(true).all()
+  return statement.all()
 }
 
 /**
@@ -135,20 +222,26 @@ function getNodesUpdatedDateTime(ids) {
  * @return number[] Identifiers of newly inserted nodes
  */
 function executeBulkEditing(updatedNodes, deletedNodes, addedNodes) {
-  const addedNodeIds = []
+  const addedNodeIds = {}
+  addedNodes.sort((a, b) => a.id - b.id)
   const addStatement = db.prepare(ADD_ITEM_SQL_TEMPLATE)
   const updateStatement = db.prepare(UPDATE_ITEM_SQL_TEMPLATE)
   const deleteStatement = db.prepare(DELETE_ITEM_SQL_TEMPLATE)
   const bulkUpdate = db.transaction(() => {
     for (const node of addedNodes) {
+      const theirId = node.id
+      delete node.id
+      if (addedNodeIds[node.parent] !== undefined) {
+        node.parent = addedNodeIds[node.parent]
+      }
       const info = addStatement.run(node)
-      addedNodeIds.push(info.lastInsertRowid)
+      addedNodeIds[theirId] = info.lastInsertRowid
     }
     for (const node of updatedNodes) updateStatement.run(node)
     for (const node of deletedNodes) deleteStatement.run(node)
   })
   bulkUpdate()
-  return addedNodeIds
+  return Object.values(addedNodeIds)
 }
 
 /**
@@ -181,6 +274,7 @@ function restoreItem(id) {
 module.exports = {
   TREE_ROOT_NODE_ID,
   initDb,
+  cleanDb,
   db,
 
   getItem,

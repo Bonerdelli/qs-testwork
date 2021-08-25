@@ -13,6 +13,7 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { TreeDataNode } from 'library/types'
 import { cashedTreeItemsToNodes } from 'library/helpers/tree'
 import { antdTreeUseExpandedState } from 'library/helpers/antd'
+import { CachedTreeNodeDisabled } from './CachedTreeNodeDisabled'
 import { CachedTreeNodeDeleted } from './CachedTreeNodeDeleted'
 import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
 import { CachedTreeNode } from './CachedTreeNode'
@@ -29,21 +30,20 @@ export const CachedTreeView: React.FC = () => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
       const keys = nodes.map(node => node.id)
-      if (treeNodes.length > 1 && !editingId) {
-        // Workaround that prevents animation flickering
-        setTimeout(() => setTreeData(treeNodes))
-      } else {
-        setTreeData(treeNodes)
-      }
+      setTreeData(treeNodes)
       setExpandedKeys(keys)
     } else {
       setTreeData([])
-      setExpandedKeys([])
+      // setExpandedKeys([])
     }
   }, [nodes])
 
   const renderNode = (node: TreeDataNode) => {
-    if (node.treeNode?.deletedAt) {
+    if (node.treeNode?.is_parent_deleted) {
+      // Disable any action for nodes, that has removed parent
+      return <CachedTreeNodeDisabled dataNode={node} />
+    }
+    if (node.treeNode?.deleted_at) {
       return <CachedTreeNodeDeleted dataNode={node} />
     }
     if (node.treeNode?.id === editingId) {

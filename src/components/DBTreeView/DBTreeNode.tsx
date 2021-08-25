@@ -42,9 +42,11 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
     </div>
   )
 
+  const itemClass = treeNode?.deleted_at ? 'disabled' : ''
+
   return (
     <div className="tree-node">
-      <span className="tree-node-value">{dataNode.title}</span>
+      <span className={`tree-node-value ${itemClass}`}>{dataNode.title}</span>
       {key !== TREE_ROOT_NODE_ID && renderActionButtons()}
     </div>
   )

@@ -32,13 +32,6 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
     setInitialValue(treeNode?.value)
   }, [])
 
-  useEffect(() => {
-    if (treeNode?.isNew) {
-      // Immediatly set edited value for a new nodes
-      setNodeValue([treeNode, editedValue])
-    }
-  }, [editedValue])
-
   const confirmEdit = () => {
     if (treeNode && editedValue) {
       setInitialValue(editedValue)
@@ -86,6 +79,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
           size="small"
           defaultValue={treeNode?.value}
           onChange={e => setEditedValue(e.target.value)}
+          onBlur={() => treeNode && setNodeValue([treeNode, editedValue])}
           onPressEnter={execOnAntdEvent(confirmEdit)}
           style={{
             width: `${editedValue.length * 0.85 + 2}em`,

@@ -14,11 +14,13 @@ import {
 } from '@ant-design/icons'
 
 import { useStoreState, useStoreActions } from 'library/store'
+import { TreeNode } from 'library/types'
 import { ActionButtonProps } from './types'
 
 export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { apiErrors, confirmOverwriteIds } = useStoreState(state => state.dbTree)
-  const { nodes: cashedNodes, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, nodeIds: cashedNodesIds, isChanged } = useStoreState(state => state.cashedTreeNodes)
+  const { setEditingId } = useStoreActions(state => state.nodeEdit)
   const { saveChanges } = useStoreActions(state => state.dbTree)
 
   const [modalOpened, setModalOpened] = useState<boolean>(false)
@@ -28,15 +30,19 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
     if (confirmOverwriteIds?.length) {
       setNodeIds([...confirmOverwriteIds])
       setModalOpened(true)
+    } else {
+      setNodeIds([])
     }
   }, [confirmOverwriteIds])
 
   const handleSave = () => {
     saveChanges([cashedNodes])
+    setEditingId(undefined)
   }
 
-  const handleSaveWithOwervrite = () => {
+  const handleSaveWithOwervrite = async () => {
     saveChanges([cashedNodes, nodeIds])
+    setEditingId(undefined)
     setModalOpened(false)
   }
 
@@ -58,6 +64,11 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
     return (
       <DoubleLeftOutlined />
     )
+  }
+
+  const getNodeValue = (id: TreeNode['id']) => {
+    const index = cashedNodesIds.indexOf(id)
+    return cashedNodes[index]?.value
   }
 
   return (
@@ -88,7 +99,10 @@ export const SaveChangesActionButton: React.FC<ActionButtonProps> = ({ title }) 
         </p>
         <ul>
           {nodeIds?.map(id => (
-            <li key={id.toString()}>{id}</li>
+            <li key={id.toString()}>
+              <strong>{getNodeValue(id)}</strong>
+              <span> (ID: {id})</span>
+            </li>
           ))}
         </ul>
       </Modal>

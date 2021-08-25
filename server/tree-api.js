@@ -17,6 +17,8 @@ const {
   deleteItem: dbDeleteItem,
   getNodesUpdatedDateTime,
   executeBulkEditing,
+  cleanDb,
+  initDb,
 } = require('./database')
 
 const sendJson = (res, data, status) => {
@@ -39,7 +41,7 @@ const getTree = (req, res) => {
 
 const getTreeNodes = (req, res) => {
   const { ids } = req.body
-  const nodes = dbGetItems(ids)
+  const nodes = dbGetItems(ids, true)
   sendJson(res, nodes)
 }
 
@@ -80,6 +82,20 @@ const deleteTreeNode = (req, res) => {
   sendJson(res, { success: true })
 }
 
+const resetTreeData = (req, res) => {
+  // TODO: destructive operation, add some confirmation maybe?
+  try {
+    const transaction = db.transaction(() => {
+      cleanDb()
+      initDb()
+    })
+    transaction()
+  } catch(e) {
+    return handleApiError(res, e)
+  }
+  sendJson(res, { success: true })
+}
+
 /**
  * Handler for bulk update of tree nodes in a single transaction
  */
@@ -95,7 +111,16 @@ const bulkUpdateTreeNodes = async (req, res) => {
   if (updatedNodes.length) {
     // Check if confirmation to override changes needed
     const updatedNodeIds = updatedNodes.map(node => node.id)
-    const nodesUpdatedAt = getNodesUpdatedDateTime(updatedNodeIds)
+    const nodesUpdatedAtResult = getNodesUpdatedDateTime(updatedNodeIds)
+    console.log('nodesUpdatedAtResult', nodesUpdatedAtResult)
+    const nodesUpdatedAt = updatedNodeIds.map(id => {
+      const updatedResult = nodesUpdatedAtResult.find(node => node.id === id)
+      return updatedResult ? updatedResult.updated_at : null
+    })
+
+    // Uncomment for debug
+    // console.log('nodesUpdatedTheir', updatedNodes.map(node => node.updated_at))
+    // console.log('nodesUpdatedOur', nodesUpdatedAt)
 
     overwriteConfirmRequired = updatedNodes
       .filter((node, index) => node.updated_at !== nodesUpdatedAt[index])
@@ -134,4 +159,5 @@ module.exports = {
   deleteTreeNode,
 
   bulkUpdateTreeNodes,
+  resetTreeData,
 }

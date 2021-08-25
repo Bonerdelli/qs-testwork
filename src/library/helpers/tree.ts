@@ -4,6 +4,7 @@ export const TREE_ROOT_NODE_ID = 1
 
 interface TreeDataNodeExt extends TreeDataNode {
   exclude?: boolean
+  parentIds?: TreeNode['id'][]
 }
 
 /**
@@ -40,10 +41,13 @@ export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
   const dataNodes = treeNodes.map(nodeMapper) as TreeDataNodeExt[]
   dataNodes.forEach(node => delete node.isLeaf) // Because we have partial hierarchy
   const hierarchyBuilder = (node: TreeDataNode) => {
-    const childs = dataNodes.filter(n => n.treeNode?.parent === node.treeNode?.id)
+    const childs = dataNodes
+      .filter(n => n.treeNode?.parent === node.treeNode?.id)
     if (childs.length > 0) {
       node.children = childs
       childs.forEach((n) => {
+        const parentId = node.treeNode?.id ?? 0
+        n.parentIds = [parentId]
         n.exclude = true
       })
     }

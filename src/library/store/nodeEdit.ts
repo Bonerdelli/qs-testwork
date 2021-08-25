@@ -1,3 +1,10 @@
+/**
+ * Node editing application state
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Action, action } from 'easy-peasy'
 
 import { TreeNode } from 'library/types'

@@ -18,6 +18,7 @@ import {
   ReloadCacheActionButton,
   ReloadTreeActionButton,
   SaveChangesActionButton,
+  ResetTreeDataActionButton,
 } from 'components/TreeEditorActionButtons'
 
 import './TreeEditor.css'
@@ -25,7 +26,6 @@ import './TreeEditor.css'
 export const TreeEditor: React.FC = () => {
   const {
     tree,
-    isLoading,
     apiErrors,
     savedSuccessfully,
     addedNodeIds,
@@ -37,12 +37,12 @@ export const TreeEditor: React.FC = () => {
   } = useStoreState(state => state.cashedTreeNodes)
 
   const {
-    clearAddedAndDeleted,
+    clearNodeStatuses,
     refreshNodesById,
     setLoading: setCashedNodesLoading,
   } = useStoreActions(state => state.cashedTreeNodes)
 
-  const { clear: clearTree, reloadTree } = useStoreActions(state => state.dbTree)
+  const { reloadTree } = useStoreActions(state => state.dbTree)
 
   useEffect(() => {
     setCashedNodesLoading(true)
@@ -55,13 +55,12 @@ export const TreeEditor: React.FC = () => {
 
   useEffect(() => {
     if (savedSuccessfully) {
-      clearTree()
       reloadTree()
       setCashedNodesLoading(true)
       const nodeIds = cashedNodes
         .filter(node => !node.isDeleted)
         .map(node => node.id)
-      clearAddedAndDeleted()
+      clearNodeStatuses()
       refreshNodesById([
         ...addedNodeIds ?? [],
         ...nodeIds,
@@ -80,7 +79,7 @@ export const TreeEditor: React.FC = () => {
         />
       )
     }
-    if (!tree && isLoading) {
+    if (!tree) {
       return (
         <Skeleton active />
       )
@@ -120,6 +119,7 @@ export const TreeEditor: React.FC = () => {
             title="База данных"
             actions={[
               <ReloadTreeActionButton key="reload" title="Обновить" />,
+              <ResetTreeDataActionButton key="reset" title="Сбросить" />,
             ]}
           >
             {renderDbTree()}

@@ -12,7 +12,7 @@ import { ActionButtonProps } from './types'
 
 export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) => {
   const { nodes: cashedNodes, apiError } = useStoreState(state => state.cashedTreeNodes)
-  const { refreshNodesById } = useStoreActions(state => state.cashedTreeNodes)
+  const { refreshNodesById, clear } = useStoreActions(state => state.cashedTreeNodes)
 
   const renderIcon = () => {
     if (apiError) {
@@ -28,6 +28,7 @@ export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) 
   }
 
   const handleCacheReload = () => {
+    clear()
     const ids = cashedNodes.map(node => node.id)
     refreshNodesById(ids)
   }

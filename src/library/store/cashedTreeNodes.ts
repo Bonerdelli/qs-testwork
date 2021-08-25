@@ -1,3 +1,10 @@
+/**
+ * Cached tree nodes application state
+ *
+ * @author Nekrasov Andrew <bonerdelli@gmail.com>
+ * @package qs-test-work
+ */
+
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
 import { TreeNode } from 'library/types'
@@ -15,7 +22,7 @@ export interface CashedTreeNodesStoreModel {
   loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   reloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
-  clearAddedAndDeleted: Action<CashedTreeNodesStoreModel>
+  clearNodeStatuses: Action<CashedTreeNodesStoreModel>
   refreshNodesById: Thunk<CashedTreeNodesStoreModel, TreeNode['id'][]>
   setLoading: Action<CashedTreeNodesStoreModel, boolean>
 
@@ -43,23 +50,25 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
 
   loadNode: action((state, payload) => {
     const { childs, ...node } = payload
-    const index = getNodeIndex(state.nodes, node.id)
+    const { id } = node
+    const index = getNodeIndex(state.nodes, id)
     if (index !== -1) {
       return
     }
-    if (node.id > state.lastNodeId) {
-      state.lastNodeId = node.id
+    if (id > state.lastNodeId) {
+      state.lastNodeId = id
     }
     delete node.hasChilds
     state.nodes.push(node)
-    state.nodeIds.push(node.id)
+    state.nodeIds.push(id)
   }),
 
   reloadNode: action((state, payload) => {
     const { childs, ...node } = payload
     const index = getNodeIndex(state.nodes, node.id)
-    if (node.id > state.lastNodeId) {
-      state.lastNodeId = node.id
+    const { id } = node
+    if (id > state.lastNodeId) {
+      state.lastNodeId = id
     }
     delete node.hasChilds
     if (index === -1) {
@@ -83,10 +92,20 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     }
   }),
 
-  clearAddedAndDeleted: action((state) => {
-    const cleared = state.nodes.filter(node => !node.isNew && !node.isDeleted)
+  clearNodeStatuses: action((state) => {
+    const cleared = state.nodes.filter(node => !node.isNew)
+    cleared.forEach((node) => {
+      delete node.isDeleted
+      delete node.isUpdated
+    })
     state.nodeIds = cleared.map(node => node.id)
     state.nodes = cleared
+    // NOTE: for the future...
+    // const nodesMap: Record<TreeNode['id'], TreeNode> = {}
+    // state.nodesMap = cleared.reduce((acc, node) => {
+    //   acc[node.id] = node
+    //   return acc
+    // }, nodesMap)
   }),
 
   refreshNodesById: thunk(async (actions, payload) => {
@@ -121,7 +140,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        deletedAt: new Date(),
+        deleted_at: new Date(),
         isDeleted: true,
       }
     }
@@ -134,7 +153,9 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        deletedAt: undefined,
+        deleted_at: null,
+        isUpdated: true,
+        isDeleted: false,
       }
     }
   }),
@@ -163,7 +184,6 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
       state.isChanged = true
       state.nodes[index] = {
         ...state.nodes[index],
-        updatedAt: new Date(),
         isUpdated: true,
         value,
       }
