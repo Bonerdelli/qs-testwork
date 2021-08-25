@@ -12,6 +12,8 @@ import { useStoreActions } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
 import { execOnAntdEvent } from 'library/helpers/antd'
 
+import { TreeDataNode } from 'library/types'
+
 import 'components/TreeNode/TreeNode.css'
 
 export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
@@ -20,15 +22,31 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   const { treeNode } = dataNode
   const { restoreNode, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
 
+  const restoredSubtreeMapper = (item: TreeDataNode) => {
+    if (item.treeNode) {
+      delete item.treeNode.is_parent_deleted
+    }
+    if (item.children) {
+      item.children.map(restoredSubtreeMapper)
+    }
+  }
+
+  const handleNodeRestore = () => {
+    if (treeNode) {
+      restoreNode(treeNode)
+      if (dataNode.children) {
+        dataNode.children.map(restoredSubtreeMapper)
+      }
+    }
+  }
+
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
         type="text"
         shape="circle"
         icon={<UndoOutlined />}
-        onClick={execOnAntdEvent(
-          () => treeNode && restoreNode(treeNode),
-        )}
+        onClick={execOnAntdEvent(handleNodeRestore)}
         title="Восстановить"
         size="small"
       />

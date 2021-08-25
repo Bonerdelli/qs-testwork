@@ -59,15 +59,48 @@ function getItem(id) {
 }
 
 /**
+ * Retrieve parent of given item by identifier
+ * @param {number} id – Node identifier
+ * @return TreeNode
+ */
+function getParentItem(id) {
+  const statement = db.prepare('SELECT * FROM tree WHERE parent = ?')
+  return statement.get(id)
+}
+
+/**
  * Retrieve a couple of items by identifiers
  * @param {number} id – Node identifier
  * @return TreeNode
  */
-function getItems(ids) {
+function getItems(ids, checkIsBranchDeleted) {
   const idsValue = ids.map(id => +id).join(',')
   const sql = `SELECT * FROM tree WHERE id IN (${idsValue})`
   const statement = db.prepare(sql)
-  return statement.all()
+  const items = statement.all()
+  if (checkIsBranchDeleted) {
+    // NOTE: there is no simple mapping to prevent unnecessary checkings
+    // e.g. when checking nodes in one branch
+    let deletedParentIds = []
+    const parentIds = items
+      .map(item => item.parent)
+      .filter((item, id, array) => array.indexOf(item) === id)
+
+    parentIds.forEach((parentId) => {
+      if (isBranchDeleted(parentId)) {
+        deletedParentIds.push(parentId)
+      }
+    })
+    console.log('deletedParentIds', deletedParentIds)
+    if (deletedParentIds.length) {
+      deletedParentIds.forEach((deletedParentId) => {
+        items
+          .filter(item => item.parent === deletedParentId)
+          .forEach(item => (item.is_parent_deleted = true))
+      })
+    }
+  }
+  return items
 }
 
 /**
@@ -129,6 +162,47 @@ function isNodeHasChilds(id) {
   )
   const result = statement.get(id)
   return result.count > 0
+}
+
+/**
+ * Check is parent of given node has deleted
+ * NOTE: I suppose to use Nested Sets to prevent unnecessary queries
+ *
+ * @param {number} id – Child node identifier
+ * @return boolean
+ */
+function isParentDeleted(id) {
+  const statement = db.prepare(
+    'SELECT deleted_at FROM tree WHERE parent = ?'
+  )
+  const result = statement.get(id)
+  return result.deleted_at !== null
+}
+
+/**
+ * Check is branch contains given node has deleted,
+ * i.e. any parent has deleted state
+ *
+ * NOTE: I suppose to use Nested Sets to prevent unnecessary queries
+ *
+ * @param {number} id – Node identifier
+ * @return boolean
+ */
+function isBranchDeleted(id) {
+  let branchDeleted = false
+  const checkIsDeleted = (id) => {
+    const node = getItem(id)
+    if (!node) {
+      return false
+    }
+    if (node.deleted_at !== null) {
+      return true
+    }
+    if (node.parent !== TREE_ROOT_NODE_ID) {
+      return checkIsDeleted(node.parent)
+    }
+  }
+  return checkIsDeleted(id)
 }
 
 /**

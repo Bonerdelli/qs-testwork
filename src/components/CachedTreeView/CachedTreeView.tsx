@@ -13,6 +13,7 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { TreeDataNode } from 'library/types'
 import { cashedTreeItemsToNodes } from 'library/helpers/tree'
 import { antdTreeUseExpandedState } from 'library/helpers/antd'
+import { CachedTreeNodeDisabled } from './CachedTreeNodeDisabled'
 import { CachedTreeNodeDeleted } from './CachedTreeNodeDeleted'
 import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
 import { CachedTreeNode } from './CachedTreeNode'
@@ -33,11 +34,15 @@ export const CachedTreeView: React.FC = () => {
       setExpandedKeys(keys)
     } else {
       setTreeData([])
-      setExpandedKeys([])
+      // setExpandedKeys([])
     }
   }, [nodes])
 
   const renderNode = (node: TreeDataNode) => {
+    if (node.treeNode?.is_parent_deleted) {
+      // Disable any action for nodes, that has removed parent
+      return <CachedTreeNodeDisabled dataNode={node} />
+    }
     if (node.treeNode?.deleted_at) {
       return <CachedTreeNodeDeleted dataNode={node} />
     }
