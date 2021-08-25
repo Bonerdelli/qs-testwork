@@ -40,6 +40,7 @@ export const TreeEditor: React.FC = () => {
     clearNodeStatuses,
     refreshNodesById,
     setLoading: setCashedNodesLoading,
+    clear: clearCashedNodes,
   } = useStoreActions(state => state.cashedTreeNodes)
 
   const { reloadTree } = useStoreActions(state => state.dbTree)
@@ -61,6 +62,7 @@ export const TreeEditor: React.FC = () => {
         .filter(node => !node.isDeleted)
         .map(node => node.id)
       clearNodeStatuses()
+      clearCashedNodes()
       refreshNodesById([
         ...addedNodeIds ?? [],
         ...nodeIds,
