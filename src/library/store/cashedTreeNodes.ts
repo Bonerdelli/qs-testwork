@@ -6,10 +6,11 @@
  */
 
 import { Action, Thunk, action, thunk } from 'easy-peasy'
+import { notification } from 'antd'
 
 import { TreeNode } from 'library/types'
 import { ApiErrorResponse } from 'library/helpers/api'
-import { getNodes } from 'library/api/tree'
+import { getNodes, getNode } from 'library/api/tree'
 
 export interface CashedTreeNodesStoreModel {
   nodes: TreeNode[]
@@ -19,7 +20,8 @@ export interface CashedTreeNodesStoreModel {
   isLoading: boolean
   apiError: string | null
 
-  loadNode: Action<CashedTreeNodesStoreModel, TreeNode>
+  loadNode: Thunk<CashedTreeNodesStoreModel, TreeNode['id']>
+  addNode: Action<CashedTreeNodesStoreModel, TreeNode>
   reloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   unloadNode: Action<CashedTreeNodesStoreModel, TreeNode>
   clearNodeStatuses: Action<CashedTreeNodesStoreModel>
@@ -48,7 +50,29 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   isChanged: false,
   apiError: null,
 
-  loadNode: action((state, payload) => {
+  loadNode: thunk(async (actions, payload) => {
+    const { addNode } = actions
+    const node = await getNode(payload)
+    if (!node) {
+      notification.warning({
+        message: 'Не удалось загрузить',
+        description: 'Сервер вернул пустой результат',
+        placement: 'bottomRight',
+      })
+      return
+    }
+    if (node.deleted_at || node.is_parent_deleted) {
+      notification.warning({
+        message: 'Не удалось загрузить',
+        description: 'Выбранный узел был удалён из базы данных',
+        placement: 'bottomRight',
+      })
+      return
+    }
+    addNode(node)
+  }),
+
+  addNode: action((state, payload) => {
     const { childs, ...node } = payload
     const { id } = node
     const index = getNodeIndex(state.nodes, id)

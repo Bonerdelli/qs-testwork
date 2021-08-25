@@ -51,11 +51,16 @@ function cleanDb() {
 /**
  * Retrieve one item by identifier
  * @param {number} id – Node identifier
+ * @param {boolean} checkIsBranchDeleted – Check is branch contains given node has deleted
  * @return TreeNode
  */
-function getItem(id) {
+function getItem(id, checkIsBranchDeleted = false) {
   const statement = db.prepare('SELECT * FROM tree WHERE id = ?')
-  return statement.get(id)
+  const item = statement.get(id)
+  if (checkIsBranchDeleted) {
+    item.is_parent_deleted = isBranchDeleted(id)
+  }
+  return item
 }
 
 /**

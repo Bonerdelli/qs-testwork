@@ -9,6 +9,7 @@ const { TREE_ROOT_NODE_ID, TREE_MAX_INITIAL_DEPTH } = require('../config')
 
 const {
   db,
+  getItem: dbGetItem,
   getItems: dbGetItems,
   getBranch: dbGetBranch,
   getSubtree: dbGetSubtree,
@@ -43,6 +44,12 @@ const getTreeNodes = (req, res) => {
   const { ids } = req.body
   const nodes = dbGetItems(ids, true)
   sendJson(res, nodes)
+}
+
+const getTreeNode = (req, res) => {
+  const { id } = req.params
+  const item = dbGetItem(id, true)
+  sendJson(res, item)
 }
 
 const getTreeBranch = (req, res) => {
@@ -151,6 +158,7 @@ const bulkUpdateTreeNodes = async (req, res) => {
 
 module.exports = {
   getTree,
+  getTreeNode,
   getTreeBranch,
   getTreeNodes,
 

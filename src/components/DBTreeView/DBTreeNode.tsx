@@ -55,7 +55,7 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
           icon={<DoubleRightOutlined />}
           disabled={!treeNode || cashedNodeIds?.includes(treeNode.id)}
           onClick={execOnAntdEvent(
-            () => treeNode && loadNode(treeNode),
+            () => treeNode && loadNode(treeNode.id),
           )}
           title="Загрузить для редактирования"
           size="small"
