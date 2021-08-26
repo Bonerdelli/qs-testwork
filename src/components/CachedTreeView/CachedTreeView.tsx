@@ -39,14 +39,18 @@ export const CachedTreeView: React.FC = () => {
   }, [nodes])
 
   const renderNode = (node: TreeDataNode) => {
-    if (node.treeNode?.is_parent_deleted) {
-      // Disable any action for nodes, that has removed parent
-      return <CachedTreeNodeDisabled dataNode={node} />
+    if (!node.treeNode) {
+      return <></>
     }
-    if (node.treeNode?.deleted_at) {
+    if (node.treeNode.isDeleted) {
       return <CachedTreeNodeDeleted dataNode={node} />
     }
-    if (node.treeNode?.id === editingId) {
+    if (node.treeNode.is_parent_deleted || node.treeNode.deleted_at) {
+      // Disable any action for already deleted nodes
+      // or for nodes, that has removed parent
+      return <CachedTreeNodeDisabled dataNode={node} />
+    }
+    if (node.treeNode.id === editingId) {
       return <CachedTreeNodeEditor dataNode={node} />
     }
     return <CachedTreeNode dataNode={node} />
