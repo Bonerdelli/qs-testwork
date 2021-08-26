@@ -64,7 +64,6 @@ export const TreeEditor: React.FC = () => {
       setCacheLoading(true)
       await reloadTree()
       const nodeIds = cashedNodes
-        .filter(node => !node.isDeleted)
         .map(node => node.id)
       clearNodeStatuses()
       clearCashedNodes()

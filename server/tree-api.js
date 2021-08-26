@@ -42,7 +42,7 @@ const getTree = (req, res) => {
 
 const getTreeNodes = (req, res) => {
   const { ids } = req.body
-  const nodes = dbGetItems(ids, true)
+  const nodes = dbGetItems(ids, true, true)
   sendJson(res, nodes)
 }
 

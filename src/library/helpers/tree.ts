@@ -58,7 +58,9 @@ export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
     if (!node.treeNode || !node.children) {
       return
     }
-    if (node.treeNode.isDeleted || node.treeNode.is_parent_deleted) {
+    if (node.treeNode.isDeleted
+      || node.treeNode.deleted_at
+      || node.treeNode.is_parent_deleted) {
       node.children.forEach((n: TreeDataNode) => {
         n.treeNode && (n.treeNode.is_parent_deleted = true)
         hierarchyStateIterator(n)
