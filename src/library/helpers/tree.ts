@@ -46,6 +46,11 @@ export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
     if (childs.length > 0) {
       node.children = childs
       childs.forEach((n) => {
+        if (node.treeNode?.isDeleted
+         || node.treeNode?.deleted_at
+         || node.treeNode?.is_parent_deleted) {
+          n.treeNode && (n.treeNode.is_parent_deleted = true)
+        }
         const parentId = node.treeNode?.id ?? 0
         n.parentIds = [parentId]
         n.exclude = true
