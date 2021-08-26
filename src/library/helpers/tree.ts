@@ -40,20 +40,35 @@ export function treeDataToNodes(tree: TreeNode): TreeDataNode {
 export function cashedTreeItemsToNodes(treeNodes: TreeNode[]): TreeDataNode[] {
   const dataNodes = treeNodes.map(nodeMapper) as TreeDataNodeExt[]
   dataNodes.forEach(node => delete node.isLeaf) // Because we have partial hierarchy
+
   const hierarchyBuilder = (node: TreeDataNode) => {
     const childs = dataNodes
       .filter(n => n.treeNode?.parent === node.treeNode?.id)
     if (childs.length > 0) {
-      node.children = childs
       childs.forEach((n) => {
         const parentId = node.treeNode?.id ?? 0
         n.parentIds = [parentId]
         n.exclude = true
       })
+      node.children = childs
     }
   }
+
+  const hierarchyStateIterator = (node: TreeDataNode) => {
+    if (!node.treeNode || !node.children) {
+      return
+    }
+    if (node.treeNode.isDeleted || node.treeNode.is_parent_deleted) {
+      node.children.forEach((n: TreeDataNode) => {
+        n.treeNode && (n.treeNode.is_parent_deleted = true)
+        hierarchyStateIterator(n)
+      })
+    }
+  }
+
   dataNodes.forEach(hierarchyBuilder)
   const dataNodesHierarchy = dataNodes.filter(n => !n.exclude)
+  dataNodesHierarchy.forEach(hierarchyStateIterator)
   return dataNodesHierarchy as TreeDataNode[]
 }
 
