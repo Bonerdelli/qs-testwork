@@ -51,11 +51,16 @@ function cleanDb() {
 /**
  * Retrieve one item by identifier
  * @param {number} id – Node identifier
+ * @param {boolean} checkIsBranchDeleted – Check is branch contains given node has deleted
  * @return TreeNode
  */
-function getItem(id) {
+function getItem(id, checkIsBranchDeleted = false) {
   const statement = db.prepare('SELECT * FROM tree WHERE id = ?')
-  return statement.get(id)
+  const item = statement.get(id)
+  if (checkIsBranchDeleted) {
+    item.is_parent_deleted = isBranchDeleted(id)
+  }
+  return item
 }
 
 /**
@@ -73,11 +78,11 @@ function getParentItem(id) {
  * @param {number} id – Node identifier
  * @return TreeNode
  */
-function getItems(ids, checkIsBranchDeleted) {
+function getItems(ids, checkIsBranchDeleted = true, includeDeleted = false) {
   const idsValue = ids.map(id => +id).join(',')
   const sql = `SELECT * FROM tree WHERE id IN (${idsValue})`
   const statement = db.prepare(sql)
-  const items = statement.all()
+  let items = statement.all()
   if (checkIsBranchDeleted) {
     // NOTE: there is no simple mapping to prevent unnecessary checkings
     // e.g. when checking nodes in one branch
@@ -91,7 +96,6 @@ function getItems(ids, checkIsBranchDeleted) {
         deletedParentIds.push(parentId)
       }
     })
-    console.log('deletedParentIds', deletedParentIds)
     if (deletedParentIds.length) {
       deletedParentIds.forEach((deletedParentId) => {
         items
@@ -99,6 +103,9 @@ function getItems(ids, checkIsBranchDeleted) {
           .forEach(item => (item.is_parent_deleted = true))
       })
     }
+  }
+  if (!includeDeleted) {
+    items = items.filter(item => !item.deleted_at && !item.is_parent_deleted)
   }
   return items
 }
@@ -108,15 +115,15 @@ function getItems(ids, checkIsBranchDeleted) {
  * @param {number} id – Node identifier
  * @return TreeNode
  */
-function getBranch(id) {
+function getBranch(id, disabled = false) {
   const node = getItem(id)
-  if (node.deleted_at) {
-    return node
-  }
   const statement = db.prepare(
     'SELECT * FROM tree WHERE parent = ?'
   )
   const childs = statement.all(id)
+  if (node.deleted_at || disabled || isBranchDeleted(id)) {
+    childs.forEach(item => (item.is_parent_deleted = true))
+  }
   if (childs.length > 0) {
     childs.forEach(item => item.hasChilds = isNodeHasChilds(item.id))
     node.childs = childs
@@ -130,20 +137,26 @@ function getBranch(id) {
  * @param {number} maxDepth – Maximum levels for retrieve
  * @return TreeNode
  */
-function getSubtree(id, maxDepth = 1) {
-  const subtree = getBranch(id)
-  if (subtree.deleted_at) {
-    return subtree
-  }
+function getSubtree(id, maxDepth = 1, disabled = false) {
+  const subtree = getBranch(id, disabled)
   if (!subtree.childs) {
     return subtree
   }
   if (maxDepth > 2) {
-    // NOTE: I suppose to use Nested Sets to prevent extra queries
-    subtree.childs = subtree.childs.map(item => getSubtree(item.id, maxDepth - 1))
+    subtree.childs.forEach((item) => {
+      // NOTE: Not optimal, I suppose to use Nested Sets for sttore tree data
+      const branch = getSubtree(
+        item.id,
+        maxDepth - 1,
+        item.is_parent_deleted || item.deleted_at,
+      )
+      if (branch.childs) {
+        item.childs = branch.childs
+      }
+    })
   } else {
-    // Check if each of child node has childs
-    subtree.childs.forEach(item => item.hasChilds = !item.deleted_at && isNodeHasChilds(item.id))
+    // Check for each of child node that it has childs
+    subtree.childs.forEach(item => item.hasChilds = isNodeHasChilds(item.id))
   }
   return subtree
 }

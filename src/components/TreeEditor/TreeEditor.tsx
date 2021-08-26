@@ -5,7 +5,7 @@
  * @package qs-test-work
  */
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Row, Col, Card, Skeleton, Result, Empty } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
@@ -33,38 +33,49 @@ export const TreeEditor: React.FC = () => {
 
   const {
     nodes: cashedNodes,
-    isLoading: isCashedNodesLoading,
+    isLoading: isCacheLoadingState,
   } = useStoreState(state => state.cashedTreeNodes)
 
   const {
     clearNodeStatuses,
     refreshNodesById,
-    setLoading: setCashedNodesLoading,
+    clear: clearCashedNodes,
   } = useStoreActions(state => state.cashedTreeNodes)
 
   const { reloadTree } = useStoreActions(state => state.dbTree)
 
+  const [cacheLoading, setCacheLoading] = useState<boolean>()
+
   useEffect(() => {
-    setCashedNodesLoading(true)
+    setCacheLoading(true)
     reloadTree()
   }, [])
 
   useEffect(() => {
-    setTimeout(() => setCashedNodesLoading(false))
+    setCacheLoading(isCacheLoadingState)
+  }, [isCacheLoadingState])
+
+  useEffect(() => {
+    setTimeout(() => setCacheLoading(false))
   }, [cashedNodes])
 
   useEffect(() => {
-    if (savedSuccessfully) {
-      reloadTree()
-      setCashedNodesLoading(true)
+    const reloadCb = async () => {
+      setCacheLoading(true)
+      await reloadTree()
       const nodeIds = cashedNodes
         .filter(node => !node.isDeleted)
         .map(node => node.id)
       clearNodeStatuses()
-      refreshNodesById([
+      clearCashedNodes()
+      await refreshNodesById([
         ...addedNodeIds ?? [],
         ...nodeIds,
       ])
+      setCacheLoading(false)
+    }
+    if (savedSuccessfully) {
+      reloadCb()
     }
   }, [savedSuccessfully, addedNodeIds])
 
@@ -90,7 +101,7 @@ export const TreeEditor: React.FC = () => {
   }
 
   const renderCachedTreeView = () => {
-    if (isCashedNodesLoading) {
+    if (cacheLoading) {
       return (
         <Skeleton active />
       )

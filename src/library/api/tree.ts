@@ -26,10 +26,18 @@ export async function getTree(): Promise<TreeNode | ApiErrorResponse> {
 }
 
 /**
- * Get a single tree branch (node with childs)
+ * Get a tree branch (node with childs)
  */
 export async function getBranch(id: TreeNode['id']): Promise<TreeNode> {
-  const result = await getJson<TreeNode>(`/tree/${id}`)
+  const result = await getJson<TreeNode>(`/tree/branch/${id}`)
+  return result as TreeNode
+}
+
+/**
+ * Get a single node (without childs)
+ */
+export async function getNode(id: TreeNode['id']): Promise<TreeNode> {
+  const result = await getJson<TreeNode>(`/tree/node/${id}`)
   return result as TreeNode
 }
 
