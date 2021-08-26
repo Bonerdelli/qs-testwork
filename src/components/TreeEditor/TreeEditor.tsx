@@ -31,7 +31,10 @@ export const TreeEditor: React.FC = () => {
     addedNodeIds,
   } = useStoreState(state => state.dbTree)
 
-  const { nodes: cashedNodes } = useStoreState(state => state.cashedTreeNodes)
+  const {
+    nodes: cashedNodes,
+    isLoading: isCacheLoadingState,
+  } = useStoreState(state => state.cashedTreeNodes)
 
   const {
     clearNodeStatuses,
@@ -47,6 +50,10 @@ export const TreeEditor: React.FC = () => {
     setCacheLoading(true)
     reloadTree()
   }, [])
+
+  useEffect(() => {
+    setCacheLoading(isCacheLoadingState)
+  }, [isCacheLoadingState])
 
   useEffect(() => {
     setTimeout(() => setCacheLoading(false))
