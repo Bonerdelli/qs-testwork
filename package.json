@@ -42,7 +42,8 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      ".*testUtils.*"
+      ".*testUtils.*",
+      ".*utils/.*"
     ]
   },
   "engines": {
