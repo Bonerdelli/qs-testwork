@@ -1,5 +1,5 @@
 /**
- * Helper function to use antd tree expandedKeys paameter with componen state
+ * Helper function to use antd tree expandedKeys paameter with component state
  */
 export const antdTreeUseExpandedState = (
   expandedKeys: number[],
@@ -23,6 +23,10 @@ export const antdTreeUseExpandedState = (
  */
 export const execOnAntdEvent = (callback: () => void) => (e: any): void => {
   callback()
-  e.stopPropagation()
-  e.preventDefault()
+  if (e?.stopPropagation) {
+    e.stopPropagation()
+  }
+  if (e?.preventDefault) {
+    e.preventDefault()
+  }
 }

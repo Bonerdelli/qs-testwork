@@ -22,7 +22,6 @@
     "start": "run-p start:client start:server",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "test:watch": "react-app-rewired test --watch",
     "test:coverage": "react-app-rewired test --coverage",
     "lint": "eslint ./src -f table --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src -f table --fix --ext .js,.jsx,.ts,.tsx",
@@ -40,7 +39,11 @@
     "moduleNameMapper": {
       "^components/(.*)$": "<rootDir>/src/components/$1",
       "^library/(.*)$": "<rootDir>/src/library/$1"
-    }
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      ".*testUtils.*"
+    ]
   },
   "engines": {
     "node": "<=18.20.0"

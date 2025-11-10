@@ -142,6 +142,11 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     setLoading(true)
     setApiError(null)
     const result = await getNodes(payload)
+    if (!result) {
+      setApiError('Сервер вернул пустой результат')
+      setLoading(false)
+      return
+    }
     if ((result as ApiErrorResponse).error) {
       setApiError((result as ApiErrorResponse).error.message)
       setLoading(false)
@@ -150,7 +155,7 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (Array.isArray(result)) {
       result.forEach(node => reloadNode(node))
       setUnchanged()
-      setTimeout(() => setLoading(false)) // Sorry
+      setTimeout(() => setLoading(false), 0) // Sorry
       return
     }
     setApiError('Сервер вернул пустой результат')
