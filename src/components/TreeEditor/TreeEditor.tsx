@@ -110,7 +110,7 @@ export const TreeEditor: React.FC = () => {
         <Col span={12} xl={10}>
           <Card
             size="small"
-            className="tree-card"
+            className="tree-card left-card"
             title="База данных"
             actions={[
               <ReloadTreeActionButton key="reload" title="Обновить" />,
@@ -123,7 +123,7 @@ export const TreeEditor: React.FC = () => {
         <Col span={12} xl={10}>
           <Card
             size="small"
-            className="tree-card"
+            className="tree-card right-card"
             title="Редактирование (локальный кэш)"
             actions={[
               <SaveChangesActionButton key="save" title="Сохранить" />,

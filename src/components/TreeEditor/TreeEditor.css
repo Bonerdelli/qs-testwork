@@ -2,6 +2,17 @@
   height: 100%;
 }
 
+.left-card {
+  border-right-width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.right-card {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .tree-card .ant-card-body {
   min-height: 240px;
   height: 100%;
