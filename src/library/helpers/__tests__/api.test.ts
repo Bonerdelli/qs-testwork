@@ -1,5 +1,5 @@
 import { getEndpointUrl, isSuccessful } from '../api'
-import { ApiErrorResponse, ApiSuccessResponse } from '../api'
+import { ApiErrorResponse, ApiSuccessResponse, ApiCrudResponse } from '../api'
 
 describe('api helpers', () => {
   describe('getEndpointUrl', () => {
@@ -52,21 +52,22 @@ describe('api helpers', () => {
     })
 
     it('should return true for object without error property', () => {
-      const response = {
+      const response: ApiCrudResponse<{ data: string }> = {
         data: 'some data',
       }
-      expect(isSuccessful(response as any)).toBe(true)
+      expect(isSuccessful(response)).toBe(true)
     })
 
     it('should return true for empty object', () => {
-      expect(isSuccessful({} as any)).toBe(true)
+      const response: ApiCrudResponse<Record<string, never>> = {}
+      expect(isSuccessful(response)).toBe(true)
     })
 
     it('should handle response with success false but no error', () => {
-      const response = {
+      const response: ApiCrudResponse<{ success: boolean }> = {
         success: false,
       }
-      expect(isSuccessful(response as any)).toBe(true)
+      expect(isSuccessful(response)).toBe(true)
     })
   })
 })

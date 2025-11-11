@@ -3,9 +3,8 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint', 'import'],
   extends: [
-    'airbnb',
     'prettier',
     'airbnb-typescript',
     'plugin:react/recommended',
@@ -20,6 +19,7 @@ module.exports = {
   rules: {
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
+    'import/no-extraneous-dependencies': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',

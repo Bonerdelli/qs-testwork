@@ -164,7 +164,7 @@ describe('tree helpers', () => {
       const result = cashedTreeItemsToNodes(nodes)
 
       expect(result[0].children?.length).toBe(1)
-      expect(result[0].children?.[0].treeNode?.is_parent_deleted).toBe(true)
+      expect((result[0].children?.[0] as TreeDataNode).treeNode?.is_parent_deleted).toBe(true)
     })
 
     it('should handle nodes with deleted_at flag', () => {
@@ -184,7 +184,7 @@ describe('tree helpers', () => {
 
       const result = cashedTreeItemsToNodes(nodes)
 
-      expect(result[0].children?.[0].treeNode?.is_parent_deleted).toBe(true)
+      expect((result[0].children?.[0] as TreeDataNode).treeNode?.is_parent_deleted).toBe(true)
     })
 
     it('should handle deep nested hierarchy', () => {

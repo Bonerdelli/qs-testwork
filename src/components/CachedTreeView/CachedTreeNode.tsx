@@ -15,7 +15,7 @@ import {
 
 import { useStoreActions, useStoreState } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
-import { execOnAntdEvent } from 'library/helpers/antd'
+import { execOnAntdEvent, resolveTreeNodeTitle } from 'library/helpers/antd'
 
 import { TreeDataNode } from 'library/types'
 
@@ -68,13 +68,14 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
     return <></>
   }
 
-  const renderTitle = () => {
-    if (!dataNode.title) {
+  const renderTitle = (): React.ReactNode => {
+    const title = resolveTreeNodeTitle(dataNode)
+    if (!title) {
       return (
         <i>(без названия)</i>
       )
     }
-    return dataNode.title
+    return title
   }
 
   const renderActionButtons = () => (

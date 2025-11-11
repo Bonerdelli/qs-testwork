@@ -82,7 +82,7 @@ export function getLeafNodeKeys(tree: TreeDataNode[]): number[] {
   const treeIterator = (node: TreeDataNode) => {
     if (node.children) {
       node.children.forEach(treeIterator)
-      keys.push(+node.key)
+      keys.push(Number(node.key))
     }
   }
   tree.forEach(treeIterator)

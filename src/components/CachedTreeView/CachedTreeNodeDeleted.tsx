@@ -10,7 +10,7 @@ import { UndoOutlined, ClearOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
-import { execOnAntdEvent } from 'library/helpers/antd'
+import { execOnAntdEvent, resolveTreeNodeTitle } from 'library/helpers/antd'
 
 import { TreeDataNode } from 'library/types'
 
@@ -70,7 +70,7 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
   return (
     <div className="tree-node">
       {treeNode?.isDeleted && <Badge status="error" className="tree-node-status-badge" />}
-      <div className="tree-node-value disabled">{dataNode.title}</div>
+      <div className="tree-node-value disabled">{resolveTreeNodeTitle(dataNode)}</div>
       {renderActionButtons()}
     </div>
   )

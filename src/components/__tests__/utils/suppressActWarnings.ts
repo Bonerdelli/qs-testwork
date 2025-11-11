@@ -5,7 +5,7 @@
 const originalError = console.error
 
 export function suppressAntdActWarnings(): void {
-  console.error = (...args: any[]) => {
+  console.error = (...args: Parameters<typeof console.error>) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: An update to List inside a test was not wrapped in act')

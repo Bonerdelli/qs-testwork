@@ -93,9 +93,16 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
       treeNodes[id].childs = nodes
       delete treeNodes[id].hasChilds
     }
+    // Convert nodes array to map and merge with treeNodes
+    const nodesMap = nodes.reduce((acc, node) => {
+      acc[node.id] = node
+      return acc
+    }, {} as TreeNodeMap)
+    // Merge treeNodes with nodesMap, preserving the modified treeNodes[id] with childs
     state.treeNodes = {
       ...treeNodes,
-      ...nodes,
+      ...nodesMap,
+      [id]: treeNodes[id], // Ensure the modified node with childs is preserved
     }
   }),
 

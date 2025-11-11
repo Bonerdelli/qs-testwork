@@ -12,7 +12,7 @@ import { DoubleRightOutlined } from '@ant-design/icons'
 import { TREE_ROOT_NODE_ID } from 'library/helpers/tree'
 import { useStoreState, useStoreActions } from 'library/store'
 import { TreeDataNode } from 'library/types'
-import { execOnAntdEvent } from 'library/helpers/antd'
+import { execOnAntdEvent, resolveTreeNodeTitle } from 'library/helpers/antd'
 
 import 'components/TreeNode/TreeNode.css'
 
@@ -68,7 +68,7 @@ export const DBTreeNode: React.FC<DBTreeNodeProps> = ({
 
   return (
     <div className="tree-node">
-      <span className={`tree-node-value ${itemClass}`}>{dataNode.title}</span>
+      <span className={`tree-node-value ${itemClass}`}>{resolveTreeNodeTitle(dataNode)}</span>
       {renderActionButtons()}
     </div>
   )
