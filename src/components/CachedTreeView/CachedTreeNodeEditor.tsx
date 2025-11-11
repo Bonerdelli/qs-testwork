@@ -7,10 +7,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button, Input } from 'antd'
-import {
-  CheckOutlined,
-  CloseOutlined,
-} from '@ant-design/icons'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
@@ -18,12 +15,10 @@ import { execOnAntdEvent } from 'library/helpers/antd'
 
 import 'components/TreeNode/TreeNode.css'
 
-export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
-  dataNode,
-}) => {
+export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({ dataNode }) => {
   const { treeNode } = dataNode
-  const { setNodeValue } = useStoreActions(state => state.cashedTreeNodes)
-  const { setEditingId } = useStoreActions(state => state.nodeEdit)
+  const { setNodeValue } = useStoreActions((state) => state.cashedTreeNodes)
+  const { setEditingId } = useStoreActions((state) => state.nodeEdit)
 
   const [editedValue, setEditedValue] = useState<string>(treeNode?.value ?? '')
   const [initialValue, setInitialValue] = useState<string>()
@@ -78,7 +73,7 @@ export const CachedTreeNodeEditor: React.FC<TreeNodeProps> = ({
           autoFocus
           size="small"
           defaultValue={treeNode?.value}
-          onChange={e => setEditedValue(e.target.value)}
+          onChange={(e) => setEditedValue(e.target.value)}
           onBlur={() => treeNode && setNodeValue([treeNode, editedValue])}
           onPressEnter={execOnAntdEvent(confirmEdit)}
           style={{

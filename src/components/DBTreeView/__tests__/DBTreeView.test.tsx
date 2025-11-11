@@ -48,4 +48,3 @@ describe('DBTreeView', () => {
     expect(store.getState().dbTree.isLoading).toBe(true)
   })
 })
-

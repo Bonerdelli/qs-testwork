@@ -11,10 +11,10 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { ActionButtonProps } from './types'
 
 export const ResetTreeDataActionButton: React.FC<ActionButtonProps> = ({ title }) => {
-  const { resetTreeData } = useStoreActions(state => state.dbTree)
-  const { clear: clearCashe } = useStoreActions(state => state.cashedTreeNodes)
-  const { setActiveId, setEditingId } = useStoreActions(state => state.nodeEdit)
-  const { apiErrors } = useStoreState(state => state.dbTree)
+  const { resetTreeData } = useStoreActions((state) => state.dbTree)
+  const { clear: clearCashe } = useStoreActions((state) => state.cashedTreeNodes)
+  const { setActiveId, setEditingId } = useStoreActions((state) => state.nodeEdit)
+  const { apiErrors } = useStoreState((state) => state.dbTree)
   const renderIcon = () => {
     if (apiErrors.resetTree) {
       return (
@@ -23,9 +23,7 @@ export const ResetTreeDataActionButton: React.FC<ActionButtonProps> = ({ title }
         </Tooltip>
       )
     }
-    return (
-      <PoweroffOutlined />
-    )
+    return <PoweroffOutlined />
   }
   const handleAction = async () => {
     const result = await resetTreeData()
@@ -38,19 +36,19 @@ export const ResetTreeDataActionButton: React.FC<ActionButtonProps> = ({ title }
   return (
     <Popconfirm
       key="clear"
-      title={<>База данных будет сброшена в первоначальное состояние<br />Данное действие нельзя отменить. Продолжить?</>}
+      title={
+        <>
+          База данных будет сброшена в первоначальное состояние
+          <br />
+          Данное действие нельзя отменить. Продолжить?
+        </>
+      }
       onConfirm={handleAction}
       okText="Да"
       cancelText="Нет"
       okType="danger"
     >
-      <Button
-        size="small"
-        type="text"
-        key="reload"
-        title={title}
-        danger={!!apiErrors.resetTree}
-      >
+      <Button size="small" type="text" key="reload" title={title} danger={!!apiErrors.resetTree}>
         {renderIcon()}
         <span className="title">{title}</span>
       </Button>

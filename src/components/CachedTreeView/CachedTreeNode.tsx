@@ -6,12 +6,7 @@
  */
 
 import { Button, Badge, Popconfirm } from 'antd'
-import {
-  EditOutlined,
-  PlusCircleOutlined,
-  ClearOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons'
+import { EditOutlined, PlusCircleOutlined, ClearOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import { useStoreActions, useStoreState } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
@@ -21,14 +16,12 @@ import { TreeDataNode } from 'library/types'
 
 import 'components/TreeNode/TreeNode.css'
 
-export const CachedTreeNode: React.FC<TreeNodeProps> = ({
-  dataNode,
-}) => {
+export const CachedTreeNode: React.FC<TreeNodeProps> = ({ dataNode }) => {
   const { treeNode } = dataNode
-  const { activeId } = useStoreState(state => state.nodeEdit)
-  const { lastNodeId } = useStoreState(state => state.cashedTreeNodes)
-  const { addChildNode, unloadNode, removeNode } = useStoreActions(state => state.cashedTreeNodes)
-  const { setEditingId, setActiveId } = useStoreActions(state => state.nodeEdit)
+  const { activeId } = useStoreState((state) => state.nodeEdit)
+  const { lastNodeId } = useStoreState((state) => state.cashedTreeNodes)
+  const { addChildNode, unloadNode, removeNode } = useStoreActions((state) => state.cashedTreeNodes)
+  const { setEditingId, setActiveId } = useStoreActions((state) => state.nodeEdit)
 
   const handleNodeAdd = () => {
     treeNode && addChildNode(treeNode)
@@ -56,14 +49,10 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
 
   const renderStateBage = () => {
     if (treeNode?.isNew) {
-      return (
-        <Badge status="success" className="tree-node-status-badge" />
-      )
+      return <Badge status="success" className="tree-node-status-badge" />
     }
     if (treeNode?.isUpdated) {
-      return (
-        <Badge status="warning" className="tree-node-status-badge" />
-      )
+      return <Badge status="warning" className="tree-node-status-badge" />
     }
     return <></>
   }
@@ -71,9 +60,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
   const renderTitle = (): React.ReactNode => {
     const title = resolveTreeNodeTitle(dataNode)
     if (!title) {
-      return (
-        <i>(без названия)</i>
-      )
+      return <i>(без названия)</i>
     }
     return title
   }
@@ -111,7 +98,13 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
       <Popconfirm
         placement="bottom"
         disabled={!treeNode?.isUpdated && !treeNode?.isNew}
-        title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+        title={
+          <>
+            Внесённые изменения будут потеряны
+            <br />
+            Продолжить?
+          </>
+        }
         onConfirm={() => treeNode && unloadNode(treeNode)}
         okText="Да"
         cancelText="Нет"
@@ -120,12 +113,7 @@ export const CachedTreeNode: React.FC<TreeNodeProps> = ({
           type="text"
           shape="circle"
           icon={<ClearOutlined />}
-          onClick={execOnAntdEvent(
-            () => treeNode
-              && !treeNode.isUpdated
-              && !treeNode.isNew
-              && unloadNode(treeNode),
-          )}
+          onClick={execOnAntdEvent(() => treeNode && !treeNode.isUpdated && !treeNode.isNew && unloadNode(treeNode))}
           title="Выгрузить из кэша"
           size="small"
         />

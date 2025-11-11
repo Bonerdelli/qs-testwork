@@ -1,8 +1,4 @@
-import {
-  treeDataToNodes,
-  cashedTreeItemsToNodes,
-  getLeafNodeKeys,
-} from '../tree'
+import { treeDataToNodes, cashedTreeItemsToNodes, getLeafNodeKeys } from '../tree'
 import { TreeNode, TreeDataNode } from 'library/types'
 
 describe('tree helpers', () => {
@@ -334,4 +330,3 @@ describe('tree helpers', () => {
     })
   })
 })
-

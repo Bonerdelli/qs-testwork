@@ -108,9 +108,7 @@ describe('dbTree store', () => {
       })
 
       it('should not fail when tree is not set', () => {
-        const branchNodes: TreeNode[] = [
-          createMockTreeNode({ id: 2, parent: 1 }),
-        ]
+        const branchNodes: TreeNode[] = [createMockTreeNode({ id: 2, parent: 1 })]
 
         expect(() => {
           store.getActions().dbTree.setBranchNodes([1, branchNodes])
@@ -375,9 +373,7 @@ describe('dbTree store', () => {
         })
         mockTreeApi.getBranch.mockReturnValue(promise)
 
-        const loadPromise = store.getActions().dbTree.loadBranch(
-          createMockTreeNode({ id: 1 }),
-        )
+        const loadPromise = store.getActions().dbTree.loadBranch(createMockTreeNode({ id: 1 }))
         expect(store.getState().dbTree.isLoading).toBe(true)
 
         resolvePromise!(branch)
@@ -402,9 +398,7 @@ describe('dbTree store', () => {
 
     describe('saveChanges', () => {
       it('should save changes successfully', async () => {
-        const nodes: TreeNode[] = [
-          createMockTreeNode({ id: 1, isUpdated: true }),
-        ]
+        const nodes: TreeNode[] = [createMockTreeNode({ id: 1, isUpdated: true })]
         const response = {
           success: true,
           addedNodeIds: [2, 3],
@@ -421,9 +415,7 @@ describe('dbTree store', () => {
       })
 
       it('should handle overwrite confirmation required', async () => {
-        const nodes: TreeNode[] = [
-          createMockTreeNode({ id: 1, isUpdated: true }),
-        ]
+        const nodes: TreeNode[] = [createMockTreeNode({ id: 1, isUpdated: true })]
         const response = {
           success: false,
           overwriteConfirmRequired: [1, 2],
@@ -438,9 +430,7 @@ describe('dbTree store', () => {
       })
 
       it('should handle API error', async () => {
-        const nodes: TreeNode[] = [
-          createMockTreeNode({ id: 1, isUpdated: true }),
-        ]
+        const nodes: TreeNode[] = [createMockTreeNode({ id: 1, isUpdated: true })]
         const response = {
           success: false,
         }
@@ -454,9 +444,7 @@ describe('dbTree store', () => {
       })
 
       it('should pass confirmForOverwriteIds to API', async () => {
-        const nodes: TreeNode[] = [
-          createMockTreeNode({ id: 1, isUpdated: true }),
-        ]
+        const nodes: TreeNode[] = [createMockTreeNode({ id: 1, isUpdated: true })]
         const confirmIds = [1, 2]
         const response = {
           success: true,
@@ -465,13 +453,8 @@ describe('dbTree store', () => {
 
         await store.getActions().dbTree.saveChanges([nodes, confirmIds])
 
-        expect(mockTreeApi.saveTreeNodes).toHaveBeenCalledWith(
-          nodes,
-          confirmIds,
-          expect.any(Function),
-        )
+        expect(mockTreeApi.saveTreeNodes).toHaveBeenCalledWith(nodes, confirmIds, expect.any(Function))
       })
     })
   })
 })
-

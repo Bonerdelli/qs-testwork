@@ -349,7 +349,7 @@ describe('cashedTreeNodes store', () => {
         await store.getActions().cashedTreeNodes.refreshNodesById([1, 2])
 
         // Wait for setTimeout to complete
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
 
         const state = store.getState().cashedTreeNodes
         expect(state.nodes).toHaveLength(2)
@@ -386,11 +386,10 @@ describe('cashedTreeNodes store', () => {
         resolvePromise!([node])
         await refreshPromise
         // Wait for setTimeout to complete
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
 
         expect(store.getState().cashedTreeNodes.isLoading).toBe(false)
       })
     })
   })
 })
-

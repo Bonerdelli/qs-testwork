@@ -23,17 +23,12 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialState?: Partial<AppStoreModel>
 }
 
-export function renderWithStore(
-  ui: React.ReactElement,
-  options: CustomRenderOptions = {},
-) {
+export function renderWithStore(ui: React.ReactElement, options: CustomRenderOptions = {}) {
   const { store, initialState, ...renderOptions } = options
   const testStore = store || createTestStore(initialState)
 
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <StoreProvider store={testStore}>
-      {children}
-    </StoreProvider>
+    <StoreProvider store={testStore}>{children}</StoreProvider>
   )
 
   return {
@@ -50,4 +45,3 @@ export function createMockTreeNode(overrides?: Partial<TreeNode>): TreeNode {
     ...overrides,
   }
 }
-

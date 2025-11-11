@@ -239,11 +239,7 @@ describe('tree API', () => {
 
       await treeApi.saveTreeNodes(nodes, undefined, errorHandler)
 
-      expect(mockApiHelpers.post).toHaveBeenCalledWith(
-        '/tree/bulk-update',
-        expect.any(Object),
-        errorHandler,
-      )
+      expect(mockApiHelpers.post).toHaveBeenCalledWith('/tree/bulk-update', expect.any(Object), errorHandler)
     })
   })
 
@@ -377,4 +373,3 @@ describe('tree API', () => {
     })
   })
 })
-

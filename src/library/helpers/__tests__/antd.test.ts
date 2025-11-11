@@ -1,7 +1,4 @@
-import {
-  antdTreeUseExpandedState,
-  execOnAntdEvent,
-} from '../antd'
+import { antdTreeUseExpandedState, execOnAntdEvent } from '../antd'
 
 describe('antd helpers', () => {
   describe('antdTreeUseExpandedState', () => {
@@ -99,4 +96,3 @@ describe('antd helpers', () => {
     })
   })
 })
-

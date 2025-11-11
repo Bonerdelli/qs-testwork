@@ -32,4 +32,3 @@ export function setupAntdActWarningSuppression(): {
     afterAll: () => restoreConsoleError(),
   }
 }
-

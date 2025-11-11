@@ -16,11 +16,9 @@ import { TreeDataNode } from 'library/types'
 
 import 'components/TreeNode/TreeNode.css'
 
-export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
-  dataNode,
-}) => {
+export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({ dataNode }) => {
   const { treeNode } = dataNode
-  const { restoreNode, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { restoreNode, unloadNode } = useStoreActions((state) => state.cashedTreeNodes)
 
   const restoredSubtreeMapper = (item: TreeDataNode) => {
     if (item.treeNode) {
@@ -52,18 +50,18 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
       />
       <Popconfirm
         placement="bottom"
-        title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+        title={
+          <>
+            Внесённые изменения будут потеряны
+            <br />
+            Продолжить?
+          </>
+        }
         onConfirm={() => treeNode && unloadNode(treeNode)}
         okText="Да"
         cancelText="Нет"
       >
-        <Button
-          type="text"
-          shape="circle"
-          icon={<ClearOutlined />}
-          title="Выгрузить из кэша"
-          size="small"
-        />
+        <Button type="text" shape="circle" icon={<ClearOutlined />} title="Выгрузить из кэша" size="small" />
       </Popconfirm>
     </div>
   )

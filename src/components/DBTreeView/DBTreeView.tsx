@@ -15,8 +15,8 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { DBTreeNode } from './DBTreeNode'
 
 export const DBTreeView: React.FC = () => {
-  const { tree, expandedKeys, isLoading } = useStoreState(state => state.dbTree)
-  const { loadBranch, setExpandedKeys } = useStoreActions(state => state.dbTree)
+  const { tree, expandedKeys, isLoading } = useStoreState((state) => state.dbTree)
+  const { loadBranch, setExpandedKeys } = useStoreActions((state) => state.dbTree)
   const [treeData, setTreeData] = useState<TreeDataNode[]>()
 
   useEffect(() => {
@@ -48,9 +48,7 @@ export const DBTreeView: React.FC = () => {
       loadData={onLoadNodeData}
       expandedKeys={expandedKeys}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
-      titleRender={node => (
-        <DBTreeNode dataNode={node} />
-      )}
+      titleRender={(node) => <DBTreeNode dataNode={node} />}
     />
   )
 }

@@ -22,11 +22,7 @@ export function createMockTreeNode(overrides?: Partial<TreeNode>): TreeNode {
   }
 }
 
-export function createMockTreeNodeWithChildren(
-  id: number,
-  parent: number,
-  children: TreeNode[],
-): TreeNode {
+export function createMockTreeNodeWithChildren(id: number, parent: number, children: TreeNode[]): TreeNode {
   return {
     id,
     value: `Node ${id}`,
@@ -34,4 +30,3 @@ export function createMockTreeNodeWithChildren(
     childs: children,
   }
 }
-

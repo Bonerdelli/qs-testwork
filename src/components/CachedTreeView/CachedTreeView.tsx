@@ -20,9 +20,9 @@ import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
 import { CachedTreeNode } from './CachedTreeNode'
 
 export const CachedTreeView: React.FC = () => {
-  const { nodes } = useStoreState(state => state.cashedTreeNodes)
-  const { activeId, editingId } = useStoreState(state => state.nodeEdit)
-  const { setActiveId } = useStoreActions(state => state.nodeEdit)
+  const { nodes } = useStoreState((state) => state.cashedTreeNodes)
+  const { activeId, editingId } = useStoreState((state) => state.nodeEdit)
+  const { setActiveId } = useStoreActions((state) => state.nodeEdit)
 
   const [treeData, setTreeData] = useState<DataNode[]>()
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
@@ -30,7 +30,7 @@ export const CachedTreeView: React.FC = () => {
   useEffect(() => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
-      const keys = nodes.map(node => node.id)
+      const keys = nodes.map((node) => node.id)
       setTreeData(treeNodes)
       setExpandedKeys(keys)
     } else {
