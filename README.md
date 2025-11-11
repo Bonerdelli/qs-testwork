@@ -19,17 +19,15 @@ See task description in the TASK.md (in russian)
 ### Notes of constraints
 
 * No localization support
-* Zero tests coverage
 * Only one level of newly added nodes are allowed
 * Based on `react-create-app`, but in a serious project we should prefer customly configured builder
-* LESS or any other style preprocessor aren't used, because styles is not complex
-* Styled components aren't used, because of antd framework
+* Styled components, LESS or any other style preprocessor aren't used aren't used
 
 Simple adjacency list are used for tree handling.
 That's not optimal, especially for querying tree branches. I suppose to replace it with the Nested Sets, see a `tryouts/ns-tree` branch for a very draft implementation
 
 ### Start the project
 
-Just run `yarn && yarn start` from a project root \
+Just run `npm && npm start` from a project root \
 This command will install dependencies and then starts both cliend and server applications
-To start its separately, run `yarn run start:client` and `yarn run start:server` commands in separate terminals
+To start its separately, run `npm run start:client` and `npm run start:server` commands in separate terminals

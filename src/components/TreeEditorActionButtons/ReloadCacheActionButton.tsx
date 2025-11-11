@@ -11,8 +11,8 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { ActionButtonProps } from './types'
 
 export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) => {
-  const { nodes: cashedNodes, apiError } = useStoreState(state => state.cashedTreeNodes)
-  const { refreshNodesById, setLoading, clear } = useStoreActions(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, apiError } = useStoreState((state) => state.cashedTreeNodes)
+  const { refreshNodesById, setLoading, clear } = useStoreActions((state) => state.cashedTreeNodes)
 
   const renderIcon = () => {
     if (apiError) {
@@ -22,16 +22,14 @@ export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) 
         </Tooltip>
       )
     }
-    return (
-      <SyncOutlined />
-    )
+    return <SyncOutlined />
   }
 
   const handleCacheReload = async () => {
     setLoading(true)
     clear()
 
-    const ids = cashedNodes.map(node => node.id)
+    const ids = cashedNodes.map((node) => node.id)
     await refreshNodesById(ids)
     setLoading(false)
   }
@@ -39,13 +37,15 @@ export const ReloadCacheActionButton: React.FC<ActionButtonProps> = ({ title }) 
   return (
     <Popconfirm
       key="clear"
-      title={(
+      title={
         <>
-          Данные узлов будут перезагружены<br />
-          Внесённые изменения будут потеряны<br />
+          Данные узлов будут перезагружены
+          <br />
+          Внесённые изменения будут потеряны
+          <br />
           Продолжить?
         </>
-      )}
+      }
       onConfirm={() => handleCacheReload()}
       okText="Да"
       cancelText="Нет"

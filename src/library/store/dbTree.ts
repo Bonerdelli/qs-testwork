@@ -7,18 +7,8 @@
 
 import { Action, Thunk, action, thunk } from 'easy-peasy'
 
-import {
-  ApiError,
-  ApiErrorResponse,
-  ApiSuccessResponse,
-} from 'library/helpers/api'
-import {
-  TreeBulkUpdateResponse,
-  saveTreeNodes,
-  getTree,
-  getBranch,
-  resetTreeData,
-} from 'library/api/tree'
+import { ApiError, ApiErrorResponse, ApiSuccessResponse } from 'library/helpers/api'
+import { TreeBulkUpdateResponse, saveTreeNodes, getTree, getBranch, resetTreeData } from 'library/api/tree'
 
 import { TreeNode } from 'library/types'
 
@@ -58,7 +48,7 @@ export interface DbTreeStoreModel {
 const treeReducer = (item: TreeNode, acc: TreeNodeMap): TreeNodeMap => {
   acc[item.id] = item
   if (item.childs) {
-    item.childs.forEach(child => ({
+    item.childs.forEach((child) => ({
       ...acc,
       ...treeReducer(child, acc),
     }))
@@ -93,9 +83,16 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
       treeNodes[id].childs = nodes
       delete treeNodes[id].hasChilds
     }
+    // Convert nodes array to map and merge with treeNodes
+    const nodesMap = nodes.reduce((acc, node) => {
+      acc[node.id] = node
+      return acc
+    }, {} as TreeNodeMap)
+    // Merge treeNodes with nodesMap, preserving the modified treeNodes[id] with childs
     state.treeNodes = {
       ...treeNodes,
-      ...nodes,
+      ...nodesMap,
+      [id]: treeNodes[id], // Ensure the modified node with childs is preserved
     }
   }),
 
@@ -104,12 +101,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
   }),
 
   reloadTree: thunk(async (actions) => {
-    const {
-      setLoading,
-      setApiError,
-      clear,
-      setTree,
-    } = actions
+    const { setLoading, setApiError, clear, setTree } = actions
     setApiError(['loadData', null])
     setLoading(true)
     clear()
@@ -163,12 +155,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
    * Editing
    */
   saveChanges: thunk(async (actions, payload) => {
-    const {
-      setApiError,
-      setOverwriteConfirmation,
-      setSavedSuccessfully,
-      setAddedNodeIds,
-    } = actions
+    const { setApiError, setOverwriteConfirmation, setSavedSuccessfully, setAddedNodeIds } = actions
     const [nodes, confirmForOverwriteIds] = payload
 
     const apiErrorHandler = (err?: ApiError) => {
@@ -179,11 +166,7 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     }
 
     setSavedSuccessfully(false)
-    const result = await saveTreeNodes(
-      nodes,
-      confirmForOverwriteIds,
-      apiErrorHandler,
-    ) as TreeBulkUpdateResponse
+    const result = (await saveTreeNodes(nodes, confirmForOverwriteIds, apiErrorHandler)) as TreeBulkUpdateResponse
 
     if (result.overwriteConfirmRequired) {
       setOverwriteConfirmation(result.overwriteConfirmRequired)
@@ -234,5 +217,4 @@ export const dbTreeStoreModel: DbTreeStoreModel = {
     state.tree = undefined
     state.expandedKeys = []
   }),
-
 }

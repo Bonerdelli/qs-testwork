@@ -24,25 +24,17 @@ import {
 import './TreeEditor.css'
 
 export const TreeEditor: React.FC = () => {
-  const {
-    tree,
-    apiErrors,
-    savedSuccessfully,
-    addedNodeIds,
-  } = useStoreState(state => state.dbTree)
+  const { tree, apiErrors, savedSuccessfully, addedNodeIds } = useStoreState((state) => state.dbTree)
 
-  const {
-    nodes: cashedNodes,
-    isLoading: isCacheLoadingState,
-  } = useStoreState(state => state.cashedTreeNodes)
+  const { nodes: cashedNodes, isLoading: isCacheLoadingState } = useStoreState((state) => state.cashedTreeNodes)
 
   const {
     clearNodeStatuses,
     refreshNodesById,
     clear: clearCashedNodes,
-  } = useStoreActions(state => state.cashedTreeNodes)
+  } = useStoreActions((state) => state.cashedTreeNodes)
 
-  const { reloadTree } = useStoreActions(state => state.dbTree)
+  const { reloadTree } = useStoreActions((state) => state.dbTree)
 
   const [cacheLoading, setCacheLoading] = useState<boolean>()
 
@@ -63,14 +55,10 @@ export const TreeEditor: React.FC = () => {
     const reloadCb = async () => {
       setCacheLoading(true)
       await reloadTree()
-      const nodeIds = cashedNodes
-        .map(node => node.id)
+      const nodeIds = cashedNodes.map((node) => node.id)
       clearNodeStatuses()
       clearCashedNodes()
-      await refreshNodesById([
-        ...addedNodeIds ?? [],
-        ...nodeIds,
-      ])
+      await refreshNodesById([...(addedNodeIds ?? []), ...nodeIds])
       setCacheLoading(false)
     }
     if (savedSuccessfully) {
@@ -90,33 +78,30 @@ export const TreeEditor: React.FC = () => {
       )
     }
     if (!tree) {
-      return (
-        <Skeleton active />
-      )
+      return <Skeleton active />
     }
-    return (
-      <DBTreeView />
-    )
+    return <DBTreeView />
   }
 
   const renderCachedTreeView = () => {
     if (cacheLoading) {
-      return (
-        <Skeleton active />
-      )
+      return <Skeleton active />
     }
     if (!cashedNodes?.length) {
       return (
         <Empty
           className="tree-editor-empty"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={(<>Загрузите элементы,<br /> чтобы начать редактирование</>)}
+          description={
+            <>
+              Загрузите элементы,
+              <br /> чтобы начать редактирование
+            </>
+          }
         />
       )
     }
-    return (
-      <CachedTreeView />
-    )
+    return <CachedTreeView />
   }
 
   return (
@@ -125,7 +110,7 @@ export const TreeEditor: React.FC = () => {
         <Col span={12} xl={10}>
           <Card
             size="small"
-            className="tree-card"
+            className="tree-card left-card"
             title="База данных"
             actions={[
               <ReloadTreeActionButton key="reload" title="Обновить" />,
@@ -138,7 +123,7 @@ export const TreeEditor: React.FC = () => {
         <Col span={12} xl={10}>
           <Card
             size="small"
-            className="tree-card"
+            className="tree-card right-card"
             title="Редактирование (локальный кэш)"
             actions={[
               <SaveChangesActionButton key="save" title="Сохранить" />,

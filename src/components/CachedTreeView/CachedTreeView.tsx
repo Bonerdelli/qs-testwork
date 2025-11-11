@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react'
 import { Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'
+import { Key } from 'rc-tree/lib/interface'
 
 import { useStoreState, useStoreActions } from 'library/store'
 import { TreeDataNode } from 'library/types'
@@ -19,9 +20,9 @@ import { CachedTreeNodeEditor } from './CachedTreeNodeEditor'
 import { CachedTreeNode } from './CachedTreeNode'
 
 export const CachedTreeView: React.FC = () => {
-  const { nodes } = useStoreState(state => state.cashedTreeNodes)
-  const { activeId, editingId } = useStoreState(state => state.nodeEdit)
-  const { setActiveId } = useStoreActions(state => state.nodeEdit)
+  const { nodes } = useStoreState((state) => state.cashedTreeNodes)
+  const { activeId, editingId } = useStoreState((state) => state.nodeEdit)
+  const { setActiveId } = useStoreActions((state) => state.nodeEdit)
 
   const [treeData, setTreeData] = useState<DataNode[]>()
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
@@ -29,7 +30,7 @@ export const CachedTreeView: React.FC = () => {
   useEffect(() => {
     if (nodes) {
       const treeNodes = cashedTreeItemsToNodes(nodes)
-      const keys = nodes.map(node => node.id)
+      const keys = nodes.map((node) => node.id)
       setTreeData(treeNodes)
       setExpandedKeys(keys)
     } else {
@@ -63,7 +64,10 @@ export const CachedTreeView: React.FC = () => {
       defaultExpandAll
       expandedKeys={expandedKeys}
       selectedKeys={[activeId ?? 0]}
-      onSelect={keys => setActiveId(+keys[0])}
+      onSelect={(keys: Key[]) => {
+        const key = keys[0]
+        setActiveId(Number(key))
+      }}
       defaultExpandedKeys={expandedKeys}
       onExpand={antdTreeUseExpandedState(expandedKeys, setExpandedKeys)}
       titleRender={(node: TreeDataNode) => renderNode(node)}

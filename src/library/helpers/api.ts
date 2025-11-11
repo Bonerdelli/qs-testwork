@@ -37,10 +37,7 @@ export type ApiCrudResponse<T = ApiSuccessResponse> = T | ApiErrorResponse
 /**
  * Fetch and parse JSON from backend
  */
-export async function getJson<T>(
-  path: string,
-  onError?: (error?: ApiError) => void,
-): Promise<T | ApiErrorResponse> {
+export async function getJson<T>(path: string, onError?: (error?: ApiError) => void): Promise<T | ApiErrorResponse> {
   let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
@@ -132,10 +129,7 @@ export async function put<T = void>(
 /**
  * DELETE request
  */
-export async function del<T = void>(
-  path: string,
-  onError?: (error?: ApiError) => void,
-): Promise<ApiCrudResponse<T>> {
+export async function del<T = void>(path: string, onError?: (error?: ApiError) => void): Promise<ApiCrudResponse<T>> {
   let serverError: ApiErrorResponse | null = null
   const url = getEndpointUrl(path)
   const response = await request
@@ -162,9 +156,7 @@ export async function del<T = void>(
 /**
  * Helper function to check if request was successful
  */
-export function isSuccessful<T = void>(
-  result: ApiCrudResponse<T | ApiSuccessResponse>,
-): boolean {
+export function isSuccessful<T = void>(result: ApiCrudResponse<T | ApiSuccessResponse>): boolean {
   if (typeof result === 'undefined') {
     return false
   }
@@ -188,10 +180,7 @@ export function getEndpointUrl(path: string): string {
 /**
  * Helper function to handle API errors
  */
-function handleApiError(
-  error?: ApiError,
-  onError?: (error?: ApiError) => void,
-): ApiErrorResponse {
+function handleApiError(error?: ApiError, onError?: (error?: ApiError) => void): ApiErrorResponse {
   if (onError) {
     onError(error)
   } else {
@@ -206,7 +195,9 @@ function handleApiError(
       // size: 'small',
     })
   }
-  return error ? { error } : {
-    error: { message: 'Неизвестная ошибка' },
-  }
+  return error
+    ? { error }
+    : {
+        error: { message: 'Неизвестная ошибка' },
+      }
 }

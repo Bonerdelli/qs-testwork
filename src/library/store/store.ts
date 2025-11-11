@@ -21,9 +21,7 @@ const persistBaseConfig = {
 
 const persistRootConfig: PersistConfig<AppStoreModel> = {
   ...persistBaseConfig,
-  whitelist: [
-    'cashedTreeNodes',
-  ],
+  whitelist: ['cashedTreeNodes'],
 }
 
 const appStoreModel = {
@@ -33,10 +31,7 @@ const appStoreModel = {
 }
 
 export const store = createStore<AppStoreModel>(appStoreModel, {
-  reducerEnhancer: reducer => persistReducer(
-    persistRootConfig,
-    reducer,
-  ),
+  reducerEnhancer: (reducer) => persistReducer(persistRootConfig, reducer),
 })
 
 const typedHooks = createTypedHooks<AppStoreModel>()

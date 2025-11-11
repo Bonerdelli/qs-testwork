@@ -3,24 +3,27 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^4.6.2",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "antd": "^4.16.9",
-    "easy-peasy": "^5.0.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "redux": "^4.1.1",
+    "@ant-design/icons": "^5.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "antd": "^5.21.0",
+    "easy-peasy": "^5.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1",
+    "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "superagent": "^6.1.0"
+    "superagent": "^10.2.3"
   },
   "scripts": {
     "start:client": "react-app-rewired start",
     "start:server": "node server/index.js",
     "start": "run-p start:client start:server",
     "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "test:coverage": "react-app-rewired test --coverage",
+    "ts-check": "tsc --noEmit",
     "lint": "eslint ./src -f table --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src -f table --fix --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --check ./src",
@@ -32,6 +35,20 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^components/(.*)$": "<rootDir>/src/components/$1",
+      "^library/(.*)$": "<rootDir>/src/library/$1"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      ".*testUtils.*",
+      ".*utils/.*"
+    ]
+  },
+  "engines": {
+    "node": "<=18.20.0"
   },
   "browserslist": {
     "production": [
@@ -46,29 +63,31 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/dom": "^8.1.0",
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.13",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/superagent": "^4.1.12",
-    "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@typescript-eslint/parser": "^4.28.3",
-    "better-sqlite3": "^7.4.3",
+    "@testing-library/dom": "^10.4.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/superagent": "^4.1.16",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "better-sqlite3": "^11.8.1",
     "cors": "^2.8.5",
-    "eslint": "^7.30.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-formatter-table": "^7.32.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.3.2",
+    "prettier": "^3.4.2",
     "react-app-rewire-alias": "^1.0.3",
-    "react-app-rewired": "^2.1.8",
-    "typescript": "^4.3.5"
+    "react-app-rewired": "^2.2.1",
+    "typescript": "^4.9.5"
   }
 }

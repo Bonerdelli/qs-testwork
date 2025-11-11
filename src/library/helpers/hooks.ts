@@ -2,11 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 
 import { ApiError, getJson } from 'library/helpers/api'
 
-export type UseApiDataHookValue<T> = [
-  T | undefined,
-  (value: T) => void,
-  () => Promise<T | undefined>,
-]
+export type UseApiDataHookValue<T> = [T | undefined, (value: T) => void, () => Promise<T | undefined>]
 
 /**
  * Hook for using data from API
@@ -14,10 +10,7 @@ export type UseApiDataHookValue<T> = [
  * @author Nekrasov Andrew <bonerdelli@gmail.com>
  * @package qs-test-work
  */
-export function useApiData<T>(
-  path: string,
-  onError?: (error?: ApiError) => void,
-): UseApiDataHookValue<T> {
+export function useApiData<T>(path: string, onError?: (error?: ApiError) => void): UseApiDataHookValue<T> {
   const [data, setData] = useState<T>()
   const loadData = useCallback(async () => {
     const result = await getJson(path, onError)

@@ -10,9 +10,7 @@ import { store, persistor } from 'library/store'
 import './App.css'
 
 function App(): JSX.Element {
-  const renderLoading = () => (
-    <Spin />
-  )
+  const renderLoading = () => <Spin />
   return (
     <PersistGate loading={renderLoading()} persistor={persistor}>
       <StoreProvider store={store}>

@@ -38,9 +38,7 @@ export interface CashedTreeNodesStoreModel {
   clear: Action<CashedTreeNodesStoreModel>
 }
 
-const getNodeIndex = (
-  nodes: TreeNode[], id: number,
-) => nodes.findIndex(item => item.id === id)
+const getNodeIndex = (nodes: TreeNode[], id: number) => nodes.findIndex((item) => item.id === id)
 
 export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   nodes: [],
@@ -110,19 +108,17 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
     if (index !== -1) {
       state.nodes.splice(index, 1)
       state.nodeIds.splice(index, 1)
-      state.nodes = [
-        ...state.nodes,
-      ]
+      state.nodes = [...state.nodes]
     }
   }),
 
   clearNodeStatuses: action((state) => {
-    const cleared = state.nodes.filter(node => !node.isNew)
+    const cleared = state.nodes.filter((node) => !node.isNew)
     cleared.forEach((node) => {
       delete node.isDeleted
       delete node.isUpdated
     })
-    state.nodeIds = cleared.map(node => node.id)
+    state.nodeIds = cleared.map((node) => node.id)
     state.nodes = cleared
     // NOTE: for the future...
     // const nodesMap: Record<TreeNode['id'], TreeNode> = {}
@@ -133,24 +129,24 @@ export const cashedTreeNodesStoreModel: CashedTreeNodesStoreModel = {
   }),
 
   refreshNodesById: thunk(async (actions, payload) => {
-    const {
-      setApiError,
-      reloadNode,
-      setUnchanged,
-      setLoading,
-    } = actions
+    const { setApiError, reloadNode, setUnchanged, setLoading } = actions
     setLoading(true)
     setApiError(null)
     const result = await getNodes(payload)
+    if (!result) {
+      setApiError('Сервер вернул пустой результат')
+      setLoading(false)
+      return
+    }
     if ((result as ApiErrorResponse).error) {
       setApiError((result as ApiErrorResponse).error.message)
       setLoading(false)
       return
     }
     if (Array.isArray(result)) {
-      result.forEach(node => reloadNode(node))
+      result.forEach((node) => reloadNode(node))
       setUnchanged()
-      setTimeout(() => setLoading(false)) // Sorry
+      setTimeout(() => setLoading(false), 0) // Sorry
       return
     }
     setApiError('Сервер вернул пустой результат')

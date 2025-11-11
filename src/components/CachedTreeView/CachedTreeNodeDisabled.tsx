@@ -10,24 +10,20 @@ import { ClearOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
-import { execOnAntdEvent } from 'library/helpers/antd'
+import { execOnAntdEvent, resolveTreeNodeTitle } from 'library/helpers/antd'
 
 import 'components/TreeNode/TreeNode.css'
 
-export const CachedTreeNodeDisabled: React.FC<TreeNodeProps> = ({
-  dataNode,
-}) => {
+export const CachedTreeNodeDisabled: React.FC<TreeNodeProps> = ({ dataNode }) => {
   const { treeNode } = dataNode
-  const { unloadNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { unloadNode } = useStoreActions((state) => state.cashedTreeNodes)
 
   const renderActionButtons = () => (
     <div className="tree-node-actions">
       <Button
         type="text"
         shape="circle"
-        onClick={execOnAntdEvent(
-          () => treeNode && unloadNode(treeNode),
-        )}
+        onClick={execOnAntdEvent(() => treeNode && unloadNode(treeNode))}
         icon={<ClearOutlined />}
         title="Выгрузить из кэша"
         size="small"
@@ -36,7 +32,7 @@ export const CachedTreeNodeDisabled: React.FC<TreeNodeProps> = ({
   )
   return (
     <div className="tree-node">
-      <div className="tree-node-value disabled">{dataNode.title}</div>
+      <div className="tree-node-value disabled">{resolveTreeNodeTitle(dataNode)}</div>
       {renderActionButtons()}
     </div>
   )

@@ -11,8 +11,8 @@ import { useStoreState, useStoreActions } from 'library/store'
 import { ActionButtonProps } from './types'
 
 export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) => {
-  const { reloadTree } = useStoreActions(state => state.dbTree)
-  const { apiErrors } = useStoreState(state => state.dbTree)
+  const { reloadTree } = useStoreActions((state) => state.dbTree)
+  const { apiErrors } = useStoreState((state) => state.dbTree)
   const renderIcon = () => {
     if (apiErrors.loadData) {
       return (
@@ -21,9 +21,7 @@ export const ReloadTreeActionButton: React.FC<ActionButtonProps> = ({ title }) =
         </Tooltip>
       )
     }
-    return (
-      <ReloadOutlined />
-    )
+    return <ReloadOutlined />
   }
   return (
     <Button

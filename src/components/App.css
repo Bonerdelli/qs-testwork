@@ -4,7 +4,8 @@
   min-width: 320px;
 }
 
-@media screen and (max-width: 1200px) { /* NOTE: antd xl breakpoint */
+@media screen and (max-width: 1200px) {
+  /* NOTE: antd xl breakpoint */
   .content {
     height: 100%;
     width: 100%;

@@ -10,17 +10,15 @@ import { UndoOutlined, ClearOutlined } from '@ant-design/icons'
 
 import { useStoreActions } from 'library/store'
 import { TreeNodeProps } from 'components/TreeNode/types'
-import { execOnAntdEvent } from 'library/helpers/antd'
+import { execOnAntdEvent, resolveTreeNodeTitle } from 'library/helpers/antd'
 
 import { TreeDataNode } from 'library/types'
 
 import 'components/TreeNode/TreeNode.css'
 
-export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
-  dataNode,
-}) => {
+export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({ dataNode }) => {
   const { treeNode } = dataNode
-  const { restoreNode, unloadNode } = useStoreActions(state => state.cashedTreeNodes)
+  const { restoreNode, unloadNode } = useStoreActions((state) => state.cashedTreeNodes)
 
   const restoredSubtreeMapper = (item: TreeDataNode) => {
     if (item.treeNode) {
@@ -52,25 +50,25 @@ export const CachedTreeNodeDeleted: React.FC<TreeNodeProps> = ({
       />
       <Popconfirm
         placement="bottom"
-        title={<>Внесённые изменения будут потеряны<br />Продолжить?</>}
+        title={
+          <>
+            Внесённые изменения будут потеряны
+            <br />
+            Продолжить?
+          </>
+        }
         onConfirm={() => treeNode && unloadNode(treeNode)}
         okText="Да"
         cancelText="Нет"
       >
-        <Button
-          type="text"
-          shape="circle"
-          icon={<ClearOutlined />}
-          title="Выгрузить из кэша"
-          size="small"
-        />
+        <Button type="text" shape="circle" icon={<ClearOutlined />} title="Выгрузить из кэша" size="small" />
       </Popconfirm>
     </div>
   )
   return (
     <div className="tree-node">
       {treeNode?.isDeleted && <Badge status="error" className="tree-node-status-badge" />}
-      <div className="tree-node-value disabled">{dataNode.title}</div>
+      <div className="tree-node-value disabled">{resolveTreeNodeTitle(dataNode)}</div>
       {renderActionButtons()}
     </div>
   )
